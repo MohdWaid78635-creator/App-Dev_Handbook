@@ -1,0 +1,17 @@
+# Editor / OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Claude / IDE config
+.claude/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Vercel local config
+.vercel/
+
+# Large source PDFs (kept locally, not needed in the deployed site)
+*.pdf

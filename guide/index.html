@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>App Guide</title>
+  <!-- paper look only. Apply the saved text size before the page paints, so there is no flash -->
+  <script>
+    try {
+      const p = JSON.parse(localStorage.getItem('guide.prefs')) || {};
+      document.documentElement.dataset.size = p.size || 'm';
+      if (p.focus) document.documentElement.dataset.focus = '1';
+    } catch {}
+  </script>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="game.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="top">
+    <button type="button" id="menu" class="icon-btn menu-btn" aria-label="Hide chapter list" aria-expanded="true" aria-controls="side" data-icon="menu"></button>
+    <a class="brand" href="#/"><span class="logo" data-icon="book" aria-hidden="true"></span><span>App Guide</span></a>
+
+    <form class="searchbox" role="search" onsubmit="return false">
+      <label for="q" class="sr">Search the handbook</label>
+      <span class="s-icon" data-icon="search" aria-hidden="true"></span>
+      <input id="q" type="search" placeholder="Search everything: backups, login, slow app…" autocomplete="off"
+             role="combobox" aria-expanded="false" aria-controls="sugg" aria-autocomplete="list">
+      <kbd class="hint" aria-hidden="true">/</kbd>
+      <div id="sugg" role="listbox" aria-label="Search suggestions" hidden></div>
+    </form>
+
+    <nav class="topnav" aria-label="Main">
+      <a href="#/play" data-nav="play"><span data-icon="rocket" aria-hidden="true"></span><span class="lbl">Quest</span></a>
+      <a href="#/learn" data-nav="learn"><span data-icon="book" aria-hidden="true"></span><span class="lbl">Learn</span></a>
+      <a href="#/help" data-nav="help"><span data-icon="help" aria-hidden="true"></span><span class="lbl">Help</span></a>
+      <a href="#/prompts" data-nav="prompts"><span data-icon="terminal" aria-hidden="true"></span><span class="lbl">Prompts</span></a>
+    </nav>
+
+    <div class="settings-wrap">
+      <button type="button" id="set-btn" class="icon-btn" aria-label="Reading settings" aria-expanded="false" aria-controls="settings" data-icon="sliders"></button>
+      <div id="settings" role="dialog" aria-label="Reading settings" hidden>
+        <p class="set-title">Make it easy on your eyes</p>
+        <div class="set-row" role="group" aria-labelledby="l-size">
+          <span id="l-size" class="set-label">Text size</span>
+          <div class="seg" data-pref="size">
+            <button type="button" data-v="s" aria-label="Small text" style="font-size:.8rem">A</button>
+            <button type="button" data-v="m" aria-label="Medium text" style="font-size:1rem">A</button>
+            <button type="button" data-v="l" aria-label="Large text" style="font-size:1.2rem">A</button>
+            <button type="button" data-v="xl" aria-label="Extra large text" style="font-size:1.4rem">A</button>
+          </div>
+        </div>
+        <div class="set-row" role="group" aria-labelledby="l-bk">
+          <span id="l-bk" class="set-label">Back up your progress</span>
+          <p class="set-help">Your progress is saved only in this browser. Save a copy to a file so you never lose it.</p>
+          <div class="set-btns">
+            <button type="button" id="bk-save" class="mini-btn">Save to a file</button>
+            <button type="button" id="bk-load" class="mini-btn">Load from a file</button>
+            <input type="file" id="bk-file" accept=".json,application/json" hidden>
+          </div>
+          <p id="bk-status" class="set-help" role="status"></p>
+        </div>
+        <label class="set-switch"><input type="checkbox" id="focus-mode"> <span>Hide the chapter list <small>more room to read. The button at the top left does the same.</small></span></label>
+      </div>
+    </div>
+  </header>
+  <div class="read-progress" aria-hidden="true"><span id="read-bar"></span></div>
+
+  <div class="layout">
+    <nav class="side" id="side" aria-label="Chapters">
+      <div class="appbar">
+        <label for="app">Your app (each has its own quest)</label>
+        <select id="app"></select>
+        <div class="appbtns">
+          <button type="button" id="app-new">+ New app</button>
+          <button type="button" id="app-del">Delete</button>
+        </div>
+      </div>
+      <div id="mini"></div>
+      <div class="side-nav">
+        <a href="#/play"><span data-icon="rocket" aria-hidden="true"></span>Your quest</a>
+        <a href="#/index"><span data-icon="search" aria-hidden="true"></span>A to Z index</a>
+        <a href="#/learn"><span data-icon="book" aria-hidden="true"></span>Learn Lab</a>
+        <a href="#/help"><span data-icon="help" aria-hidden="true"></span>Something broke?</a>
+        <a href="#/prompts"><span data-icon="terminal" aria-hidden="true"></span>Prompt library</a>
+      </div>
+      <p class="side-title">Chapters</p>
+      <ol id="toc-list"></ol>
+    </nav>
+    <div class="backdrop" id="backdrop" hidden></div>
+    <main id="main" tabindex="-1" aria-busy="true"></main>
+    <aside class="outline" id="outline" aria-label="On this page"></aside>
+  </div>
+
+  <!-- Loading skeleton: a grey outline of the page you asked for, shown until the app is ready (a few hundred milliseconds
+       on a fast computer). Each kind of page has its own shape. If the app never starts, a plain message replaces it. -->
+  <script>
+    (function () {
+      var L = function (w) { return '<i class="sk-line" style="width:' + w + '%"></i>'; };
+      var T = '<i class="sk-title"></i>';
+      var C = function (h) { return '<i class="sk-card" style="height:' + h + 'px"></i>'; };
+      var G = function (n, h) { var s = ''; for (var i = 0; i < n; i++) s += C(h); return '<div class="sk-grid">' + s + '</div>'; };
+      var P = '<div class="sk-p">' + L(100) + L(96) + L(88) + L(55) + '</div>';
+      var R = {
+        read: L(28) + T + P + P + C(120) + P,
+        home: T + L(70) + L(52) + '<div class="sk-chips"><i></i><i></i><i></i><i></i></div>' + G(3, 90) + G(8, 76),
+        results: T + L(38) + C(92) + C(92) + C(92) + C(92),
+        quest: C(190) + C(150) + C(110) + G(4, 72),
+        level: L(34) + T + L(80) + C(56) + C(56) + C(56) + C(56) + C(56),
+        learn: T + L(70) + C(120) + G(6, 88),
+        form: L(30) + T + L(70) + C(64) + C(64) + C(120) + C(64),
+        list: T + L(60) + C(110) + C(110) + C(110),
+        index: T + L(60) + C(44) + L(20) + C(44) + C(44) + C(44) + L(20) + C(44) + C(44),
+      };
+      var kinds = { c: 'read', s: 'read', q: 'results', play: 'quest', 'new': 'form', level: 'level', learn: 'learn', help: 'list', facts: 'list', details: 'form', myapp: 'form', check: 'form', proof: 'list', prompts: 'list', index: 'index' };
+      var k = location.hash.replace(/^#\//, '').split('/')[0] || 'home';
+      var main = document.getElementById('main');
+      main.innerHTML = '<div class="sk" role="status" aria-live="polite"><span class="sr">Loading the page…</span>' + (R[kinds[k]] || R.home) + '</div>';
+      var toc = ''; for (var i = 0; i < 14; i++) toc += '<li class="sk-toc"><i class="sk-line" style="width:' + (60 + (i * 13) % 35) + '%"></i></li>';
+      document.getElementById('toc-list').innerHTML = toc;
+      setTimeout(function () {
+        if (document.querySelector('#main .sk')) main.innerHTML = '<div class="empty"><h1>This is taking too long</h1><p>Reload the page. If it keeps happening, open a terminal in this folder and run <code>node build.mjs</code>, then reload.</p></div>';
+      }, 15000);
+    })();
+  </script>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script src="data.js"></script>
+  <script src="journey.js"></script>
+  <script src="game-data.js"></script>
+  <script src="synonyms.js"></script>
+  <script src="app.js"></script>
+  <script src="game.js"></script>
+  <script src="backup.js"></script>
+  <script src="fill.js"></script>
+  <script src="check.js"></script>
+  <script src="evidence.js"></script>
+  <script src="myapp.js"></script>
+  <script src="facts.js"></script>
+  <script src="learn-data.js"></script>
+  <script src="search-index.js"></script>
+  <script src="help.js"></script>
+  <script src="learn.js"></script>
+  <script>boot();</script>
+</body>
+</html>
