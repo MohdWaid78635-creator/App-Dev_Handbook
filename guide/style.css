@@ -1,6 +1,6 @@
 /* App Guide: "calm paper" design.
    Warm off-white paper, soft dark ink (never pure black on pure white), serif body for long reading,
-   sans for controls. Paper look only (no dark or light mode). All colours are tokens. */
+   sans for controls. Light paper by default; a matching dark set lives under [data-theme="dark"]. All colours are tokens. */
 
 :root {
   --bg: #f3eee4; --surface: #faf7f0; --surface-2: #ece5d6; --ink: #2a2724; --muted: #5d564c; --line: #dcd3c1;
@@ -12,6 +12,13 @@
 }
 
 :root { color-scheme: light; }
+:root[data-theme="dark"] {
+  --bg: #1b1915; --surface: #23201b; --surface-2: #2c2822; --ink: #ece6da; --muted: #b3aa9a; --line: #7f7666;
+  --accent: #5fc2b9; --accent-ink: #7fd4cb; --accent-soft: #1f3a37; --on-accent: #0f2a28;
+  --warm: #e59a73; --warm-soft: #3a2519; --good: #7fc496; --good-soft: #1e3326;
+  --info: #8fb7e3; --info-soft: #1e2f44; --mark: #5c4d17; --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.35);
+  color-scheme: dark;
+}
 :root {
   --font-read: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
   --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -295,4 +302,14 @@ h2.sec-title { margin: 34px 0 12px; font: 800 1.05rem var(--font-ui); }
 @media (max-width: 480px) { .hint { display: none; } .stage { grid-template-columns: 38px 1fr; gap: 10px; } .dot { width: 38px; height: 38px; } .stages::before { left: 17px; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
-@media print { .top, .side, .outline, .read-progress, #toast { display: none; } .layout { display: block; } body { background: #fff; color: #000; } }
+@media print { :root[data-theme="dark"] { --bg: #f3eee4; --surface: #faf7f0; --surface-2: #ece5d6; --ink: #2a2724; --muted: #5d564c; --line: #dcd3c1; --accent: #1b6b66; --accent-ink: #14534f; --accent-soft: #dcebe6; --on-accent: #fff; --warm: #9f4520; --warm-soft: #f5e2d4; --good: #2a6b43; --good-soft: #e0eee3; --info: #2c5a87; --info-soft: #dfe8f2; --mark: #f3dd96; color-scheme: light; } #read-ring, .install-bar { display: none !important; } .top, .side, .outline, .read-progress, #toast { display: none; } .layout { display: block; } body { background: #fff; color: #000; } }
+
+/* reading time + floating progress ring (chapter pages only) */
+.readmeta { margin: -6px 0 14px; color: var(--muted); font: 600 .85rem var(--font-ui); }
+.ring.sm { position: fixed; right: 14px; bottom: 14px; z-index: 28; width: 46px; height: 46px; font-size: .7rem; box-shadow: var(--shadow); }
+.ring.sm::before { inset: 5px; }
+.ring.sm[hidden] { display: none; }
+.install-bar { position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 55; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding: 12px 14px; background: var(--surface); border: 1.5px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); font: 600 .9rem var(--font-ui); }
+.install-bar span { flex: 1 1 200px; }
+.install-bar button { min-height: 44px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: inherit; cursor: pointer; }
+.install-bar button.go { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }

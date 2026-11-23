@@ -16,9 +16,17 @@ Deployed on Vercel → [app-dev-handbook.vercel.app](https://app-dev-handbook.ve
 | 📋 My App Sheets | App info, decisions log, cost table |
 | ✅ Check My Project | Scans your folder for the book's required files |
 | 🔍 A–Z Index | 336 topics across all features, filterable |
+| 🃏 Flashcards | The 85 glossary words as flip cards with spaced repetition |
+| 📅 Daily challenge | One question a day that keeps your streak going |
+| 📈 My progress | XP chart, activity grid, reading time |
+| ⚔️ Boss fights | 5-question gate at the end of each quest level (3 right to pass, optional timer) |
+| 🏆 Scores and sharing | Scores for every app on the device, plus a shareable progress card (PNG) |
+| 🗂 Feature board | Must / Should / Could / Won't board with print layout |
+| 🧭 Pick my stack | 5 questions, then a recommendation taken from the book's own advice |
+| 🌙 Dark mode, reading time, offline install | Settings → Colours; works offline once installed (needs https) |
 
 ## Run locally
-Just double-click `guide/index.html` — no install, no server needed.
+Just double-click `guide/index.html` — no install, no server needed. (Offline install and the service worker need http(s), so they only work on the deployed site or a local server.)
 
 ## Rebuild data from PDFs
 ```bash

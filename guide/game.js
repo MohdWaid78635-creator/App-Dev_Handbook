@@ -74,13 +74,27 @@ const Game = (() => {
   const hasGame = () => !!currentApp && !!gameRec();
   const quizDone = () => store.get('quiz:' + currentApp, {});
   const all_ = keys => keys.every(k => tickSet.has(k));
+  const fightOk = n => !!store.get('fight:' + currentApp, {})[n]?.ok; // passed the boss fight for level n
+  // Boss fights were added after some people had already finished levels. Mark those levels as passed once, for every
+  // app on this device, so nobody is locked out of work they already did. Runs only for apps with no fight record yet.
+  function grandfather() {
+    let levels; try { levels = build().levels; } catch { return; }
+    for (const app of store.get('apps', [])) {
+      const k = 'fight:' + app;
+      if (store.get(k, null)) continue;
+      const tk = new Set(store.get('ticks:' + app, [])), rec = { v: 1 };
+      for (const l of levels) if (l.missions.every(m => m.keys.every(x => tk.has(x))) && l.bossKeys.every(x => tk.has(x))) rec[l.n] = { best: 0, tries: 0, ok: true, gf: true };
+      store.set(k, rec);
+    }
+  }
   const missionDone = m => all_(m.keys);
   function status(l) {
     const mDone = l.missions.filter(missionDone).length;
     const boss = all_(l.bossKeys);
     const exDone = l.extras.filter(e => all_(e.keys)).length;
     const qd = quizDone(), qOk = l.quiz.filter(q => qd[q.qid]).length;
-    return { mDone, mTotal: l.missions.length, boss, exDone, qOk, done: mDone === l.missions.length && boss };
+    const fight = fightOk(l.n);
+    return { mDone, mTotal: l.missions.length, boss, fight, exDone, qOk, done: mDone === l.missions.length && boss && fight };
   }
   function overall() {
     const { levels } = build(), qd = quizDone();
@@ -166,6 +180,8 @@ const Game = (() => {
       { id: 'proof', name: 'Proof collector', desc: 'Save a note or picture for 5 proofs.', ok: Evidence.count() >= 5, ic: 'clip' },
       { id: 'roll', name: 'On a roll', desc: 'Do something 3 days in a row.', ok: streakInfo().best >= 3, ic: 'flame' },
       { id: 'week', name: 'Full week', desc: 'Do something 7 days in a row.', ok: streakInfo().best >= 7, ic: 'trophy' },
+      { id: 'month', name: '30-day streak', desc: 'Do something 30 days in a row.', ok: streakInfo().best >= 30, ic: 'trophy' },
+      { id: 'gloss', name: 'Glossary master', desc: 'Master every flashcard word.', ok: typeof Flashcards !== 'undefined' && glossary.length > 0 && Flashcards.mastered() === glossary.length, ic: 'star' },
       { id: 'founder', name: 'App founder', desc: 'Finish every level.', ok: o.doneLevels === o.levels.length, ic: 'trophy' },
     ];
   }
@@ -220,7 +236,7 @@ const Game = (() => {
     const node = p => {
       const st = stateOf(o, p.i), s = o.sts[p.i], side = p.x > 50 ? 'left' : 'right';
       const sign = st === 'done' ? icon('check') : st === 'locked' ? icon('lock') : p.l.n;
-      const prog = s.done ? 'Done' : st === 'locked' ? 'Locked' : `${s.mDone} of ${s.mTotal} missions`;
+      const fs = Boss.state(p.l.n), prog = (s.done ? 'Done' : st === 'locked' ? 'Locked' : `${s.mDone} of ${s.mTotal} missions`) + (fs?.tries ? ` · fight ${fs.best}/${Boss.N}` : '');
       return `<li class="mnode ${st}" style="left:${p.x}%;top:${p.y}px">
         <a class="mdot" href="#/level/${p.l.n}" aria-label="Level ${p.l.n}: ${esc(p.l.name)}, ${prog}"${st === 'current' ? ' aria-current="step"' : ''}>${sign}</a>
         ${st === 'current' ? `<span class="here ${side}" aria-hidden="true">${icon('rocket')} You are here</span>` : ''}
@@ -383,12 +399,21 @@ const Game = (() => {
         <p>Tick each proof only when you have seen it yourself: a test result, a setting, a screenshot, or the app on your own phone.</p>
         ${G.projectFiles.some(f => f.level === n) ? `<p><a href="#/check">${icon('arrow')} Check my project folder for the files this level needs</a></p>` : ''}
         ${checkList(l.bossKeys, l.bossLabels, locked)}
+        ${fightBox(n, locked)}
       </section>
 
       ${l.extras.length ? `<h2 class="sec-title">Bonus quests <small>${XP.extra} XP each · optional</small></h2>${l.extras.map(e => extraCard(e, locked)).join('')}` : ''}
 
       <nav class="pager" aria-label="Levels">${prev ? `<a href="#/level/${prev.n}"><small>← Back</small>Level ${prev.n}: ${esc(prev.name)}</a>` : '<span></span>'}${next ? `<a href="#/level/${next.n}"><small>${s.done ? 'Next level →' : 'Coming up →'}</small>Level ${next.n}: ${esc(next.name)}</a>` : '<a href="#/play"><small>Finish line</small>Back to the map</a>'}</nav>
     </article>`;
+  }
+
+  // boss fight line: passed or not, best score, and the button that opens the fight
+  function fightBox(n, locked) {
+    const st = Boss.state(n);
+    return `<div class="fightbox ${st?.ok ? 'passed' : ''}"><p><b>${st?.ok ? icon('check') + ' Boss fight passed' : 'Boss fight: pass it to finish this level'}</b>
+      <small>${st?.tries ? `Best ${st.best} of ${Boss.N} · ${st.tries} attempt${st.tries === 1 ? '' : 's'}` : `${Boss.N} questions, ${Boss.PASS} right to pass`}${st?.gf ? ' · counted because you finished this level earlier' : ''}</small></p>
+      <button type="button" class="btn${st?.ok ? ' ghost' : ''}" data-boss="${n}"${locked ? ' disabled' : ''}>${st?.tries ? 'Fight again' : 'Start boss fight'}</button></div>`;
   }
 
   // the book's "start a stage" prompt (19.2), with this level's stage filled in
@@ -413,8 +438,19 @@ const Game = (() => {
 
   // ---------- change detection, toasts and celebration ----------
   let snap = null;
+  // XP total at the end of each day, so the stats page can show XP per day. Only written when it changes.
+  function logXp(xp) {
+    if (!hasGame()) return;
+    try {
+      const k = 'xplog:' + currentApp, log = store.get(k, {}), t = dayKey(new Date());
+      if (log[t] === xp) return;
+      log[t] = xp;
+      store.set(k, Object.fromEntries(Object.entries(log).sort().slice(-400)));
+    } catch { /* storage full: the chart just stops growing */ }
+  }
   function snapshot() {
     const o = overall();
+    logXp(o.xp);
     return { xp: o.xp, rank: o.rank, levels: o.sts.map(s => s.done), boss: o.sts.map(s => s.boss) };
   }
   function compare() {
@@ -455,6 +491,7 @@ const Game = (() => {
   }
 
   function init() {
+    grandfather();
     // starting a game
     main.addEventListener('submit', e => {
       const f = e.target.closest('[data-game-form]');
@@ -508,8 +545,8 @@ const Game = (() => {
     return { ...m, intro: m.what[0] || first?.text || '', proofs: real ? m.proofLabels : [] };
   }
   return {
-    sectionInfo, noteActivity, streakInfo, nextStep,
-    newGame, play, level, refresh, init, compare, overall, hasGame, status, build, XP, renderMini,
+    sectionInfo, noteActivity, streakInfo, nextStep, dayKey,
+    newGame, play, level, refresh, init, fightOk, compare, overall, hasGame, status, build, XP, renderMini,
     onCopy() { if (hasGame()) { const k = 'copies:' + currentApp; const had = store.get(k, 0); store.set(k, had + 1); if (!had) toast('Badge earned: First prompt'); } },
     summary() { if (!hasGame()) return null; const o = overall(); return { o, cur: o.cur >= 0 ? o.levels[o.cur] : null }; },
     resetWrong() { wrongPicks.clear(); },

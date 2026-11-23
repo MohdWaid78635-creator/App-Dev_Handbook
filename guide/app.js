@@ -60,12 +60,14 @@ function renderAppPicker() {
 }
 
 // ---- reading comfort: text size and focus mode (paper look only) ----
-const prefs = { size: 'm', focus: false, ...store.get('prefs', {}) };
+const prefs = { size: 'm', focus: false, mode: 'auto', ...store.get('prefs', {}) };
 delete prefs.theme; // old saved colour choice from an earlier version
 function applyPrefs() {
   const root = document.documentElement;
   root.dataset.size = prefs.size;
   prefs.focus ? (root.dataset.focus = '1') : delete root.dataset.focus;
+  const dark = prefs.mode === 'dark' || (prefs.mode === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches);
+  dark ? (root.dataset.theme = 'dark') : delete root.dataset.theme;
   document.querySelectorAll('.seg').forEach(seg => seg.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === prefs[seg.dataset.pref]))));
   document.getElementById('focus-mode').checked = prefs.focus;
   const mb = document.getElementById('menu');
@@ -75,6 +77,8 @@ function applyPrefs() {
   }
   store.set('prefs', prefs);
 }
+
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => prefs.mode === 'auto' && applyPrefs());
 
 // flat list of every section for search and lookups
 const all = H.chapters.flatMap(c => c.sections.map(s => {
@@ -245,6 +249,7 @@ function chapter(id, focusId, ts = []) {
   const html = `<article>
     <p class="crumb"><a href="#/">Home</a> › ${chLabel(c)}</p>
     <h1>${esc(c.title)}</h1>
+    <p class="readmeta">~${Math.max(1, Math.ceil(all.filter(x => x.c === c).reduce((n, x) => n + x.raw.split(/\s+/).length, 0) / 200))} min read</p>
     ${many ? `<div class="chapter-tools"><button type="button" class="chip" data-act="toggle-all">Collapse all sections</button></div>
     <nav class="inpage" aria-label="In this chapter"><strong>In this chapter</strong><ul>${c.sections.map(s => `<li>${jump(s)}</li>`).join('')}</ul></nav>` : ''}
     ${c.sections.map(s => renderSection(c, s)).join('')}
@@ -302,7 +307,18 @@ const J = window.JOURNEY;
 const notFound = () => `<div class="empty"><h1>Page not found</h1><p><a href="#/">Go to the start</a></p></div>`;
 
 // ---- routing ----
+let rtCh = null, rtAt = 0;
+function flushReadTime() {
+  if (rtCh && !document.hidden) {
+    const s = Math.min(1800, Math.round((Date.now() - rtAt) / 1000));
+    if (s > 0) { const rt = store.get('readtime', {}); rt[rtCh] = (rt[rtCh] || 0) + s; store.set('readtime', rt); }
+  }
+  rtAt = Date.now();
+}
+addEventListener('visibilitychange', () => { if (document.hidden) { flushReadTime(); rtCh = null; } else { rtCh = curChapter; rtAt = Date.now(); } });
+addEventListener('pagehide', () => { flushReadTime(); rtCh = null; });
 function route() {
+  flushReadTime();
   const [, kind = '', a = '', b = ''] = decodeURIComponent(location.hash).split('/');
   page = kind === 'c' || kind === 's' ? 'c' : kind || 'home';
   curChapter = null; outline.innerHTML = '';
@@ -323,6 +339,12 @@ function route() {
   else if (kind === 'help') html = Help.page(a);
   else if (kind === 'learn') html = Learn.page(a);
   else if (kind === 'index') html = SearchIndex.page();
+  else if (kind === 'cards') html = Flashcards.page();
+  else if (kind === 'daily') html = Daily.page();
+  else if (kind === 'stats') html = Stats.page();
+  else if (kind === 'moscow') html = Moscow.page();
+  else if (kind === 'stack') html = StackPicker.page();
+  else if (kind === 'scores') html = Scorecard.page();
   else if (kind === 'level') html = /^\d+$/.test(a) ? Game.level(+a) : notFound();
   else { q.value = ''; html = home(); }
   Game.resetWrong();
@@ -331,6 +353,7 @@ function route() {
   Game.renderMini();
   main.removeAttribute('aria-busy'); // the loading skeleton is gone once a page is drawn
   markCurrentToc();
+  rtCh = curChapter; rtAt = Date.now(); // start timing the chapter you just opened
   document.querySelectorAll('.topnav a').forEach(l => ((l.dataset.nav === kind || (l.dataset.nav === 'play' && (kind === 'level' || kind === 'new'))) ? l.setAttribute('aria-current', 'page') : l.removeAttribute('aria-current')));
   updateReading();
 }
@@ -340,10 +363,13 @@ let ticking = false;
 addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { ticking = false; updateReading(); }); } }, { passive: true });
 function updateReading() {
   const bar = document.getElementById('read-bar');
+  const ring = document.getElementById('read-ring');
+  ring.hidden = page !== 'c';
   if (page !== 'c') { bar.style.width = '0'; return; }
   const max = document.documentElement.scrollHeight - innerHeight;
   const pct = max > 0 ? Math.min(1, scrollY / max) : 1;
   bar.style.width = pct * 100 + '%';
+  ring.style.setProperty('--p', Math.round(pct * 100)); ring.firstChild.textContent = Math.round(pct * 100) + '%';
   const secs = [...main.querySelectorAll('.sec')];
   let cur = secs[0];
   for (const s of secs) if (s.getBoundingClientRect().top <= 140) cur = s;
@@ -500,7 +526,7 @@ document.getElementById('app-del').addEventListener('click', () => {
   if (!currentApp) return;
   if (!confirm(`Delete the quest for “${currentApp}”, with all its ticks, points and quiz answers?
 This cannot be undone.`)) return;
-  ['ticks:', 'game:', 'quiz:', 'copies:', 'dates:', 'profile:', 'days:', 'proof:', 'decisions:', 'costs:'].forEach(k => localStorage.removeItem('guide.' + k + currentApp));
+  ['ticks:', 'game:', 'quiz:', 'copies:', 'dates:', 'profile:', 'days:', 'proof:', 'decisions:', 'costs:', 'xplog:', 'moscow:', 'stack:'].forEach(k => localStorage.removeItem('guide.' + k + currentApp));
   Object.keys(localStorage).filter(k => k.startsWith('guide.img:' + currentApp + ':')).forEach(k => localStorage.removeItem(k)); // pictures saved with proofs
   apps = apps.filter(a => a !== currentApp);
   currentApp = apps[0] || '';
@@ -518,6 +544,13 @@ function boot() {
   MyApp.init();
   Facts.init();
   Learn.init();
+  Flashcards.init();
+  Daily.init();
+  Stats.init();
+  Moscow.init();
+  Boss.init();
+  Scorecard.init();
+  StackPicker.init();
   SearchIndex.init();
   applyPrefs(); loadTicks(); renderAppPicker(); renderToc();
   route();

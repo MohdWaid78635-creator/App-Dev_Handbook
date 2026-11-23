@@ -99,5 +99,24 @@ for (const id of Object.keys(G.elsewhere)) if (!byId.has(id)) bad.push(`elsewher
 const dup = [...used].filter(id => G.levels.filter(l => l.sections.some(e => sid(e) === id)).length > 1);
 if (dup.length) bad.push('section used in two levels: ' + dup.join(', '));
 
+// stack picker: every combination of answers gives a full recommendation whose section links exist
+{
+  const code = readFileSync(join(here, 'stackpicker.js'), 'utf8') + '\n;StackPicker';
+  const SP = vm.runInContext(code, ctx);
+  const qs = SP.questions; let n = 0;
+  const walk = (i, a) => {
+    if (i === qs.length) { n++; const r = SP.recommend(a); if (r.length < 6) bad.push('stack picker: short answer for ' + JSON.stringify(a)); for (const x of r) for (const l of x.links) if (!byId.has(l.id)) bad.push(`stack picker: unknown section ${l.id}`); return; }
+    for (const [v] of qs[i].o) walk(i + 1, { ...a, [qs[i].id]: v });
+  };
+  walk(0, {});
+  if (n !== 243) bad.push('stack picker: expected 243 combinations, got ' + n);
+}
+
+// the offline cache must list every script the page loads
+{
+  const html = readFileSync(join(here, 'index.html'), 'utf8'), sw = readFileSync(join(here, 'sw.js'), 'utf8');
+  for (const m of html.matchAll(/<script src="([^"]+)"/g)) if (!sw.includes(`'${m[1]}'`)) bad.push(`sw.js ASSETS is missing ${m[1]}`);
+}
+
 if (bad.length) { console.error('GAME CHECK FAILED:\n  ' + bad.join('\n  ')); process.exit(1); }
 console.log(`OK: ${G.levels.length} levels cover ${used.size} sections; ${Object.keys(G.extras).length} bonus quests (${Object.values(G.extras).filter(x => x.kind !== 'moved').length} added by this guide).`);

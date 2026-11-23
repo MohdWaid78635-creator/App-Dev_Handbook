@@ -3,7 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#1b6b66">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
   <title>App Guide</title>
   <!-- paper look only. Apply the saved text size before the page paints, so there is no flash -->
   <script>
@@ -11,10 +14,13 @@
       const p = JSON.parse(localStorage.getItem('guide.prefs')) || {};
       document.documentElement.dataset.size = p.size || 'm';
       if (p.focus) document.documentElement.dataset.focus = '1';
+      var m = p.mode || 'auto';
+      if (m === 'dark' || (m === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.dataset.theme = 'dark';
     } catch {}
   </script>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="game.css">
+  <link rel="stylesheet" href="tools.css">
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -52,6 +58,14 @@
             <button type="button" data-v="xl" aria-label="Extra large text" style="font-size:1.4rem">A</button>
           </div>
         </div>
+        <div class="set-row" role="group" aria-labelledby="l-mode">
+          <span id="l-mode" class="set-label">Colours</span>
+          <div class="seg" data-pref="mode">
+            <button type="button" data-v="auto">Auto</button>
+            <button type="button" data-v="light">Light</button>
+            <button type="button" data-v="dark">Dark</button>
+          </div>
+        </div>
         <div class="set-row" role="group" aria-labelledby="l-bk">
           <span id="l-bk" class="set-label">Back up your progress</span>
           <p class="set-help">Your progress is saved only in this browser. Save a copy to a file so you never lose it.</p>
@@ -67,6 +81,7 @@
     </div>
   </header>
   <div class="read-progress" aria-hidden="true"><span id="read-bar"></span></div>
+  <div id="read-ring" class="ring sm" style="--p:0" aria-hidden="true" hidden><span>0%</span></div>
 
   <div class="layout">
     <nav class="side" id="side" aria-label="Chapters">
@@ -83,6 +98,12 @@
         <a href="#/play"><span data-icon="rocket" aria-hidden="true"></span>Your quest</a>
         <a href="#/index"><span data-icon="search" aria-hidden="true"></span>A to Z index</a>
         <a href="#/learn"><span data-icon="book" aria-hidden="true"></span>Learn Lab</a>
+        <a href="#/cards"><span data-icon="star" aria-hidden="true"></span>Flashcards</a>
+        <a href="#/daily"><span data-icon="flame" aria-hidden="true"></span>Daily challenge</a>
+        <a href="#/stats"><span data-icon="trophy" aria-hidden="true"></span>My progress</a>
+        <a href="#/scores"><span data-icon="shield" aria-hidden="true"></span>Scores and sharing</a>
+        <a href="#/moscow"><span data-icon="flag" aria-hidden="true"></span>Feature board</a>
+        <a href="#/stack"><span data-icon="route" aria-hidden="true"></span>Pick my stack</a>
         <a href="#/help"><span data-icon="help" aria-hidden="true"></span>Something broke?</a>
         <a href="#/prompts"><span data-icon="terminal" aria-hidden="true"></span>Prompt library</a>
       </div>
@@ -114,7 +135,7 @@
         list: T + L(60) + C(110) + C(110) + C(110),
         index: T + L(60) + C(44) + L(20) + C(44) + C(44) + C(44) + L(20) + C(44) + C(44),
       };
-      var kinds = { c: 'read', s: 'read', q: 'results', play: 'quest', 'new': 'form', level: 'level', learn: 'learn', help: 'list', facts: 'list', details: 'form', myapp: 'form', check: 'form', proof: 'list', prompts: 'list', index: 'index' };
+      var kinds = { scores: 'list', moscow: 'list', stack: 'form', cards: 'form', daily: 'form', stats: 'quest', c: 'read', s: 'read', q: 'results', play: 'quest', 'new': 'form', level: 'level', learn: 'learn', help: 'list', facts: 'list', details: 'form', myapp: 'form', check: 'form', proof: 'list', prompts: 'list', index: 'index' };
       var k = location.hash.replace(/^#\//, '').split('/')[0] || 'home';
       var main = document.getElementById('main');
       main.innerHTML = '<div class="sk" role="status" aria-live="polite"><span class="sr">Loading the page…</span>' + (R[kinds[k]] || R.home) + '</div>';
@@ -143,6 +164,14 @@
   <script src="search-index.js"></script>
   <script src="help.js"></script>
   <script src="learn.js"></script>
+  <script src="flashcards.js"></script>
+  <script src="daily.js"></script>
+  <script src="stats.js"></script>
+  <script src="moscow.js"></script>
+  <script src="stackpicker.js"></script>
+  <script src="bossfight.js"></script>
+  <script src="scorecard.js"></script>
   <script>boot();</script>
+  <script src="pwa.js"></script>
 </body>
 </html>

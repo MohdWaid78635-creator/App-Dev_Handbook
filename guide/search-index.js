@@ -28,6 +28,13 @@ const SearchIndex = (() => {
     ['Back up and restore my progress', '#/play', 'backup restore save progress file lose data json settings sliders'],
     ['Learn Lab home', '#/learn', 'learn lab modules lessons quiz study understand'],
     ['Something broke? Help desk', '#/help', 'help broke emergency hacked crash slow bill'],
+    ['Flashcards: glossary words', '#/cards', 'flashcards glossary words flip cards memorize spaced repetition'],
+    ['Daily challenge', '#/daily', 'daily challenge question streak quiz today'],
+    ['My progress: stats and charts', '#/stats', 'stats progress chart xp heatmap reading time streak best'],
+    ['Feature board (Must, Should, Could, Won\'t)', '#/moscow', 'feature board moscow must should could wont prioritize version 1 scope'],
+    ['Pick my stack', '#/stack', 'stack picker backend supabase firebase clerk sign-in recommend tools choose'],
+    ['Scores and sharing: progress card', '#/scores', 'scores leaderboard share progress card png rank xp apps compare'],
+    ['Export my app sheets as Markdown', '#/myapp', 'export markdown md notion obsidian PROJECT_LOG download'],
     ['A to Z index', '#/index', 'index browse alphabet topics'],
   ];
 

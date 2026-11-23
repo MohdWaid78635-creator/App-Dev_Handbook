@@ -50,8 +50,8 @@ const MyApp = (() => {
   }
 
   // ----- pieces of html -----
-  const tabs = () => `<nav class="matabs ma-noprint" aria-label="My app sheets">${TABS.map(([id, name]) => `<a class="chip" href="#/myapp${id ? '/' + id : ''}"${tab === id ? ' aria-current="page" aria-pressed="true"' : ''}>${esc(name)}${id === 'decisions' && decisions().length ? ` (${decisions().length})` : ''}</a>`).join('')}</nav>`;
-  const tools = (copyId) => `<div class="matools ma-noprint"><button type="button" class="mini-btn" data-ma-copy="${copyId}">Copy as text</button><button type="button" class="mini-btn" onclick="window.print()">Print or save as PDF</button><span id="ma-status" class="ma-status" role="status" aria-live="polite"></span></div>`;
+  const tabs = () => `<nav class="matabs ma-noprint" aria-label="My app sheets">${TABS.map(([id, name]) => `<a class="chip" href="#/myapp${id ? '/' + id : ''}"${tab === id ? ' aria-current="page" aria-pressed="true"' : ''}>${esc(name)}${id === 'decisions' && decisions().length ? ` (${decisions().length})` : ''}</a>`).join('')}<a class="chip" href="#/moscow">Feature board</a><a class="chip" href="#/stack">Pick my stack</a></nav>`;
+  const tools = (copyId) => `<div class="matools ma-noprint"><button type="button" class="mini-btn" data-ma-copy="${copyId}">Copy as text</button><button type="button" class="mini-btn" onclick="window.print()">Print or save as PDF</button><button type="button" class="mini-btn" data-ma-export>Export as Markdown</button><span id="ma-status" class="ma-status" role="status" aria-live="polite"></span></div>`;
   const field = (id, label, hint, rows, extra = '') => {
     const v = profile()[id] || '';
     return `<div class="mafield"><label class="flabel" for="m-${id}">${esc(label)} ${extra}</label>
@@ -111,7 +111,8 @@ const MyApp = (() => {
     const t = totals(c), b = toMinor(profile().budget), checks = bookChecks(c);
     let msg = '';
     if (b > 0) msg = t.m1k > b ? `<p class="over" role="alert"><b>Over budget:</b> at 1,000 users you would spend ${money(t.m1k - b)} more each month than your limit of ${money(b)}.</p>` : `<p class="under"><b>Within budget:</b> at 1,000 users you keep ${money(b - t.m1k)} of your ${money(b)} monthly limit.</p>`;
-    return `<div id="ma-totals"><div class="cototals"><div><small>One-time</small><b>${money(t.once)}</b></div><div><small>Monthly at 100</small><b>${money(t.m100)}</b></div><div><small>Monthly at 1,000</small><b>${money(t.m1k)}</b></div><div><small>Monthly at 10,000</small><b>${money(t.m10k)}</b></div></div>${msg}
+    const rate = parseFloat(c.fx), usd = n => (rate > 0 ? `<small>≈ $${(n / 100 / rate).toLocaleString(undefined, { maximumFractionDigits: 2 })}</small>` : '');
+    return `<div id="ma-totals"><div class="cototals"><div><small>One-time</small><b>${money(t.once)}</b>${usd(t.once)}</div><div><small>Monthly at 100</small><b>${money(t.m100)}</b>${usd(t.m100)}</div><div><small>Monthly at 1,000</small><b>${money(t.m1k)}</b>${usd(t.m1k)}</div><div><small>Monthly at 10,000</small><b>${money(t.m10k)}</b>${usd(t.m10k)}</div></div>${msg}
       <h3>The book’s four checks <small>(section 3.5). Tick the real boxes in Level 2 when you are sure.</small></h3>
       <ul class="bookchecks">${checks.map(k => `<li class="${k.ok ? 'ok' : ''}"><span aria-hidden="true">${k.ok ? icon('check') : '·'}</span><span>${esc(k.text)}${k.ok ? '' : ` <small>(${esc(k.todo)})</small>`}</span></li>`).join('')}</ul></div>`;
   }
@@ -120,7 +121,8 @@ const MyApp = (() => {
     const c = costs();
     return `<section aria-label="Cost table">
       <p class="lede">What the app costs to build and to run each month. The book gives no prices on purpose, because they change: type what the <b>official price page</b> says today, and link to it. Amounts are in ${esc(cur())}; change the currency on the App info sheet.</p>
-      <div class="mafield maprice ma-noprint"><div><label class="flabel" for="m-budget2">Monthly budget limit</label><input id="m-budget2" type="text" inputmode="decimal" data-ma-field="budget" maxlength="${LIM.budget}" value="${esc(profile().budget || '')}"></div></div>
+      <div class="mafield maprice ma-noprint"><div><label class="flabel" for="m-budget2">Monthly budget limit</label><input id="m-budget2" type="text" inputmode="decimal" data-ma-field="budget" maxlength="${LIM.budget}" value="${esc(profile().budget || '')}"></div>
+        <div><label class="flabel" for="m-fx">Show dollars too: 1 US dollar = how many ${esc(cur())}?</label><input id="m-fx" type="text" inputmode="decimal" data-ma-fx maxlength="8" value="${esc(c.fx || '')}" placeholder="e.g. 85"><p class="fnote">Optional. Rates change daily: type today's rate from your bank or an official source.</p></div></div>
       ${tools('costs')}
       <ol class="colist">${c.rows.map(rowHtml).join('')}</ol>
       <p class="ma-noprint"><button type="button" class="btn ghost" data-ma-addrow>+ Add another cost</button></p>
@@ -138,17 +140,18 @@ const MyApp = (() => {
   }
 
   // ----- plain-text versions (to paste into your AI or PROJECT_LOG.md) -----
+  const pipe = s => String(s ?? '').replace(/\|/g, '\\|').replace(/\n/g, ' ');
   function asText(which) {
     const p = profile();
     if (which === 'decisions') return ['## Decisions', ...decisions().sort((a, b) => String(a.date).localeCompare(String(b.date))).map(d => `- ${d.date}: ${d.decision}${d.why ? ` | Why: ${d.why}` : ''}${d.rejected ? ` | Options rejected: ${d.rejected}` : ''}`)].join('\n');
     if (which === 'costs') {
       const c = costs(), t = totals(c), n = s => (toMinor(s) === null ? '' : money(toMinor(s)));
       return ['## Cost table', `Currency: ${cur()}`, '', '| Item | One-time | Monthly at 100 | at 1,000 | at 10,000 | Grows with users? | Official price page | Confirmed |', '|---|---|---|---|---|---|---|---|',
-        ...c.rows.map(r => `| ${r.item} | ${n(r.once)} | ${n(r.m100)} | ${n(r.m1k)} | ${n(r.m10k)} | ${r.grows} | ${r.link} | ${r.checked || 'not confirmed'} |`),
+        ...c.rows.map(r => `| ${pipe(r.item)} | ${n(r.once)} | ${n(r.m100)} | ${n(r.m1k)} | ${n(r.m10k)} | ${pipe(r.grows)} | ${pipe(r.link)} | ${r.checked || 'not confirmed'} |`),
         `| **Total** | ${money(t.once)} | ${money(t.m100)} | ${money(t.m1k)} | ${money(t.m10k)} | | | |`, p.budget ? `Monthly budget limit: ${money(toMinor(p.budget))}` : ''].filter(x => x !== '').join('\n');
     }
     const rec = store.get('game:' + currentApp, {}), tps = (rec.types || []).map(id => G.appTypes.find(t => t.id === id)?.name).filter(Boolean);
-    const line = (l, v) => `${l}:\n${v || '(not filled in yet)'}\n`;
+    const line = (l, v) => `### ${l}\n${v || '(not filled in yet)'}\n`;
     return [`# App info sheet: ${currentApp}`, '', line('One-sentence promise', p.promise), line('Who the users are', p.users), line('App type(s)', tps.join(', ')), line('MUST features for version 1', p.must), line('NOT in this version', p.notnow), line('Notes from 5 real user talks', p.talks), line('Monthly budget limit', p.budget ? money(toMinor(p.budget)) : ''), line('Accounts', p.accounts), line('Human expert needed?', p.expert)].join('\n');
   }
   async function copyText(text) {
@@ -164,6 +167,14 @@ const MyApp = (() => {
   function init() {
     main.addEventListener('change', e => {
       const t = e.target;
+      if (t.dataset.maFx !== undefined) { // dollar rate for the cost table
+        const v = clean(t.value, 8);
+        if (v && !(parseFloat(v) > 0)) { t.setAttribute('aria-invalid', 'true'); toast('Type a number above 0, like 85.'); return; }
+        t.removeAttribute('aria-invalid');
+        const c = costs(); c.fx = v; saveCosts(c); say('Saved');
+        document.getElementById('ma-totals').outerHTML = totalsHtml(c);
+        return;
+      }
       if (t.dataset.maField) { // App info sheet field (and the budget box on the cost tab)
         const id = t.dataset.maField, err = document.getElementById('me-' + id);
         const v = clean(t.value, LIM[id]);
@@ -209,6 +220,7 @@ const MyApp = (() => {
     });
     main.addEventListener('click', async e => {
       const b = e.target.closest('button'); if (!b) return;
+      if (b.dataset.maExport !== undefined) return exportMd();
       if (b.dataset.maCopy) { const ok = await copyText(asText(b.dataset.maCopy)); say(ok ? 'Copied. Paste it into your AI or into PROJECT_LOG.md.' : 'Could not copy. Use Print instead.'); }
       else if (b.dataset.maDeldec) { if (!confirm('Delete this decision from the log?')) return; store.set('decisions:' + currentApp, decisions().filter(d => d.id !== b.dataset.maDeldec)); main.innerHTML = page('decisions'); }
       else if (b.dataset.maAddrow !== undefined) { const c = costs(); if (c.rows.length >= 40) return toast('That is plenty of rows (40).'); c.rows.push({ id: uid(), item: '', note: '', link: '', grows: '', once: '', m100: '', m1k: '', m10k: '', checked: '' }); saveCosts(c); main.innerHTML = page('costs'); document.querySelector('.corow:last-child [data-f="item"]')?.focus(); }
@@ -216,5 +228,23 @@ const MyApp = (() => {
     });
   }
 
-  return { page, init };
+  // one Markdown file with everything typed on the sheets (plus the feature board and stack choice, if you made them)
+  function exportMd() {
+    if (!currentApp || !store.get('game:' + currentApp)) return toast('Start a quest first, then there is something to export.');
+    const parts = [asText(''), asText('decisions'), asText('costs')];
+    if (typeof Moscow !== 'undefined' && Moscow.asText) parts.push(Moscow.asText());
+    if (typeof StackPicker !== 'undefined' && StackPicker.asText) parts.push(StackPicker.asText());
+    const blob = new Blob([parts.filter(Boolean).join('\n\n') + '\n'], { type: 'text/markdown' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = `my-app-export-${todayKey()}.md`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    toast('Saved as a .md file.');
+  }
+  function addDecision(decision, why, rejected) {
+    const list = decisions();
+    if (list.length >= 200) return false;
+    list.push({ id: uid(), date: todayKey(), decision: clean(decision, 200), why: clean(why, 300), rejected: clean(rejected, 300) });
+    return store.set('decisions:' + currentApp, list);
+  }
+  return { page, init, exportMd, addDecision };
 })();
