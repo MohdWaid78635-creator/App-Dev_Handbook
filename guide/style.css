@@ -1,14 +1,14 @@
-/* App Guide: "calm paper" design.
-   Warm off-white paper, soft dark ink (never pure black on pure white), serif body for long reading,
+/* App Guide: "cool mist" design.
+   Soft cool grey-blue light (no glare, no yellow cast), soft dark ink (never pure black on pure white), serif body for long reading,
    sans for controls. Light paper by default; a matching dark set lives under [data-theme="dark"]. All colours are tokens. */
 
 :root {
-  --bg: #f3eee4; --surface: #faf7f0; --surface-2: #ece5d6; --ink: #2a2724; --muted: #5d564c; --line: #dcd3c1;
-  --accent: #1b6b66; --accent-ink: #14534f; --accent-soft: #dcebe6; --on-accent: #fff;
-  --warm: #9f4520; --warm-soft: #f5e2d4;
-  --good: #2a6b43; --good-soft: #e0eee3;
-  --info: #2c5a87; --info-soft: #dfe8f2;
-  --mark: #f3dd96; --shadow: 0 1px 2px rgba(60,45,20,.08), 0 6px 18px rgba(60,45,20,.07);
+  --bg: #eaf0f2; --surface: #f5f8f9; --surface-2: #dde6ea; --ink: #1f2a30; --muted: #4a5961; --line: #b9c6cc;
+  --accent: #1b6b66; --accent-ink: #14534f; --accent-soft: #d4eae8; --on-accent: #fff;
+  --warm: #9a4420; --warm-soft: #f4e3da;
+  --good: #25643f; --good-soft: #dcede3;
+  --info: #2a5683; --info-soft: #dce8f3;
+  --mark: #f1e2a4; --shadow: 0 1px 2px rgba(20,45,60,.08), 0 6px 18px rgba(20,45,60,.07);
 }
 
 :root { color-scheme: light; }
@@ -302,7 +302,7 @@ h2.sec-title { margin: 34px 0 12px; font: 800 1.05rem var(--font-ui); }
 @media (max-width: 480px) { .hint { display: none; } .stage { grid-template-columns: 38px 1fr; gap: 10px; } .dot { width: 38px; height: 38px; } .stages::before { left: 17px; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
-@media print { :root[data-theme="dark"] { --bg: #f3eee4; --surface: #faf7f0; --surface-2: #ece5d6; --ink: #2a2724; --muted: #5d564c; --line: #dcd3c1; --accent: #1b6b66; --accent-ink: #14534f; --accent-soft: #dcebe6; --on-accent: #fff; --warm: #9f4520; --warm-soft: #f5e2d4; --good: #2a6b43; --good-soft: #e0eee3; --info: #2c5a87; --info-soft: #dfe8f2; --mark: #f3dd96; color-scheme: light; } #read-ring, .install-bar { display: none !important; } .top, .side, .outline, .read-progress, #toast { display: none; } .layout { display: block; } body { background: #fff; color: #000; } }
+@media print { :root[data-theme="dark"] { --bg: #eaf0f2; --surface: #f5f8f9; --surface-2: #dde6ea; --ink: #1f2a30; --muted: #4a5961; --line: #b9c6cc; --accent: #1b6b66; --accent-ink: #14534f; --accent-soft: #d4eae8; --on-accent: #fff; --warm: #9a4420; --warm-soft: #f4e3da; --good: #25643f; --good-soft: #dcede3; --info: #2a5683; --info-soft: #dce8f3; --mark: #f1e2a4; color-scheme: light; } #read-ring, .install-bar { display: none !important; } .top, .side, .outline, .read-progress, #toast { display: none; } .layout { display: block; } body { background: #fff; color: #000; } }
 
 /* reading time + floating progress ring (chapter pages only) */
 .readmeta { margin: -6px 0 14px; color: var(--muted); font: 600 .85rem var(--font-ui); }
