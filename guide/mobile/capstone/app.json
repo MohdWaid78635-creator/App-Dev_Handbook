@@ -1,0 +1,9 @@
+{
+  "expo": {
+    "name": "Habit Check-in",
+    "slug": "habit-check-in-capstone",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "android": { "package": "com.buildquestacademy.habitcheckin" }
+  }
+}

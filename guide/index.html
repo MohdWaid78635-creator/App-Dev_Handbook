@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="game.css">
   <link rel="stylesheet" href="tools.css">
+  <link rel="stylesheet" href="playbook.css">
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -43,6 +44,7 @@
       <a href="#/learn" data-nav="learn"><span data-icon="book" aria-hidden="true"></span><span class="lbl">Learn</span></a>
       <a href="#/help" data-nav="help"><span data-icon="help" aria-hidden="true"></span><span class="lbl">Help</span></a>
       <a href="#/prompts" data-nav="prompts"><span data-icon="terminal" aria-hidden="true"></span><span class="lbl">Prompts</span></a>
+      <a href="#/buildquest" data-nav="buildquest"><span data-icon="rocket" aria-hidden="true"></span><span class="lbl">Build Quest</span></a>
     </nav>
 
     <div class="settings-wrap">
@@ -106,6 +108,8 @@
         <a href="#/stack"><span data-icon="route" aria-hidden="true"></span>Pick my stack</a>
         <a href="#/help"><span data-icon="help" aria-hidden="true"></span>Something broke?</a>
         <a href="#/prompts"><span data-icon="terminal" aria-hidden="true"></span>Prompt library</a>
+        <a href="#/buildquest"><span data-icon="rocket" aria-hidden="true"></span>⚔ Build Quest</a>
+        <a href="mobile/index.html"><span data-icon="book" aria-hidden="true"></span>Build Quest Academy</a>
       </div>
       <p class="side-title">Chapters</p>
       <ol id="toc-list"></ol>
@@ -135,7 +139,7 @@
         list: T + L(60) + C(110) + C(110) + C(110),
         index: T + L(60) + C(44) + L(20) + C(44) + C(44) + C(44) + L(20) + C(44) + C(44),
       };
-      var kinds = { scores: 'list', moscow: 'list', stack: 'form', cards: 'form', daily: 'form', stats: 'quest', c: 'read', s: 'read', q: 'results', play: 'quest', 'new': 'form', level: 'level', learn: 'learn', help: 'list', facts: 'list', details: 'form', myapp: 'form', check: 'form', proof: 'list', prompts: 'list', index: 'index' };
+      var kinds = { scores: 'list', moscow: 'list', stack: 'form', cards: 'form', daily: 'form', stats: 'quest', c: 'read', s: 'read', q: 'results', play: 'quest', 'new': 'form', level: 'level', learn: 'learn', help: 'list', facts: 'list', details: 'form', myapp: 'form', check: 'form', proof: 'list', prompts: 'list', index: 'index', buildquest: 'list' };
       var k = location.hash.replace(/^#\//, '').split('/')[0] || 'home';
       var main = document.getElementById('main');
       main.innerHTML = '<div class="sk" role="status" aria-live="polite"><span class="sr">Loading the page…</span>' + (R[kinds[k]] || R.home) + '</div>';
@@ -152,6 +156,8 @@
   <script src="journey.js"></script>
   <script src="game-data.js"></script>
   <script src="synonyms.js"></script>
+  <script src="playbook-data.js"></script>
+  <script src="playbook.js"></script>
   <script src="app.js"></script>
   <script src="game.js"></script>
   <script src="backup.js"></script>

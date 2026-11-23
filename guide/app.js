@@ -345,6 +345,7 @@ function route() {
   else if (kind === 'moscow') html = Moscow.page();
   else if (kind === 'stack') html = StackPicker.page();
   else if (kind === 'scores') html = Scorecard.page();
+  else if (kind === 'buildquest') html = BuildQuest.page(a || '');
   else if (kind === 'level') html = /^\d+$/.test(a) ? Game.level(+a) : notFound();
   else { q.value = ''; html = home(); }
   Game.resetWrong();
@@ -354,7 +355,7 @@ function route() {
   main.removeAttribute('aria-busy'); // the loading skeleton is gone once a page is drawn
   markCurrentToc();
   rtCh = curChapter; rtAt = Date.now(); // start timing the chapter you just opened
-  document.querySelectorAll('.topnav a').forEach(l => ((l.dataset.nav === kind || (l.dataset.nav === 'play' && (kind === 'level' || kind === 'new'))) ? l.setAttribute('aria-current', 'page') : l.removeAttribute('aria-current')));
+  document.querySelectorAll('.topnav a').forEach(l => ((l.dataset.nav === kind || (l.dataset.nav === 'play' && (kind === 'level' || kind === 'new')) || (l.dataset.nav === 'buildquest' && kind === 'buildquest')) ? l.setAttribute('aria-current', 'page') : l.removeAttribute('aria-current')));
   updateReading();
 }
 
@@ -552,6 +553,7 @@ function boot() {
   Scorecard.init();
   StackPicker.init();
   SearchIndex.init();
+  BuildQuest.init();
   applyPrefs(); loadTicks(); renderAppPicker(); renderToc();
   route();
 }

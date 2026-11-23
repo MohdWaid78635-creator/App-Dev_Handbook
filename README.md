@@ -25,7 +25,13 @@ Deployed on Vercel → [app-dev-handbook.vercel.app](https://app-dev-handbook.ve
 | 🧭 Pick my stack | 5 questions, then a recommendation taken from the book's own advice |
 | 🌙 Dark mode, reading time, offline install | Settings → Colours; works offline once installed (needs https) |
 
+## Build Quest
+Build Quest covers all 13 stages (0–12) with 55 step cards and 13 boss fights for the Expo + Supabase Android track. Each card includes actions, an AI prompt, observable proof, recovery guidance, and dated sources. Optional modules include explicit skip decisions. Stage 10 prepares a test-track release and holds production; Stage 11 completes the operational prerequisites and final production launch gate.
+
+Run `node guide/check-game.mjs` to validate book coverage, offline assets, complete playbook stages, card metadata, and boss answers. The content research and validation record for Stages 6–12 is in `research/STAGES_6-12_NOTES.md`. Documentation review does not mean the example Expo app was built or tested on a device.
+
 ## Run locally
+
 Just double-click `guide/index.html` — no install, no server needed. (Offline install and the service worker need http(s), so they only work on the deployed site or a local server.)
 
 ## Rebuild data from PDFs

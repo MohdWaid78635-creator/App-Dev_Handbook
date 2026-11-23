@@ -1,0 +1,205 @@
+/* ── Build Quest — Playbook styles ─────────────────────────────────────────
+   All colours come from CSS custom properties defined in style.css.
+   Never hardcode a hex value here — use color-mix() against the existing
+   tokens so dark mode works automatically.
+   ─────────────────────────────────────────────────────────────────────── */
+
+/* ── XP bar in top header ───────────────────────────────────────────────── */
+.bq-xp-bar {
+  display: flex; align-items: center; gap: 0.4rem;
+  font-size: 0.75rem; font-weight: 700; color: var(--accent);
+  white-space: nowrap;
+}
+.bq-xp-bar svg { flex-shrink: 0; }
+
+/* ── Stage list ─────────────────────────────────────────────────────────── */
+.pb-stage-list {
+  display: grid; gap: 0.75rem; padding: 1rem 0; list-style: none; margin: 0;
+}
+.pb-stage-card {
+  display: flex; align-items: center; gap: 1rem;
+  background: var(--surface); border-radius: 8px; padding: 0.75rem 1rem;
+  text-decoration: none; color: var(--ink);
+  border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  min-height: 60px; transition: background 150ms ease;
+}
+.pb-stage-card:hover,
+.pb-stage-card:focus-visible {
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+.pb-stage-card--stub { opacity: 0.5; pointer-events: none; }
+.pb-stage-card--stub::after { content: ' (coming soon)'; font-size: 0.75rem; opacity: 0.6; }
+
+.pb-stage-info { flex: 1; min-width: 0; }
+.pb-stage-num  { display: block; font-size: 0.7rem; opacity: 0.6; text-transform: uppercase; letter-spacing: .05em; }
+.pb-stage-title { display: block; font-weight: 700; }
+.pb-stage-sub  { display: block; font-size: 0.75rem; opacity: 0.6; }
+
+/* Boss fight badge on stage card */
+.pb-boss-badge {
+  font-size: 0.65rem; padding: 2px 7px; border-radius: 999px;
+  background: color-mix(in srgb, #f4a518 20%, transparent);
+  color: #f4a518; font-weight: 700; white-space: nowrap;
+}
+
+/* ── SVG progress ring ──────────────────────────────────────────────────── */
+.pb-ring { flex-shrink: 0; }
+.pb-ring-bg   { fill: none; stroke: color-mix(in srgb, var(--ink) 15%, transparent); stroke-width: 3; }
+.pb-ring-fill {
+  fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round;
+  transition: stroke-dashoffset 300ms ease;
+}
+@media (prefers-reduced-motion: reduce) { .pb-ring-fill { transition: none; } }
+
+/* ── Stage detail ───────────────────────────────────────────────────────── */
+.pb-detail-header { margin-bottom: 1.25rem; }
+.pb-back {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  font-size: 0.85rem; color: var(--accent); text-decoration: none;
+  min-height: 44px; padding: 4px 0;
+}
+.pb-back:hover { text-decoration: underline; }
+.pb-detail-header h2 { margin: 0.25rem 0; }
+.pb-stage-xp { font-size: 0.8rem; color: var(--accent); font-weight: 700; }
+
+/* Gate banner */
+.pb-gate {
+  background: color-mix(in srgb, #f4a518 15%, var(--surface));
+  border-radius: 6px; padding: 0.75rem 1rem;
+  font-size: 0.9rem; color: #f4a518; margin: 0.75rem 0;
+}
+
+/* ── Step list ──────────────────────────────────────────────────────────── */
+.pb-step-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 1rem; }
+
+.pb-step-card {
+  background: var(--surface); border-radius: 8px; padding: 1rem;
+  border-left: 4px solid transparent;
+}
+.pb-step--todo  { border-left-color: color-mix(in srgb, var(--ink) 20%, transparent); }
+.pb-step--doing { border-left-color: #f4a518; }
+.pb-step--done  { border-left-color: #3bba6b; }
+.pb-step--stuck { border-left-color: #e0533a; }
+
+.pb-step-header { display: flex; align-items: flex-start; gap: 0.6rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
+.pb-step-title  { font-weight: 700; flex: 1; min-width: 0; }
+.pb-step-xp     { font-size: 0.7rem; color: var(--accent); font-weight: 700; white-space: nowrap; }
+
+/* State badge — role="status" aria-atomic="true" on the element */
+.pb-state-badge {
+  display: inline-block; font-size: 0.72rem; font-weight: 700;
+  padding: 2px 9px; border-radius: 999px;
+  background: var(--bg); color: var(--ink);
+}
+.pb-step--done  .pb-state-badge { background: color-mix(in srgb, #3bba6b 18%, transparent); color: #3bba6b; }
+.pb-step--doing .pb-state-badge { background: color-mix(in srgb, #f4a518 18%, transparent); color: #f4a518; }
+.pb-step--stuck .pb-state-badge { background: color-mix(in srgb, #e0533a 18%, transparent); color: #e0533a; }
+
+/* Why blurb */
+.pb-why { font-size: 0.9rem; opacity: 0.8; margin: 0.4rem 0 0.75rem; }
+
+/* Do list */
+.pb-do-list { padding-left: 1.25rem; margin: 0.5rem 0; }
+.pb-do-list li { margin-bottom: 0.4rem; font-size: 0.9rem; }
+
+/* Prompt copy block */
+.pb-prompt-wrap { position: relative; margin: 0.75rem 0; }
+.pb-prompt-text {
+  background: var(--bg); border-radius: 6px; padding: 0.75rem 1rem;
+  font-size: 0.82rem; overflow-x: auto; white-space: pre-wrap; word-break: break-word;
+  border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
+  margin: 0; padding-right: 4rem; /* room for copy button */
+}
+.pb-copy-btn {
+  position: absolute; top: 0.5rem; right: 0.5rem;
+  min-width: 44px; min-height: 36px; padding: 0 10px;
+  background: var(--accent); color: var(--bg); border: none; border-radius: 6px;
+  font-size: 0.75rem; font-weight: 700; cursor: pointer;
+  transition: opacity 120ms;
+}
+.pb-copy-btn:hover  { opacity: 0.85; }
+.pb-copy--success   { background: #3bba6b !important; }
+
+/* Proof checklist */
+.pb-proof-set { border: none; padding: 0; margin: 0.5rem 0; }
+.pb-proof-set legend { font-size: 0.78rem; font-weight: 700; opacity: 0.7; margin-bottom: 4px; display: block; }
+.pb-proof-item {
+  display: flex; gap: 0.5rem; align-items: flex-start;
+  min-height: 44px; padding: 4px 0; cursor: pointer; font-size: 0.88rem;
+}
+.pb-proof-item input {
+  width: 18px; height: 18px; accent-color: var(--accent); flex-shrink: 0; margin-top: 2px;
+}
+
+/* Details (If stuck / Risk) */
+.pb-ifstuck, .pb-risk { margin: 0.5rem 0; }
+.pb-ifstuck summary, .pb-risk summary {
+  cursor: pointer; font-weight: 700; padding: 0.4rem 0;
+  min-height: 44px; font-size: 0.88rem; display: flex; align-items: center;
+  list-style: none;
+}
+.pb-ifstuck summary::marker, .pb-risk summary::marker { display: none; }
+.pb-ifstuck summary::before { content: '▶ '; font-size: 0.65em; margin-right: 0.3rem; }
+details[open] .pb-ifstuck summary::before,
+details[open] .pb-risk summary::before { content: '▼ '; }
+.pb-ifstuck p, .pb-risk p { font-size: 0.88rem; margin: 0.25rem 0 0.25rem 1.1rem; opacity: 0.85; }
+
+/* Footer */
+.pb-step-footer {
+  display: flex; gap: 1rem; font-size: 0.72rem; opacity: 0.6; margin-top: 0.75rem; flex-wrap: wrap;
+}
+.pb-source  { color: var(--accent); }
+.pb-checked { font-style: italic; }
+
+/* Action buttons */
+.pb-actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap; }
+.pb-btn {
+  min-height: 44px; padding: 0 1.1rem; border-radius: 6px;
+  border: 1px solid color-mix(in srgb, var(--ink) 35%, transparent);
+  background: transparent; color: var(--ink); cursor: pointer; font-size: 0.85rem;
+  font-weight: 600; transition: opacity 120ms;
+}
+.pb-btn:hover { opacity: 0.75; }
+.pb-btn--done  { background: #3bba6b; color: #fff; border-color: #3bba6b; }
+.pb-btn--stuck { color: #e0533a; border-color: #e0533a; }
+
+/* ── Boss Fight card ────────────────────────────────────────────────────── */
+.pb-boss-card {
+  background: color-mix(in srgb, #f4a518 8%, var(--surface));
+  border: 2px solid #f4a518; border-radius: 10px;
+  padding: 1.25rem; margin-top: 1.5rem;
+}
+.pb-boss-card h3 { margin: 0 0 0.5rem; color: #f4a518; font-size: 1.05rem; }
+.pb-boss-q { font-size: 0.9rem; margin: 0.5rem 0; }
+.pb-boss-opts { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.pb-boss-opt {
+  min-height: 44px; padding: 0.6rem 1rem; border-radius: 6px;
+  border: 1px solid color-mix(in srgb, var(--ink) 20%, transparent);
+  background: var(--bg); cursor: pointer; font-size: 0.88rem; text-align: left;
+  transition: background 120ms;
+}
+.pb-boss-opt:hover { background: color-mix(in srgb, var(--accent) 10%, var(--bg)); }
+.pb-boss-opt--correct { background: color-mix(in srgb, #3bba6b 20%, var(--bg)); border-color: #3bba6b; color: #3bba6b; font-weight: 700; }
+.pb-boss-opt--wrong   { background: color-mix(in srgb, #e0533a 15%, var(--bg)); border-color: #e0533a; color: #e0533a; }
+.pb-boss-result { font-size: 0.88rem; margin-top: 0.75rem; min-height: 44px; display: flex; align-items: center; }
+.pb-boss-xp-flash { font-weight: 700; color: #f4a518; animation: bq-pop 0.4s ease; }
+@keyframes bq-pop { 0% { transform: scale(0.8); opacity: 0; } 60% { transform: scale(1.2); } 100% { transform: scale(1); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .pb-boss-xp-flash { animation: none; } }
+
+/* ── Stage unlock fanfare ───────────────────────────────────────────────── */
+.pb-fanfare {
+  text-align: center; padding: 1.5rem; border-radius: 10px;
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  border: 2px solid var(--accent); margin: 1rem 0;
+  animation: bq-pop 0.5s ease;
+}
+@media (prefers-reduced-motion: reduce) { .pb-fanfare { animation: none; } }
+.pb-fanfare h3 { margin: 0; color: var(--accent); }
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 700px) {
+  .pb-stage-card { flex-direction: column; align-items: flex-start; }
+  .pb-actions    { flex-direction: column; }
+  .pb-actions .pb-btn { width: 100%; }
+}

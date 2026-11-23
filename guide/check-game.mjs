@@ -118,5 +118,68 @@ if (dup.length) bad.push('section used in two levels: ' + dup.join(', '));
   for (const m of html.matchAll(/<script src="([^"]+)"/g)) if (!sw.includes(`'${m[1]}'`)) bad.push(`sw.js ASSETS is missing ${m[1]}`);
 }
 
+let pbStepCount = 0;
+// ── Build Quest playbook validation ────────────────────────────────
+{
+  const pbCode = readFileSync(join(here, 'playbook-data.js'), 'utf8');
+  const pbSandbox = { window: {} };
+  vm.createContext(pbSandbox);
+  vm.runInContext(pbCode, pbSandbox);
+  const data = pbSandbox.window.PLAYBOOK_DATA;
+  if (!data || !Array.isArray(data.stages)) {
+    bad.push('playbook-data.js: missing window.PLAYBOOK_DATA.stages');
+  } else {
+    const releaseSteps = data.stages.find(stage => stage.id === 10)?.steps || [];
+    const upload = releaseSteps.findIndex(step => step.id === 's10-step4');
+    const closedTest = releaseSteps.findIndex(step => step.id === 's10-step3');
+    if (upload < 0 || closedTest <= upload) bad.push('playbook: upload and verify the Play candidate before closed testing');
+    const REQUIRED_KEYS = ['id', 'stage', 'title', 'why', 'do', 'prompt', 'proof', 'ifStuck', 'risk', 'rollback', 'cost', 'source'];
+    const stepIds = new Set();
+    const stageIds = data.stages.map(s => s.id);
+    if (stageIds.length !== 13 || new Set(stageIds).size !== 13) bad.push('playbook: expected 13 unique stages');
+    for (let i = 0; i <= 12; i++) {
+      if (!stageIds.includes(i)) bad.push(`playbook: missing stage ID ${i}`);
+    }
+    for (const stage of data.stages) {
+      if (stage.stub) bad.push(`playbook stage ${stage.id}: unfinished stub`);
+      if (!stage.title?.trim() || !stage.desc?.trim()) bad.push(`playbook stage ${stage.id}: missing title or description`);
+      const boss = stage.boss;
+      if (!boss?.question?.trim() || !Array.isArray(boss.options) || boss.options.length < 2 ||
+          boss.options.some(o => typeof o !== 'string' || !o.trim()) ||
+          !Number.isInteger(boss.answer) || boss.answer < 0 || boss.answer >= boss.options.length) {
+        bad.push(`playbook stage ${stage.id}: invalid boss fight`);
+      }
+      if (!stage.steps || !stage.steps.length) {
+        bad.push(`playbook stage ${stage.id}: active stage has no steps`);
+        continue;
+      }
+      for (const step of stage.steps) {
+        for (const k of REQUIRED_KEYS) {
+          if (step[k] === undefined || step[k] === null || step[k] === '') bad.push(`playbook step ${step.id}: missing "${k}"`);
+        }
+        if (step.stage !== stage.id) bad.push(`playbook step ${step.id}: wrong stage`);
+        for (const k of ['do', 'proof']) {
+          if (!Array.isArray(step[k]) || step[k].some(s => typeof s !== 'string' || !s.trim())) bad.push(`playbook step ${step.id}: invalid ${k}[]`);
+        }
+        const validDate = value => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) &&
+          !Number.isNaN(Date.parse(value)) && new Date(value).toISOString().slice(0, 10) === value;
+        if (!validDate(step.source?.checked)) bad.push(`playbook step ${step.id}: invalid checked date`);
+        if (!Array.isArray(step.source?.versions) || !step.source.versions.length ||
+            step.source.versions.some(v => typeof v !== 'string' || !v.trim())) bad.push(`playbook step ${step.id}: missing tool versions`);
+        if (!step.factCheck?.key || !/^https:\/\//.test(step.factCheck?.url || '') ||
+            !validDate(step.factCheck?.checkedOn)) bad.push(`playbook step ${step.id}: invalid fact check`);
+        if (!step.do || step.do.length < 1) bad.push(`playbook step ${step.id}: empty do[]`);
+        if (!step.proof || step.proof.length < 1) bad.push(`playbook step ${step.id}: empty proof[]`);
+        if (!step.source || !step.source.url || !step.source.url.startsWith('https://')) {
+          bad.push(`playbook step ${step.id}: invalid source URL`);
+        }
+        if (stepIds.has(step.id)) bad.push(`playbook step ${step.id}: duplicate ID`);
+        stepIds.add(step.id);
+      }
+    }
+    pbStepCount = stepIds.size;
+  }
+}
+
 if (bad.length) { console.error('GAME CHECK FAILED:\n  ' + bad.join('\n  ')); process.exit(1); }
-console.log(`OK: ${G.levels.length} levels cover ${used.size} sections; ${Object.keys(G.extras).length} bonus quests (${Object.values(G.extras).filter(x => x.kind !== 'moved').length} added by this guide).`);
+console.log(`OK: ${G.levels.length} levels cover ${used.size} sections; ${Object.keys(G.extras).length} bonus quests; Playbook stages 0-12 present (${pbStepCount} steps validated).`);

@@ -1,9 +1,10 @@
 // Offline cache. Network first, cache only as a fallback, so a deploy can never mix old and new scripts.
 // Bump CACHE only when ASSETS changes (check-game.mjs checks the list matches index.html).
-const CACHE = 'guide-v1';
+const CACHE = 'guide-v2';
 const ASSETS = ['./', 'index.html', 'style.css', 'game.css', 'manifest.json', 'icons/icon-192.png', 'icons/icon-512.png',
   'data.js', 'journey.js', 'game-data.js', 'synonyms.js', 'app.js', 'game.js', 'backup.js', 'fill.js', 'check.js', 'evidence.js',
-  'myapp.js', 'facts.js', 'learn-data.js', 'search-index.js', 'help.js', 'learn.js', 'flashcards.js', 'daily.js', 'stats.js', 'moscow.js', 'stackpicker.js', 'bossfight.js', 'scorecard.js', 'tools.css', 'pwa.js'];
+  'myapp.js', 'facts.js', 'learn-data.js', 'search-index.js', 'help.js', 'learn.js', 'flashcards.js', 'daily.js', 'stats.js', 'moscow.js', 'stackpicker.js', 'bossfight.js', 'scorecard.js', 'tools.css', 'pwa.js',
+  'playbook-data.js', 'playbook.js', 'playbook.css'];
 
 self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting())));
 self.addEventListener('activate', e => e.waitUntil(
