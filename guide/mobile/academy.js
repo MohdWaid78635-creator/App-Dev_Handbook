@@ -36,7 +36,7 @@
   };
   const stateKey = 'build-quest-academy-v1';
   const screen = document.querySelector('#screen');
-  const blank = { correct: {}, missed: {}, due: {}, proofs: {}, skipped: {}, notes: {}, appName: '', plan: {} };
+  const blank = { correct: {}, missed: {}, due: {}, proofs: {}, skipped: {}, notes: {}, appName: '', plan: {}, readiness: {}, activeRelease: '' };
   let state = blank;
   let canSave = true;
   try { state = { ...blank, ...JSON.parse(localStorage.getItem(stateKey) || '{}') }; }
@@ -332,10 +332,64 @@
       </section>`;
   }
 
+  const readinessGroups = window.READINESS_GROUPS;
+  const evidenceKey = (group, index) => `${group}:${index}`;
+  const readinessStatuses = { pending: 'To check', passed: 'Passed', blocked: 'Blocked', na: 'Not applicable' };
+
+  function checklistCounts(groups, items) {
+    const counts = { pending: 0, passed: 0, blocked: 0, na: 0 };
+    for (const [id, , , checks] of groups) {
+      checks.forEach((_, index) => { counts[items[evidenceKey(id, index)]?.status || 'pending']++; });
+    }
+    return counts;
+  }
+
+  function auditPrompt(release) {
+    return [
+      `Run a read-only production readiness audit of ${release.project}. Review target: ${release.build}.`,
+      'I am a beginner. Use plain language. Inspect the existing repository and available local test evidence. Identify the architecture, dependencies, backend, build profiles, and the path from an app action to a stored record.',
+      'Review these checks. Explain which apply and what evidence supports each finding.',
+      ...readinessGroups.flatMap(([, title, , checks]) => [title.toUpperCase(), ...checks.map(check => `- ${check}`)]),
+      'Recommend safe verification in an authorized development environment for anything that needs a runtime check. Separate verified findings, suspected issues, not-applicable checks, and items that need dashboard or device access. Do not infer that a control works from its name or a configuration file alone.',
+      'Return a proposed PRODUCTION_AUDIT.md in the response. Include the reviewed build or commit, findings with file locations and redacted evidence, impact and priority, a smallest-first fix plan, expected cost, and a test and rollback plan. Mark critical security or financial exposure P0 and release blockers P1. Explain what was not tested.',
+      'Keep the audit read-only. Do not edit files, databases, settings, infrastructure, or production systems. Do not print secrets or personal data. Stop after sharing the findings for review.',
+    ].join('\n');
+  }
+
+  function readinessPage() {
+    const release = state.readiness[state.activeRelease];
+    const group = readinessGroups.find(([id]) => id === location.hash.split('/')[1]);
+    if (release && group) {
+      const [id, title, stage, checks, sources] = group;
+      return `${link('readiness', '← Readiness overview')}${heading('PRODUCTION READINESS', escape(title), escape(`${release.project} · ${release.build}`))}
+        <p>Attach redacted proof to a pass, explain what is blocked, or record why a check does not apply. Save this section before leaving.</p>
+        ${sources?.length ? `<details class="checkpoint"><summary>Official references</summary><ul>${sources.map(([name, url]) => `<li><a href="${escape(url)}" target="_blank" rel="noopener noreferrer">${escape(name)}</a></li>`).join('')}</ul></details>` : ''}
+        <form id="readiness-checks" data-group="${id}">${checks.map((check, index) => {
+          const key = evidenceKey(id, index);
+          const saved = release.items[key];
+          return `<fieldset class="panel"><legend><strong>${escape(check)}</strong></legend><label for="status-${index}">Status</label><select class="app-name" id="status-${index}" name="status-${index}">${Object.entries(readinessStatuses).map(([status, label]) => `<option value="${status}"${saved?.status === status ? ' selected' : ''}>${label}</option>`).join('')}</select><label for="evidence-${index}">Evidence or reason</label><textarea id="evidence-${index}" name="evidence-${index}" maxlength="1000" placeholder="Example: build 12 · test result · redacted link or note">${escape(saved?.evidence)}</textarea></fieldset>`;
+        }).join('')}<button class="primary" type="submit">Save checks</button><p id="readiness-status" class="subtle" role="status"></p></form>
+        <div class="actions">${link(`build/${stage}`, 'Open related Build Quest tasks')}${link('readiness', 'Back to overview')}</div>`;
+    }
+    const counts = checklistCounts(readinessGroups, release?.items || {});
+    const total = Object.values(counts).reduce((sum, count) => sum + count, 0);
+    return `${link('project', '← Project')}${heading('RELEASE REVIEW', 'Production Readiness', 'Review a working app before release. Keep results tied to a specific project and build.')}
+      <form class="panel" id="readiness-release"><h2>Open a release review</h2><div class="stack"><div><label for="release-project">Project name</label><input class="app-name" id="release-project" name="project" required maxlength="80" value="${escape(release?.project || state.appName)}"></div><div><label for="release-build">Build number or commit</label><input class="app-name" id="release-build" name="build" required maxlength="80" value="${escape(release?.build)}" placeholder="e.g. Android build 12"></div></div><button class="primary" type="submit">Open review</button><p class="subtle" role="status"></p></form>
+      ${Object.keys(state.readiness).length ? `<div class="panel"><label for="saved-release">Saved reviews</label><select class="app-name" id="saved-release"><option value="">Choose a saved review</option>${Object.entries(state.readiness).map(([key, entry]) => `<option value="${escape(key)}"${key === state.activeRelease ? ' selected' : ''}>${escape(`${entry.project} · ${entry.build}`)}</option>`).join('')}</select></div>` : ''}
+      ${release ? `<section class="panel"><h2>${escape(release.project)} · ${escape(release.build)}</h2><p>${counts.passed} passed · ${counts.blocked} blocked · ${counts.na} not applicable · ${counts.pending} to check</p><p class="subtle">${total} checks. Use actual evidence and review open risks before release.</p></section>
+      <div class="path">${readinessGroups.map(entry => {
+        const [id, title, , checks] = entry;
+        const summary = checklistCounts([entry], release.items);
+        return `<a class="mission" href="#readiness/${id}"><span class="tile" aria-hidden="true">${checks.length}</span><span><strong>${escape(title)}</strong><small>${summary.passed} passed · ${summary.blocked} blocked · ${summary.na} not applicable</small></span><span class="arrow" aria-hidden="true">›</span></a>`;
+      }).join('')}</div>
+      <section class="panel"><h2>Read-only audit prompt for Codex</h2><label for="audit-prompt">Copy into the chat for this app’s repository</label><textarea id="audit-prompt" readonly rows="12">${escape(auditPrompt(release))}</textarea><button class="secondary" data-copy-audit>Copy audit prompt</button><p id="audit-status" class="subtle" role="status"></p></section>` : '<p class="empty">Enter a project and build to start tracking evidence and generate the audit prompt.</p>'}`;
+  }
+
   function projectPage() {
     const count = Object.keys(milestones).filter(id => state.notes[id]?.trim()).length;
     return `${heading('CAPSTONE', 'My app project', 'Carry the same app idea from first sketch to release readiness.')}
       ${state.appName ? `<section class="panel"><h2>Plan Mode</h2><p>Make your pre-build decisions and generate an AI foundation prompt.</p><div class="actions">${link('plan', Object.keys(state.plan).length ? 'Review project plan' : 'Start project plan', 'primary')}</div></section>` : ''}
+      <section class="panel"><h2>Production Readiness</h2><p>Review an existing app, record verification evidence, and generate a read-only audit prompt.</p><div class="actions">${link('readiness', 'Open release review')}</div></section>
       <form id="project-form"><div class="panel"><label for="app-name">App name</label><input class="app-name" id="app-name" name="name" required maxlength="80" value="${escape(state.appName)}" placeholder="e.g. Pocket Budget"><p class="subtle">${count} of ${Object.keys(milestones).length} milestones recorded</p></div>
       ${Object.entries(milestones).map(([id, [title, prompt]]) => `<section class="panel"><span class="eyebrow">MISSION ${Number(id) + 1}</span><h2>${title}</h2><label for="note-${id}">${prompt}</label><textarea id="note-${id}" name="${id}" maxlength="1200">${escape(state.notes[id])}</textarea>${link(`build/${id}`, 'Open build tasks')}</section>`).join('')}
       <button class="primary" type="submit">${state.appName ? 'Save project' : 'Create project and plan'}</button><p id="save-status" class="subtle" role="status"></p></form>`;
@@ -356,12 +410,13 @@
     else if (page === 'starter') content = starterPage();
     else if (page === 'project') content = projectPage();
     else if (page === 'plan') content = planPage();
+    else if (page === 'readiness') content = readinessPage();
     else if (page === 'result' && id !== null) {
       content = `${heading('MISSION RESULT', mastered(id) ? 'Mission mastered!' : 'Keep practicing', escape(lessons[id].title))}<section class="panel"><p>${mastered(id) ? 'Take what you learned into your project.' : 'Replay the knowledge check to finish the mission.'}</p><div class="actions">${link(`build/${id}`, 'Apply it in Build →', 'primary')}${link('path', 'Mission map')}${id + 1 < stages.length ? link(`learn/${id + 1}`, 'Next mission') : ''}</div></section>`;
     } else content = pathPage();
     screen.innerHTML = `${canSave ? '' : '<p class="feedback wrong" role="status">This browser could not save progress. Keep this tab open to continue.</p>'}${content}`;
     document.querySelector('#xp').textContent = `${Object.keys(state.correct).length * 10} XP`;
-    const current = page === 'plan' ? 'project' : ['build', 'review', 'project'].includes(page) ? page : 'path';
+    const current = ['plan', 'readiness'].includes(page) ? 'project' : ['build', 'review', 'project'].includes(page) ? page : 'path';
     document.querySelectorAll('.dock a').forEach(a => a.dataset.page === current ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
     if (focus) {
       window.scrollTo(0, 0);
@@ -373,10 +428,11 @@
     const button = event.target.closest('button');
     if (!button) return;
     const { page, id, index } = route();
-    if (button.hasAttribute('data-copy-plan')) {
-      const prompt = screen.querySelector('#foundation-prompt');
-      const status = screen.querySelector('#plan-status');
-      try { await navigator.clipboard.writeText(prompt.value); status.textContent = 'Foundation prompt copied.'; }
+    if (button.hasAttribute('data-copy-plan') || button.hasAttribute('data-copy-audit')) {
+      const audit = button.hasAttribute('data-copy-audit');
+      const prompt = screen.querySelector(audit ? '#audit-prompt' : '#foundation-prompt');
+      const status = screen.querySelector(audit ? '#audit-status' : '#plan-status');
+      try { await navigator.clipboard.writeText(prompt.value); status.textContent = audit ? 'Audit prompt copied.' : 'Foundation prompt copied.'; }
       catch { prompt.focus(); prompt.select(); status.textContent = 'The prompt is selected. Use your browser’s Copy command.'; }
       return;
     }
@@ -456,6 +512,12 @@
     }
   });
   screen.addEventListener('change', event => {
+    if (event.target.id === 'saved-release' && Object.hasOwn(state.readiness, event.target.value)) {
+      state.activeRelease = event.target.value;
+      save();
+      render();
+      screen.querySelector('#saved-release').focus({ preventScroll: true });
+    }
     if (event.target.matches('#plan-form select')) refreshToolGuides(event.target.form);
     if (event.target.matches('input[data-proof]')) {
       state.proofs[event.target.dataset.proof] = event.target.checked;
@@ -463,6 +525,40 @@
     }
   });
   screen.addEventListener('submit', event => {
+    if (event.target.id === 'readiness-release') {
+      event.preventDefault();
+      const data = new FormData(event.target);
+      const project = data.get('project').trim();
+      const build = data.get('build').trim();
+      if (!project || !build) {
+        event.target.querySelector('[role=status]').textContent = 'Enter a project name and build identifier.';
+        return;
+      }
+      const key = JSON.stringify([project, build]);
+      state.readiness[key] ??= { project, build, items: {} };
+      state.activeRelease = key;
+      save();
+      render(true);
+      return;
+    }
+    if (event.target.id === 'readiness-checks') {
+      event.preventDefault();
+      const [id, , , checks] = readinessGroups.find(([id]) => id === event.target.dataset.group);
+      const data = new FormData(event.target);
+      const entries = checks.map((_, index) => ({ status: data.get(`status-${index}`), evidence: data.get(`evidence-${index}`).trim() }));
+      const missing = entries.findIndex(({ status, evidence }) => status !== 'pending' && !evidence);
+      const message = screen.querySelector('#readiness-status');
+      if (missing !== -1) {
+        message.textContent = 'Add evidence or a reason for each check whose status changed.';
+        screen.querySelector(`#evidence-${missing}`).focus();
+        return;
+      }
+      const items = state.readiness[state.activeRelease].items;
+      entries.forEach((entry, index) => { items[evidenceKey(id, index)] = entry; });
+      save();
+      message.textContent = canSave ? 'Checks saved.' : 'Checks kept in this tab only.';
+      return;
+    }
     if (event.target.id === 'plan-form') {
       event.preventDefault();
       const data = new FormData(event.target);

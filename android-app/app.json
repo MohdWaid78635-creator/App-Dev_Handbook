@@ -1,0 +1,20 @@
+{
+  "expo": {
+    "name": "BuildWisp",
+    "slug": "buildwisp",
+    "scheme": "buildquestacademy",
+    "version": "0.1.0",
+    "plugins": [
+      "expo-router",
+      ["expo-splash-screen", {
+        "image": "./assets/splash-mark.png",
+        "backgroundColor": "#231743",
+        "imageWidth": 208,
+        "resizeMode": "contain"
+      }]
+    ],
+    "android": {
+      "package": "com.buildquestacademy.preview"
+    }
+  }
+}

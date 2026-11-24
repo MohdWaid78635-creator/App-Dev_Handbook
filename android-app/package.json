@@ -1,0 +1,38 @@
+{
+  "name": "build-quest-academy",
+  "version": "0.1.0",
+  "private": true,
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "npm run import:curriculum && expo start",
+    "android": "npm run import:curriculum && expo start --android",
+    "import:curriculum": "node scripts/import-curriculum.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "typecheck": "npm run import:curriculum && tsc --noEmit",
+    "check:bundle": "npm run import:curriculum && expo export --platform android"
+  },
+  "dependencies": {
+    "expo": "58.0.26",
+    "expo-clipboard": "~58.0.4",
+    "expo-constants": "~58.0.16",
+    "expo-document-picker": "~58.0.5",
+    "expo-file-system": "~58.0.14",
+    "expo-linking": "~58.0.17",
+    "expo-router": "~58.0.32",
+    "expo-sharing": "~58.0.23",
+    "expo-splash-screen": "~58.0.14",
+    "expo-sqlite": "~58.0.18",
+    "expo-status-bar": "~58.0.5",
+    "react": "19.3.0",
+    "react-native": "0.88.1",
+    "react-native-safe-area-context": "~5.11.1",
+    "react-native-screens": "~4.30.1"
+  },
+  "devDependencies": {
+    "@types/react": "~19.3.0",
+    "typescript": "~6.0.3"
+  },
+  "overrides": {
+    "react-dom": "19.3.0"
+  }
+}

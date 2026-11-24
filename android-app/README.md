@@ -1,0 +1,110 @@
+# BuildWisp for Android
+
+BuildWisp is an Expo React Native app for learning and building first Android projects. It includes the mission map, Start Here, Lesson Detail, Practice games, Knowledge Checks with boss questions, Mission Results, and a Review room. It imports 13 missions, 15 lesson modules including Testing, and 55 build cards. Setup checks, the latest opened mission, quiz progress, and review dates are saved locally with Expo SQLite.
+
+## Run the first screen
+
+From this directory, run `npm ci`, then `npm start`. Open a compatible Expo Go build on a physical Android phone or use an Android emulator. See [Expo Go compatibility](https://docs.expo.dev/troubleshooting/expo-go-version-mismatch/) and the [Android emulator setup](https://docs.expo.dev/workflow/android-studio-emulator/).
+
+Run `npm test`, `npm run typecheck`, and `npm run check:bundle` to verify this increment. Curriculum JSON is regenerated from the handbook for type checking, bundling, and local startup.
+
+## Phase 1 device check
+
+1. Open **Start Here** from the mission map and confirm all four checkpoints and their expected results are visible. Open the capstone guide.
+2. Mark a checkpoint and open a mission. Use Android Back to return to the map. Confirm the mission is marked **Opened** and that **Resume mission** opens the same mission.
+3. Fully close and reopen BuildWisp. Confirm the saved check and latest mission are restored. Uncheck the milestone, reopen BuildWisp, and verify it remains unchecked.
+4. Repeat the main interactions with TalkBack and a larger system font. Confirm the checkbox announces its state and no required text or control is clipped.
+
+Setup checkmarks record the learner’s own evidence. Answering all questions in a mission’s knowledge check earns mastery.
+
+## Lesson Detail device check
+
+Open **How apps work**, expand a concept and its glossary terms, read the example, and open **Check the AI’s work**. Find **Explain it back**, then expand a card under **Apply it to your app** and check its instructions, proof, and source link. Open **Catch a bug before users do** to see the testing lesson. Use Android Back to return to the same map. Repeat with TalkBack and larger text to verify the expand controls announce their state.
+
+## Practice device check
+
+Open **How apps work → Start practice**. Choose a wrong match and confirm the same pair stays open. Complete the pairs and check that the explanation appears. Select the ordering exercise, build an order, undo the last choice, and verify both an incorrect and a correct order. Try Play again, move to another exercise, and use Android Back to return to the lesson. Repeat with TalkBack and large text. Practice attempts reset when you leave the exercise and do not award XP.
+
+## Knowledge Check device check
+
+Open **Knowledge check** from a lesson or practice. Pick a wrong answer, read or listen to the feedback, and retry. Answer the first question correctly, leave the screen, and reopen it to confirm that the second question is next. Confirm that TalkBack announces response feedback.
+
+## Mission Results device check
+
+1. Finish the boss and tap **See results**. Confirm **Mission mastered**, **30 XP** for the mission, two correct knowledge answers, and **Boss challenge cleared**.
+2. Use Android Back to return to the lesson. Open **Knowledge check**, tap **Replay knowledge check**, and finish it again. Confirm the mission and total XP stay the same.
+3. Follow **Next mission** and confirm it opens the adjacent lesson. Return to the map and confirm total XP and the **Mastered** marker. Complete the final mission and confirm its primary action returns to the map.
+4. Fully close and reopen BuildWisp to verify that XP and mastery persist. Repeat the results navigation with TalkBack and a larger system font.
+
+## Review room device check
+
+1. Miss an answer, finish the knowledge check, then open **Review this mission** from Mission Results. Confirm the missed question appears even if you corrected it in the quiz.
+2. Pick a wrong answer in Review, read the explanation, then retry. Choose the correct answer and tap **Continue**. Check that the question clears from the queue and that a previously correct answer adds no XP.
+3. Restart BuildWisp and open **Review room** from the mission map. Verify that a reviewed question stays cleared until it comes due again after 24 hours. Check that the mission map entry includes due questions from all missions, while Mission Results opens Review for that mission.
+4. Repeat with TalkBack and larger text. Confirm the answer feedback is announced and the answer choices and Continue button are reachable.
+
+## Project Setup device check
+
+1. Open **Your projects** from the mission map and tap **New project**. Try saving with an empty name. Confirm the inline error and focus on the name field.
+2. Save an app name with an optional audience and goal. Confirm the project appears in the list. Create a second project, reopen the first, edit it, and confirm only the first project changes.
+3. Restart BuildWisp and reopen both projects. Confirm the details and learning progress are still present. Repeat with TalkBack, larger text, and the keyboard open to check that every field and action is reachable.
+
+## Plan Mode device check
+
+1. Open **Your projects → Open Plan Mode**. Confirm the draft starts with the saved project’s audience and goal. Enter a first user journey and save the draft. Reopen it after restarting BuildWisp.
+2. Choose **Android** and **No** for device sync. Compare language, storage, and sign-in options. Confirm the recommended Expo, SQLite, and no-account choices, along with descriptions, cost labels, and official links.
+3. Combine local-only storage with cross-device sync and open **Review decisions**. Confirm the conflict appears and the draft prompt asks the coding agent to resolve it before setup. Fix the choices and verify the prompt includes your first-build proof, install checks, and security decisions.
+4. Tap **Copy foundation prompt** and paste it into a local note to check the contents. Open another project and confirm it has its own draft. Repeat the flow with TalkBack and larger text.
+
+## Build Workspace device check
+
+1. Choose **Your projects → Open Build Workspace**. Select a mission and expand a card. Check that the instructions, official source, and proof checklist match the handbook. Preview and copy the prompt, then paste it into a local note to confirm it uses the project name.
+2. Check all the proof items for a card. Confirm that it shows **Proof recorded** and the project total increases. Restart BuildWisp, reopen the project, and confirm those checks are saved. Uncheck an item and verify the count decreases.
+3. Switch to another project and check that it has separate proof. Open the workspace from a lesson and confirm it starts on that mission after you choose a project.
+4. On an optional card, enter a reason and mark it **Not applicable**. Confirm it is counted separately. Resume the card and verify any previous checks return. Repeat with TalkBack, larger text, and offline mode.
+
+## Project Milestones device check
+
+1. Open **Your projects → Project Milestones**. Save evidence for **Problem and audience**. Restart BuildWisp and verify the note and recorded count. Edit the note, then clear it and verify the count decreases.
+2. Open a second project and confirm its notes are separate. Finish a milestone mission and use **Record project milestone** from its results to open the matching note in the chosen project.
+3. Open the saved summary preview. Check the brief, plan choices, milestone notes, and build proof against the project. Leave an edit unsaved and confirm export asks you to save it. Save the note, then copy and paste the summary into a local note and open the Android share sheet.
+4. From a milestone, open its build cards and check an item. Return and confirm the preview reflects the new proof. Repeat with TalkBack and larger text.
+
+## Production Readiness device check
+
+1. Open **Your projects → Production Readiness** and enter a build number or commit. Confirm the overview lists 133 checks across 17 sections.
+2. Open a section and a check. Preview and copy its prompt. Confirm the text names the project, build, and selected check. Return to the overview and compare it with the full read-only audit prompt.
+3. Try saving **Passed** without evidence. Add a redacted result or reason, save, and verify the status and counts. Restart BuildWisp and reopen the same build. Open another build and another project to confirm each has separate results.
+4. Open related build cards and a source link where available. Repeat the important interactions offline and with TalkBack and a larger system font.
+
+## Security Tools device check
+
+1. Open **Secure the release → Security Tools**. Expand the tool cards and open an official source. In **Start practice**, match the three sample findings to their tools, then order the steps for verifying the permission finding.
+2. Search **MobSF** in the Resource Library and open its guide. In **Production Readiness → Android release artifact checks**, open the static report check and preview its prompt. Confirm the prompt names the build and requests redacted evidence and a verification result.
+
+## Help and Resource Library device check
+
+1. Open **Help and Resource Library** from the mission map. Search `login` and filter to **Glossary** or **Prompts**. Open a result, clear the search, and verify an unmatched query shows a recovery hint.
+2. From a lesson, tap **Troubleshoot this mission**. Confirm the library starts with that mission’s fixes and **Show all missions** removes the restriction.
+3. Open a prompt and copy it into a local note. In airplane mode, repeat search and open a handbook article to confirm the library content is available offline. External sources and the separate Kotlin/Compose course require a connection.
+4. Repeat search, category selection, and opening results with TalkBack and a larger system font.
+
+## Daily Practice and Flashcards device check
+
+1. Open **Review room → Daily Practice and Flashcards**. Answer today’s question, read the explanation, and open the related lesson. Restart BuildWisp and verify that the first answer is still recorded and the choices are disabled.
+2. Use a test device or emulator to advance the local date and verify that another question is available. Answer it and confirm the streak increments. Leave a day unanswered and confirm the streak restarts when you next answer.
+3. Switch to **Flashcards**. Reveal a term and tap **Show again**. Verify that it returns after the other due terms. Tap **I knew it** on a different card and verify that it leaves today’s queue, including after a restart.
+4. Repeat offline with TalkBack and larger text. Confirm the selected mode, answer feedback, and revealed meanings are announced.
+
+## Backup and Restore device check
+
+1. On a test install, create a project with a plan, build proof, a milestone note, and one release review. Earn quiz XP and complete a daily question and a flashcard.
+2. Open **Backup and Restore → Save or share backup** from the mission map. Save the JSON file with the Android share sheet. Change some local data, then select the saved JSON using **Choose backup file**.
+3. Verify the file preview and counts. Cancel the confirmation and confirm local data stays unchanged. Repeat and choose **Replace and restore**. Verify the mission map refreshes immediately and the saved project, review, and practice state are restored after reopening the app.
+4. Select a non-backup file and a malformed backup. Confirm both are rejected with local progress intact. Repeat with a local file in airplane mode and check the labels and confirmation with TalkBack and larger text.
+
+## Splash screen
+
+The native Expo splash plugin displays the mint and violet mark on a deep violet background. After changing the asset or plugin settings, rebuild and verify a cold start in an installed preview or release build. Expo Go does not reproduce the same launch screen. [Expo splash guide](https://docs.expo.dev/develop/user-interface/splash-screen-and-app-icon/)
+
+Expo is pinned to 58.0.26 and React Native to 0.88.1. Use the npm lockfile for reproducible installs and check upgrades separately. The preview package identifier is for local development.

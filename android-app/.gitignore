@@ -1,0 +1,5 @@
+.expo/
+dist/
+src/generated/
+.env*
+!.env.example
