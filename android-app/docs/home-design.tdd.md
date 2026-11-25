@@ -13,3 +13,9 @@ GREEN: the same seven tests pass. They cover a new learner, latest valid opened 
 `npm run check:bundle`: Android export passed. Native device checks remain pending: splash masking and sizing, navigation, TalkBack, large text, small-screen/landscape layouts, and cold-start persistence. No Android SDK/device is available in this workspace. No physical-device or visual-runtime pass is claimed.
 
 Artwork: built-in image-generation edits of the approved logo and home prototype produced transparent logo lockup, header mark, and workshop illustration PNGs under `android-app/assets/`. Other screens retain their existing design.
+
+## Approved Mission Map implementation
+
+The map now uses the same tested `createHomeSummary` and `createLearningResults` functions as Home for its highlighted mission, mastery, and XP. This presentation change adds no progress storage or scoring logic. All missions link to their existing lessons, including mastered and unopened missions. New learners retain a setup link and completed learners receive a Review link. The bottom navigation was extracted without changing its destinations and is shared with Home.
+
+Validation after the map change: `npm test` passed all 50 tests; `npm run typecheck` passed; `npm run check:bundle` exported Android successfully; `git diff --check` passed. Native UI interaction, appearance, TalkBack, and large-text checks remain pending, as described in the README. No device rendering is claimed.

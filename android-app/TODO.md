@@ -8,9 +8,11 @@
 - [x] Approve the returning-learner home prototype.
 - [x] Implement splash configuration and the home screen, including saved progress and new, returning, mastered, and completed learner states.
 - [ ] Check installed Android cold start, TalkBack, larger text, small-screen and landscape layouts, and every navigation action.
-- [ ] Prototype the Mission Map for review before redesigning it.
+- [x] Prototype and approve the Mission Map.
+- [x] Implement the Mission Map journey layout with real mastery, XP, a current mission, and shared navigation.
+- [ ] Prototype Practice for review before redesigning it.
 
-The existing mission map is preserved at `/missions`; the remaining screens are awaiting their own prototypes and approvals.
+The approved Mission Map is at `/missions`; the remaining screens are awaiting their own prototypes and approvals.
 
 ## 26 November 2026 · Redesign the Android app
 

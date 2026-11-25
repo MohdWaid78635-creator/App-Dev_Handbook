@@ -6,13 +6,7 @@ import missions from '../src/generated/missions.json';
 import { homeColors as c } from '../src/theme';
 import { useProgress } from '../src/progress/provider';
 import { createHomeSummary } from '../src/progress/home';
-
-const navigation = [
-  { label: 'Home', icon: 'home-outline', href: '/' },
-  { label: 'Missions', icon: 'compass-outline', href: '/missions' },
-  { label: 'Projects', icon: 'folder-outline', href: '/project' },
-  { label: 'Review', icon: 'albums-outline', href: '/review' },
-] as const;
+import { WorkshopNavigation } from '../src/components/WorkshopNavigation';
 
 function showOptions() {
   Alert.alert('Your workshop', 'Setup, resources, and saved data', [
@@ -23,7 +17,7 @@ function showOptions() {
 }
 
 export default function Home() {
-  const { top, bottom } = useSafeAreaInsets();
+  const { top } = useSafeAreaInsets();
   const { width, fontScale } = useWindowDimensions();
   const { progress, saveError } = useProgress();
   const home = createHomeSummary(missions, progress);
@@ -111,19 +105,7 @@ export default function Home() {
           </Link>
         </View>
       </ScrollView>
-      <View style={[s.navArea, { paddingBottom: Math.max(bottom, 12) }]}>
-        <View style={s.nav}>
-          {navigation.map(({ label, icon, href }) => (
-            <Link key={label} href={href} asChild>
-              <Pressable accessibilityRole="tab" accessibilityState={{ selected: label === 'Home' }}
-                style={({ pressed }) => [s.navItem, pressed && s.pressed]}>
-                <Ionicons name={icon} size={26} color={label === 'Home' ? c.purple : c.muted} importantForAccessibility="no" />
-                <Text style={[s.navLabel, label === 'Home' && s.selected]}>{label}</Text>
-              </Pressable>
-            </Link>
-          ))}
-        </View>
-      </View>
+      <WorkshopNavigation selected="Home" />
     </View>
   );
 }
@@ -171,11 +153,6 @@ const s = StyleSheet.create({
   linkText: { color: c.ink, fontSize: 16, fontWeight: '700', flex: 1 },
   help: { minHeight: 48, paddingHorizontal: 4, gap: 12, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   helpText: { color: c.muted, fontSize: 16, flex: 1 },
-  navArea: { paddingHorizontal: 12, paddingTop: 6, backgroundColor: c.background },
-  nav: { ...clay, width: '100%', maxWidth: 680, alignSelf: 'center', flexDirection: 'row', borderRadius: 26, paddingVertical: 8, backgroundColor: c.card },
-  navItem: { flex: 1, minHeight: 54, gap: 4, alignItems: 'center', justifyContent: 'center', borderRadius: 16, paddingHorizontal: 2 },
-  navLabel: { fontSize: 12, fontWeight: '700', textAlign: 'center', color: c.muted },
-  selected: { color: c.purple },
   pressed: { opacity: 0.65 },
   notice: { backgroundColor: c.mint, color: c.ink, padding: 14, borderRadius: 16, fontSize: 16 },
 });

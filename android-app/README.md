@@ -14,7 +14,13 @@ The home screen uses the approved powder lilac, violet, mint, and porcelain clay
 
 Device checks still required: cold-start an installed Android build; follow every home action; reopen after earning XP; test 375px and landscape layouts, TalkBack, large system text, and reduced motion. The home layout stacks cards at larger text sizes and does not add looping animation or an artificial splash delay.
 
-## Phase 1 device check
+## Mission Map redesign device check
+
+Open **Missions** from Home. Verify all 13 missions are listed in curriculum order, the XP and mastery count match Home, and the highlighted mission matches Home's learning action. Open an available mission, revisit a mastered one, and finish a knowledge check; confirm the map refreshes with a mint mastery check and highlights the next unfinished mission without awarding extra XP. After all missions are mastered, confirm Review is offered and every lesson remains available. On a new profile, verify **Start Here** opens setup.
+
+Check Help and each bottom navigation action, Android Back, TalkBack labels, 375px and landscape layouts, larger text, and reduced motion. These native device checks are pending; automated tests and bundling do not verify visual appearance.
+
+## Setup device check
 
 1. Open **Start Here** from the mission map and confirm all four checkpoints and their expected results are visible. Open the capstone guide.
 2. Mark a checkpoint and open a mission. Use Android Back to return to the map. Confirm the mission is marked **Opened** and that **Resume mission** opens the same mission.
