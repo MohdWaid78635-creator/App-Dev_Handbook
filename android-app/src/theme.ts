@@ -13,4 +13,5 @@ export const colors = {
 export const homeColors = {
   background: '#E8DFF5', card: '#FFFDFA', ink: '#29233D', muted: '#655E73',
   purple: '#6746C3', mint: '#C8EBDD', track: '#D6C5EC', white: '#FFFFFF',
+  attention: '#885500', attentionSurface: '#FFF0D4', controlLine: '#8F819E',
 };

@@ -35,6 +35,8 @@ Open **How apps work**, expand a concept and its glossary terms, read the exampl
 
 ## Practice device check
 
+The approved clay layout uses a focused Practice header, large answer buttons, pair progress, amber retry selection, mint completion feedback, and a knowledge-check link. Ordering uses the same surfaces and feedback. Practice still awards no XP. Verify the wrong choice is marked without exposing the correct answer, retrying clears the old marker, Play again resets progress, and changing exercises resets the attempt. Check the lesson and mission-specific Help links, Android Back, and return to the Mission Map on an invalid route. Device appearance, TalkBack announcements, and large-text/landscape layouts remain pending.
+
 Open **How apps work → Start practice**. Choose a wrong match and confirm the same pair stays open. Complete the pairs and check that the explanation appears. Select the ordering exercise, build an order, undo the last choice, and verify both an incorrect and a correct order. Try Play again, move to another exercise, and use Android Back to return to the lesson. Repeat with TalkBack and large text. Practice attempts reset when you leave the exercise and do not award XP.
 
 ## Knowledge Check device check

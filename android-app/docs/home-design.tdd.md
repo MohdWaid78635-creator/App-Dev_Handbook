@@ -19,3 +19,9 @@ Artwork: built-in image-generation edits of the approved logo and home prototype
 The map now uses the same tested `createHomeSummary` and `createLearningResults` functions as Home for its highlighted mission, mastery, and XP. This presentation change adds no progress storage or scoring logic. All missions link to their existing lessons, including mastered and unopened missions. New learners retain a setup link and completed learners receive a Review link. The bottom navigation was extracted without changing its destinations and is shared with Home.
 
 Validation after the map change: `npm test` passed all 50 tests; `npm run typecheck` passed; `npm run check:bundle` exported Android successfully; `git diff --check` passed. Native UI interaction, appearance, TalkBack, and large-text checks remain pending, as described in the README. No device rendering is claimed.
+
+## Approved Practice implementation
+
+Practice now uses the approved clay palette, focused header, pair progress, and large matching choices. The incorrect choice is marked amber until another answer is chosen; correct matches still advance immediately. Both matching and ordering use labeled retry/success feedback. Existing scoring, shuffling, ordering, undo, reset, and exercise navigation functions are retained; no progress-writing calls or XP awards were added. The invalid-route recovery now points to `/missions`.
+
+`npm test`: 50 tests passed, including wrong-match retention, correct-match advancement, ordering validation, and shuffled choice coverage. `npm run typecheck`: passed. `npm run check:bundle`: Android export passed. `git diff --check`: passed. These checks cover existing exercise rules, not native rendering or the new selection styling. Device appearance and accessibility checks remain pending.
