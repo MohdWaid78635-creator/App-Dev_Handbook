@@ -8,6 +8,12 @@ From this directory, run `npm ci`, then `npm start`. Open a compatible Expo Go b
 
 Run `npm test`, `npm run typecheck`, and `npm run check:bundle` to verify this increment. Curriculum JSON is regenerated from the handbook for type checking, bundling, and local startup.
 
+## Approved splash and home design
+
+The home screen uses the approved powder lilac, violet, mint, and porcelain clay palette. It reads saved XP and mastery, offers setup for new learners, resumes an unfinished mission, advances after mastery, and offers Review when all missions are mastered. The bottom navigation opens Home, the existing Mission Map, Projects, and Review. The workshop options button opens setup, Help, and Backup and Restore.
+
+Device checks still required: cold-start an installed Android build; follow every home action; reopen after earning XP; test 375px and landscape layouts, TalkBack, large system text, and reduced motion. The home layout stacks cards at larger text sizes and does not add looping animation or an artificial splash delay.
+
 ## Phase 1 device check
 
 1. Open **Start Here** from the mission map and confirm all four checkpoints and their expected results are visible. Open the capstone guide.
@@ -105,6 +111,6 @@ Open **Knowledge check** from a lesson or practice. Pick a wrong answer, read or
 
 ## Splash screen
 
-The native Expo splash plugin displays the mint and violet mark on a deep violet background. After changing the asset or plugin settings, rebuild and verify a cold start in an installed preview or release build. Expo Go does not reproduce the same launch screen. [Expo splash guide](https://docs.expo.dev/develop/user-interface/splash-screen-and-app-icon/)
+The native Expo splash plugin uses `assets/clay-logo.png` on the approved powder lilac (`#E8DFF5`) background. `assets/clay-mark.png` is the home header mark and `assets/clay-workshop.png` is its decorative workshop illustration. These transparent PNGs were prepared with the built-in image-generation tool from the approved prototypes: preserve the logo identity and remove its background; isolate the mint toolbox and violet phone; isolate the logo mark for the header. After changing the asset or plugin settings, rebuild and verify a cold start in an installed preview or release build. Android controls native splash sizing and masking, so verify the lockup on the target OS. Expo Go does not reproduce the same launch screen. [Expo splash guide](https://docs.expo.dev/develop/user-interface/splash-screen-and-app-icon/)
 
 Expo is pinned to 58.0.26 and React Native to 0.88.1. Use the npm lockfile for reproducible installs and check upgrades separately. The preview package identifier is for local development.

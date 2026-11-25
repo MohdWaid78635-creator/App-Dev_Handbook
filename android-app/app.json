@@ -7,9 +7,9 @@
     "plugins": [
       "expo-router",
       ["expo-splash-screen", {
-        "image": "./assets/splash-mark.png",
-        "backgroundColor": "#231743",
-        "imageWidth": 208,
+        "image": "./assets/clay-logo.png",
+        "backgroundColor": "#E8DFF5",
+        "imageWidth": 240,
         "resizeMode": "contain"
       }]
     ],

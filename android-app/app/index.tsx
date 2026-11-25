@@ -1,114 +1,181 @@
-import { Link } from 'expo-router';
-import { ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { Link, router } from 'expo-router';
+import { Alert, Image, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import missions from '../src/generated/missions.json';
-import { colors } from '../src/theme';
+import { homeColors as c } from '../src/theme';
 import { useProgress } from '../src/progress/provider';
-import { createLearningResults } from '../src/progress/results';
+import { createHomeSummary } from '../src/progress/home';
 
-export default function MissionMap() {
-  const { bottom } = useSafeAreaInsets();
+const navigation = [
+  { label: 'Home', icon: 'home-outline', href: '/' },
+  { label: 'Missions', icon: 'compass-outline', href: '/missions' },
+  { label: 'Projects', icon: 'folder-outline', href: '/project' },
+  { label: 'Review', icon: 'albums-outline', href: '/review' },
+] as const;
+
+function showOptions() {
+  Alert.alert('Your workshop', 'Setup, resources, and saved data', [
+    { text: 'Start Here', onPress: () => router.push('/getting-started') },
+    { text: 'Help and Resource Library', onPress: () => router.push('/help') },
+    { text: 'Backup and Restore', onPress: () => router.push('/backup') },
+  ], { cancelable: true });
+}
+
+export default function Home() {
+  const { top, bottom } = useSafeAreaInsets();
+  const { width, fontScale } = useWindowDimensions();
   const { progress, saveError } = useProgress();
-  const results = createLearningResults(missions, progress.quizResults);
-  const mastered = new Set(missions.filter(mission => results.forMission(mission.quiz).mastered).map(mission => mission.id));
-  const lastMission = missions.find(mission => mission.id === progress.openedMissions.at(-1));
+  const home = createHomeSummary(missions, progress);
+  const stacked = width < 380 || fontScale > 1.2;
+  const primaryHref = home.mode === 'new' ? '/getting-started' : home.mission
+    ? { pathname: '/mission/[id]' as const, params: { id: String(home.mission.id) } } : '/review';
+  const headline = home.mode === 'new' ? 'Your first app starts here.' : home.mode === 'complete'
+    ? 'Look how far you’ve come.' : home.mode === 'mastered' ? 'One mission stronger.' : 'Welcome back, builder.';
+
   return (
-    <ScrollView contentContainerStyle={[styles.scroll, { paddingBottom: Math.max(bottom, 20) }]}>
-      <View style={styles.column}>
-        <ImageBackground source={require('../assets/workshop.webp')} style={styles.hero} imageStyle={styles.heroImage}>
-          <View style={styles.heroText}>
-            <Text accessibilityRole="header" style={styles.title}>Learn by building.</Text>
-            <Text style={styles.heroBody}>Play through 13 missions. Turn one idea into your first Android app.</Text>
-            <Link href={lastMission
-              ? { pathname: '/mission/[id]', params: { id: String(lastMission.id) } }
-              : '/getting-started'} asChild>
-              <Pressable accessibilityRole="button" style={styles.start}><Text style={styles.startText}>{lastMission ? 'Resume mission' : 'Start Here'}</Text></Pressable>
+    <View style={[s.screen, { paddingTop: top }]}>
+      <ScrollView contentContainerStyle={s.scroll}>
+        <View style={s.column}>
+          <View style={s.header}>
+            <View style={s.brand}>
+              <Image source={require('../assets/clay-mark.png')} style={s.logo} accessible={false} />
+              <Text style={s.wordmark}>BuildWisp</Text>
+            </View>
+            <Pressable accessibilityRole="button" accessibilityLabel="Workshop options: setup, help, and backup" onPress={showOptions}
+              style={({ pressed }) => [s.options, pressed && s.pressed]}>
+              <Ionicons name="settings-outline" size={28} color={c.ink} importantForAccessibility="no" />
+            </Pressable>
+          </View>
+          <View style={s.intro}>
+            <Text accessibilityRole="header" style={s.heading}>{headline}</Text>
+            <Text style={s.body}>{home.mode === 'new' ? 'Learn by building your first Android app.' : 'One mission closer to your first app.'}</Text>
+          </View>
+          {saveError ? <Text accessibilityRole="alert" style={s.notice}>{saveError}</Text> : null}
+          <View style={s.progressSection}>
+            <View style={s.progressLabels}>
+              <Text style={s.progressLabel}>{home.masteredCount} of {missions.length} mastered</Text>
+              <Text style={s.progressLabel}>{home.totalXp} XP</Text>
+            </View>
+            <View accessibilityRole="progressbar" accessibilityLabel="Missions mastered"
+              accessibilityValue={{ min: 0, max: missions.length, now: home.masteredCount }} style={s.track}>
+              <View style={[s.fill, { width: `${missions.length ? home.masteredCount / missions.length * 100 : 0}%` }]} />
+            </View>
+          </View>
+          <View style={s.missionCard}>
+            <Text style={s.eyebrow}>{home.mode === 'complete' ? 'ALL MISSIONS MASTERED' : home.mode === 'new' ? 'START HERE' : 'YOUR NEXT MISSION'}</Text>
+            <View style={[s.missionContent, stacked && s.stacked]}>
+              <View style={s.missionText}>
+                <Text accessibilityRole="header" style={s.missionTitle}>{home.mode === 'new' ? 'Get your workshop ready' : home.mission?.lessonTitle ?? 'Keep your skills fresh'}</Text>
+                <Text style={s.body}>{home.mode === 'new'
+                  ? `${progress.checkpoints.length} of 4 setup checkpoints checked. Get the tools for your first Android app.`
+                  : home.mode === 'complete' ? 'Revisit what you learned in the Review room.'
+                    : `${home.mission?.steps.length ?? 0} build cards to explore, practise, and put to work.`}</Text>
+              </View>
+              <Image source={require('../assets/clay-workshop.png')} style={[s.art, stacked && s.stackedArt]} accessible={false} />
+            </View>
+            <Link href={primaryHref} asChild>
+              <Pressable accessibilityRole="button" style={({ pressed }) => [s.primary, pressed && s.pressed]}>
+                <Text style={s.primaryText}>{home.mode === 'new' ? 'Start Here' : home.mode === 'complete' ? 'Open Review room' : 'Continue learning'}</Text>
+                <Ionicons name="arrow-forward" size={24} color={c.white} importantForAccessibility="no" />
+              </Pressable>
             </Link>
           </View>
-        </ImageBackground>
-        {saveError ? <Text accessibilityRole="alert" style={styles.notice}>{saveError}</Text> : null}
-        <Link href="/getting-started" asChild>
-          <Pressable accessibilityRole="link" style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
-            <View style={styles.rowText}>
-              <Text style={styles.rowTitle}>Get your workshop ready</Text>
-              <Text style={styles.meta}>{progress.checkpoints.length} of 4 setup checkpoints checked</Text>
-            </View>
-            <Text style={styles.chevron} importantForAccessibility="no">›</Text>
-          </Pressable>
-        </Link>
-        <Link href="/review" asChild>
-          <Pressable accessibilityRole="link" style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
-            <View style={styles.rowText}>
-              <Text style={styles.rowTitle}>Review room</Text>
-              <Text style={styles.meta}>Retry missed questions and practise what you learned</Text>
-            </View>
-            <Text style={styles.chevron} importantForAccessibility="no">›</Text>
-          </Pressable>
-        </Link>
-        <Link href="/project" asChild>
-          <Pressable accessibilityRole="link" style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
-            <View style={styles.rowText}>
-              <Text style={styles.rowTitle}>Your projects</Text>
-              <Text style={styles.meta}>Create or reopen an app idea</Text>
-            </View>
-            <Text style={styles.chevron} importantForAccessibility="no">›</Text>
-          </Pressable>
-        </Link>
-        <Link href="/help" asChild>
-          <Pressable accessibilityRole="link" style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
-            <View style={styles.rowText}>
-              <Text style={styles.rowTitle}>Help and Resource Library</Text>
-              <Text style={styles.meta}>Search lessons, glossary terms, fixes, and prompts</Text>
-            </View>
-            <Text style={styles.chevron} importantForAccessibility="no">›</Text>
-          </Pressable>
-        </Link>
-        <Link href="/backup" asChild>
-          <Pressable accessibilityRole="link" style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
-            <View style={styles.rowText}>
-              <Text style={styles.rowTitle}>Backup and Restore</Text>
-              <Text style={styles.meta}>Save or restore a copy of your progress and projects</Text>
-            </View>
-            <Text style={styles.chevron} importantForAccessibility="no">›</Text>
-          </Pressable>
-        </Link>
-        <Text accessibilityRole="header" style={styles.section}>Mission map</Text>
-        <Text style={styles.meta}>{mastered.size} of {missions.length} missions mastered · {results.totalXp} total XP</Text>
-        {missions.map(mission => (
-          <Link key={mission.id} href={{ pathname: '/mission/[id]', params: { id: String(mission.id) } }} asChild>
-            <Pressable accessibilityRole="link" style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
-              <View style={styles.tile} accessible={false}><Text style={styles.tileText}>{String(mission.id + 1).padStart(2, '0')}</Text></View>
-              <View style={styles.rowText}>
-                <Text style={styles.rowTitle}>{mission.lessonTitle}</Text>
-                <Text style={styles.meta}>{mission.steps.length} build cards{mastered.has(mission.id) ? ' · Mastered' : progress.openedMissions.includes(mission.id) ? ' · Opened' : ''}</Text>
-              </View>
-              <Text style={styles.chevron} importantForAccessibility="no">›</Text>
+          <Text accessibilityRole="header" style={s.section}>Your workshop</Text>
+          <View style={[s.workshop, stacked && s.stacked]}>
+            <Link href="/project" asChild>
+              <Pressable accessibilityRole="link" style={({ pressed }) => [s.toolCard, s.mintCard, pressed && s.pressed]}>
+                <Ionicons name="folder-outline" size={30} color={c.ink} importantForAccessibility="no" />
+                <Text style={s.toolTitle}>Your projects</Text><Text style={s.caption}>Build your app idea</Text>
+              </Pressable>
+            </Link>
+            <Link href="/review" asChild>
+              <Pressable accessibilityRole="link" style={({ pressed }) => [s.toolCard, s.lilacCard, pressed && s.pressed]}>
+                <Ionicons name="albums-outline" size={30} color={c.ink} importantForAccessibility="no" />
+                <Text style={s.toolTitle}>Review room</Text><Text style={s.caption}>Keep it fresh</Text>
+              </Pressable>
+            </Link>
+          </View>
+          <Link href="/missions" asChild>
+            <Pressable accessibilityRole="link" style={({ pressed }) => [s.missionsLink, pressed && s.pressed]}>
+              <Ionicons name="compass-outline" size={28} color={c.ink} importantForAccessibility="no" />
+              <Text style={s.linkText}>Explore all {missions.length} missions</Text>
+              <Ionicons name="chevron-forward" size={22} color={c.ink} importantForAccessibility="no" />
             </Pressable>
           </Link>
-        ))}
+          <Link href="/help" asChild>
+            <Pressable accessibilityRole="link" style={({ pressed }) => [s.help, pressed && s.pressed]}>
+              <Text style={s.helpText}>Help & resources</Text>
+              <Ionicons name="chevron-forward" size={20} color={c.muted} importantForAccessibility="no" />
+            </Pressable>
+          </Link>
+        </View>
+      </ScrollView>
+      <View style={[s.navArea, { paddingBottom: Math.max(bottom, 12) }]}>
+        <View style={s.nav}>
+          {navigation.map(({ label, icon, href }) => (
+            <Link key={label} href={href} asChild>
+              <Pressable accessibilityRole="tab" accessibilityState={{ selected: label === 'Home' }}
+                style={({ pressed }) => [s.navItem, pressed && s.pressed]}>
+                <Ionicons name={icon} size={26} color={label === 'Home' ? c.purple : c.muted} importantForAccessibility="no" />
+                <Text style={[s.navLabel, label === 'Home' && s.selected]}>{label}</Text>
+              </Pressable>
+            </Link>
+          ))}
+        </View>
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
-const styles = StyleSheet.create({
-  scroll: { padding: 18 },
-  column: { width: '100%', maxWidth: 720, alignSelf: 'center', gap: 11 },
-  hero: { backgroundColor: colors.hero, minHeight: 252, overflow: 'hidden', borderRadius: 24, justifyContent: 'flex-end' },
-  heroImage: { opacity: 0.45 },
-  heroText: { padding: 22, gap: 10 },
-  title: { color: colors.card, fontWeight: '900', fontSize: 34 },
-  heroBody: { color: colors.card, fontSize: 16, lineHeight: 23, maxWidth: 250 },
-  start: { alignSelf: 'flex-start', minHeight: 48, paddingHorizontal: 16, backgroundColor: colors.mint, borderRadius: 14, justifyContent: 'center' },
-  startText: { color: '#173b33', fontWeight: '800', fontSize: 16 },
-  section: { color: colors.ink, fontWeight: '800', fontSize: 24, marginTop: 12 },
-  row: { minHeight: 72, flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: colors.card, borderColor: colors.line, borderWidth: 1, borderRadius: 16, padding: 12 },
-  pressed: { backgroundColor: colors.lavender },
-  tile: { width: 44, height: 44, backgroundColor: colors.lavender, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  tileText: { color: colors.purple, fontWeight: '800' },
-  rowText: { flex: 1, gap: 2 },
-  rowTitle: { color: colors.ink, fontSize: 17, fontWeight: '800' },
-  meta: { color: colors.muted, fontSize: 14 },
-  chevron: { color: colors.purple, fontSize: 24 },
-  notice: { color: colors.ink, backgroundColor: '#fff0d4', padding: 12, borderRadius: 12 },
+const clay = {
+  boxShadow: [{ offsetX: 0, offsetY: 5, blurRadius: 12, color: '#39205B18' },
+    { offsetX: 2, offsetY: 2, blurRadius: 5, color: '#FFFFFFA0', inset: true }],
+};
+
+const s = StyleSheet.create({
+  screen: { flex: 1, backgroundColor: c.background },
+  scroll: { paddingHorizontal: 20, paddingTop: 8, paddingBottom: 12 },
+  column: { width: '100%', maxWidth: 680, alignSelf: 'center', gap: 18 },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
+  brand: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 4 },
+  logo: { width: 52, height: 60, resizeMode: 'contain' },
+  wordmark: { color: c.ink, fontSize: 25, fontWeight: '900', flexShrink: 1, letterSpacing: -1 },
+  options: { minHeight: 48, minWidth: 48, alignItems: 'center', justifyContent: 'center', borderRadius: 16 },
+  intro: { gap: 6, marginTop: 6 },
+  heading: { color: c.ink, fontSize: 29, fontWeight: '900', letterSpacing: -0.8 },
+  body: { color: c.muted, fontSize: 16, lineHeight: 24 },
+  progressSection: { gap: 10 },
+  progressLabels: { flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 },
+  progressLabel: { color: c.ink, fontSize: 15, fontWeight: '700' },
+  track: { height: 12, backgroundColor: c.track, borderRadius: 8, overflow: 'hidden' },
+  fill: { height: '100%', backgroundColor: c.purple, borderRadius: 8 },
+  missionCard: { ...clay, backgroundColor: c.card, padding: 20, borderRadius: 28, gap: 14 },
+  eyebrow: { color: c.muted, fontSize: 12, fontWeight: '800', letterSpacing: 1 },
+  missionContent: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  missionText: { flex: 1, gap: 8 },
+  missionTitle: { color: c.ink, fontWeight: '900', fontSize: 25, letterSpacing: -0.6 },
+  art: { width: 116, height: 142, resizeMode: 'contain' },
+  stackedArt: { width: 144, height: 128, alignSelf: 'center' },
+  primary: { ...clay, backgroundColor: c.purple, borderRadius: 24, minHeight: 54, padding: 14, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 },
+  primaryText: { color: c.white, fontSize: 17, fontWeight: '800', flexShrink: 1 },
+  section: { color: c.ink, fontSize: 23, fontWeight: '900', marginTop: 2 },
+  workshop: { flexDirection: 'row', gap: 12 },
+  stacked: { flexDirection: 'column', alignItems: 'stretch' },
+  toolCard: { ...clay, flex: 1, padding: 18, borderRadius: 24, gap: 8 },
+  mintCard: { backgroundColor: c.mint },
+  lilacCard: { backgroundColor: c.background },
+  toolTitle: { color: c.ink, fontSize: 18, fontWeight: '800' },
+  caption: { color: c.muted, fontSize: 14, lineHeight: 20 },
+  missionsLink: { ...clay, minHeight: 60, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 22, backgroundColor: c.card },
+  linkText: { color: c.ink, fontSize: 16, fontWeight: '700', flex: 1 },
+  help: { minHeight: 48, paddingHorizontal: 4, gap: 12, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  helpText: { color: c.muted, fontSize: 16, flex: 1 },
+  navArea: { paddingHorizontal: 12, paddingTop: 6, backgroundColor: c.background },
+  nav: { ...clay, width: '100%', maxWidth: 680, alignSelf: 'center', flexDirection: 'row', borderRadius: 26, paddingVertical: 8, backgroundColor: c.card },
+  navItem: { flex: 1, minHeight: 54, gap: 4, alignItems: 'center', justifyContent: 'center', borderRadius: 16, paddingHorizontal: 2 },
+  navLabel: { fontSize: 12, fontWeight: '700', textAlign: 'center', color: c.muted },
+  selected: { color: c.purple },
+  pressed: { opacity: 0.65 },
+  notice: { backgroundColor: c.mint, color: c.ink, padding: 14, borderRadius: 16, fontSize: 16 },
 });

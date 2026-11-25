@@ -9,3 +9,8 @@ export const colors = {
   mint: '#c9f6df',
   hero: '#231743',
 };
+
+export const homeColors = {
+  background: '#E8DFF5', card: '#FFFDFA', ink: '#29233D', muted: '#655E73',
+  purple: '#6746C3', mint: '#C8EBDD', track: '#D6C5EC', white: '#FFFFFF',
+};
