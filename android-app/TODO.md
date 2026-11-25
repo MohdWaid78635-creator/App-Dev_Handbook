@@ -16,7 +16,9 @@
 - [x] Implement Knowledge Check with stage progress, selected-answer feedback, retries, and saved-answer handling.
 - [x] Prototype and approve Mission Results.
 - [x] Implement Mission Results with the clay trophy, saved XP, completion rows, next mission, and milestone actions.
-- [ ] Prototype Lesson Detail for review before redesigning it.
+- [x] Prototype and approve Lesson Detail.
+- [x] Implement Lesson Detail with clay disclosures, expandable examples, full lesson/build content, and accessible Practice actions.
+- [ ] Prototype Review room for review before redesigning it.
 
 The approved Mission Map is at `/missions`; the remaining screens are awaiting their own prototypes and approvals.
 

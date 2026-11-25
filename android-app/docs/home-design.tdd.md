@@ -39,3 +39,9 @@ Results now uses the approved trophy, mint mission-XP pill, completion rows, ove
 The built-in image-generation tool isolated the approved violet trophy and mint star onto a transparent background; the production asset is `android-app/assets/clay-trophy.png`.
 
 `npm test`: 50 tests passed, including partial mastery and one-time XP. `npm run typecheck`: passed. `npm run check:bundle`: Android export passed. `git diff --check`: passed. Trophy PNG transparency verified. Native results rendering, route interactions, TalkBack, and large-text/landscape checks remain pending.
+
+## Approved Lesson Detail implementation
+
+Lesson Detail now uses the approved clay disclosures, mint expandable examples, AI-check disclosures, and explain-back panels. The full generated lesson and build-card content is retained. Reading does not award mastery or XP; the existing opened-mission save remains intact. Header Missions and Help open the map and mission-scoped resources. Practice and Knowledge Check actions are docked outside the reading scroll area for taller portrait screens, and flow after the content in short windows or above 1.5× text scaling.
+
+`npm test`: all 50 tests passed, including curriculum lessons, examples, reflection prompts, glossary terms, and corresponding build tasks. `npm run typecheck`: passed. `npm run check:bundle`: Android export passed. `git diff --check`: passed. Native accordion state announcements, dock/fallback layout, large text, landscape, and route interactions remain pending.

@@ -31,6 +31,10 @@ Setup checkmarks record the learner’s own evidence. Answering all questions in
 
 ## Lesson Detail device check
 
+The approved clay layout opens the first concept and places each worked example behind **See an example**. Concept and example controls expose their expanded state. All glossary meanings, safety notes, source links, AI checks, explain-back prompts, and build instructions remain available. **Start practice** and **Knowledge check** sit below the scroll area on a tall portrait screen; at less than 600 logical pixels of height or above 1.5× font scaling, they move after the lesson content so the reading area remains usable. Check the final build card can scroll fully above the dock, the fallback actions remain reachable, and Help is scoped to this mission. The Missions header link opens `/missions`.
+
+Native disclosure interaction, portrait/landscape appearance, TalkBack, and larger-text checks remain pending.
+
 Open **How apps work**, expand a concept and its glossary terms, read the example, and open **Check the AI’s work**. Find **Explain it back**, then expand a card under **Apply it to your app** and check its instructions, proof, and source link. Open **Catch a bug before users do** to see the testing lesson. Use Android Back to return to the same map. Repeat with TalkBack and larger text to verify the expand controls announce their state.
 
 ## Practice device check
