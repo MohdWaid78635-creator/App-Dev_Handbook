@@ -14,7 +14,9 @@
 - [x] Implement the Practice clay layout for matching and ordering, with retry and completion feedback.
 - [x] Prototype and approve Knowledge Check.
 - [x] Implement Knowledge Check with stage progress, selected-answer feedback, retries, and saved-answer handling.
-- [ ] Prototype Mission Results for review before redesigning it.
+- [x] Prototype and approve Mission Results.
+- [x] Implement Mission Results with the clay trophy, saved XP, completion rows, next mission, and milestone actions.
+- [ ] Prototype Lesson Detail for review before redesigning it.
 
 The approved Mission Map is at `/missions`; the remaining screens are awaiting their own prototypes and approvals.
 

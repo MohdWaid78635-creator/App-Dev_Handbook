@@ -31,3 +31,11 @@ Practice now uses the approved clay palette, focused header, pair progress, and 
 The question and boss stages now use the approved clay surfaces, question progress markers, labeled correct/retry selections, explanation feedback, and explicit advancement actions. Stage markers reflect the current attempt, so replay does not show old answers as already complete. Existing resume, answer saving, one-time XP, retry, and results navigation logic are preserved. Save failures suppress the saved-answer footer and retain the existing retry path. Header Help opens the current mission's resources, and invalid-route recovery opens `/missions`.
 
 `npm test`: all 50 tests passed, including saved answer persistence, replay preservation, first-success XP, and mastery requirements. `npm run typecheck`: passed. `npm run check:bundle`: Android export passed. `git diff --check`: passed. Native layout, selection styling, stage display, TalkBack, large-text, and landscape checks remain pending; these are not verified by the unit tests.
+
+## Approved Mission Results implementation
+
+Results now uses the approved trophy, mint mission-XP pill, completion rows, overall mastery progress, next-mission card, Review link, and eligible milestone action. The trophy is conditional on mastery; unfinished checks retain their Continue action and pending statuses. The final mission retains a primary map-return action, now linked to `/missions`. The existing result calculation and adjacent mission selection are retained, with no new XP writes. Header Help opens mission-specific resources.
+
+The built-in image-generation tool isolated the approved violet trophy and mint star onto a transparent background; the production asset is `android-app/assets/clay-trophy.png`.
+
+`npm test`: 50 tests passed, including partial mastery and one-time XP. `npm run typecheck`: passed. `npm run check:bundle`: Android export passed. `git diff --check`: passed. Trophy PNG transparency verified. Native results rendering, route interactions, TalkBack, and large-text/landscape checks remain pending.

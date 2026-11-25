@@ -47,6 +47,10 @@ Open **Knowledge check** from a lesson or practice. Pick a wrong answer, read or
 
 ## Mission Results device check
 
+The approved clay layout shows the trophy only for a mastered mission. Verify unfinished results show their earned XP, pending rows, and **Continue knowledge check**. Confirm completed results show actual mission and total XP, mastery progress, the next lesson, and milestone recording only for eligible missions. The final mission uses **Return to Mission Map** as its primary action. Help is scoped to the mission. All map-return and invalid-result paths open `/missions`.
+
+`assets/clay-trophy.png` is a transparent asset prepared with the built-in image-generation tool by isolating the violet trophy and mint star from the approved Results prototype. Native appearance, TalkBack, larger text, and landscape checks remain pending.
+
 1. Finish the boss and tap **See results**. Confirm **Mission mastered**, **30 XP** for the mission, two correct knowledge answers, and **Boss challenge cleared**.
 2. Use Android Back to return to the lesson. Open **Knowledge check**, tap **Replay knowledge check**, and finish it again. Confirm the mission and total XP stay the same.
 3. Follow **Next mission** and confirm it opens the adjacent lesson. Return to the map and confirm total XP and the **Mastered** marker. Complete the final mission and confirm its primary action returns to the map.
