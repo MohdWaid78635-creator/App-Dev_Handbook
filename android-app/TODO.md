@@ -18,7 +18,9 @@
 - [x] Implement Mission Results with the clay trophy, saved XP, completion rows, next mission, and milestone actions.
 - [x] Prototype and approve Lesson Detail.
 - [x] Implement Lesson Detail with clay disclosures, expandable examples, full lesson/build content, and accessible Practice actions.
-- [ ] Prototype Review room for review before redesigning it.
+- [x] Prototype and approve Review room.
+- [x] Implement Review room with the clay question card, saved queue, answer feedback, study entry, and shared navigation.
+- [ ] Prototype Daily Practice and Flashcards for review before redesigning them.
 
 The approved Mission Map is at `/missions`; the remaining screens are awaiting their own prototypes and approvals.
 

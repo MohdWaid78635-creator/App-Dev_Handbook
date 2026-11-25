@@ -62,6 +62,8 @@ The approved clay layout shows the trophy only for a mastered mission. Verify un
 
 ## Review room device check
 
+The approved clay layout shows the next missed/due question directly, with a live queue count and a Daily Practice and Flashcards entry below. Global Review uses the shared navigation bar. Review opened from Results stays scoped to that mission and returns to its results; invalid mission IDs show a recovery link to `/missions`. Verify wrong answers show amber retry feedback and correct answers show mint feedback, while Continue removes a question only after a successful save. A caught-up queue shows **No questions due** with the 24-hour reminder. Native appearance, TalkBack, navigation, larger text, and landscape checks remain pending.
+
 1. Miss an answer, finish the knowledge check, then open **Review this mission** from Mission Results. Confirm the missed question appears even if you corrected it in the quiz.
 2. Pick a wrong answer in Review, read the explanation, then retry. Choose the correct answer and tap **Continue**. Check that the question clears from the queue and that a previously correct answer adds no XP.
 3. Restart BuildWisp and open **Review room** from the mission map. Verify that a reviewed question stays cleared until it comes due again after 24 hours. Check that the mission map entry includes due questions from all missions, while Mission Results opens Review for that mission.

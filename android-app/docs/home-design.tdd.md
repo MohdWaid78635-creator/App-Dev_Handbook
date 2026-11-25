@@ -45,3 +45,9 @@ The built-in image-generation tool isolated the approved violet trophy and mint 
 Lesson Detail now uses the approved clay disclosures, mint expandable examples, AI-check disclosures, and explain-back panels. The full generated lesson and build-card content is retained. Reading does not award mastery or XP; the existing opened-mission save remains intact. Header Missions and Help open the map and mission-scoped resources. Practice and Knowledge Check actions are docked outside the reading scroll area for taller portrait screens, and flow after the content in short windows or above 1.5× text scaling.
 
 `npm test`: all 50 tests passed, including curriculum lessons, examples, reflection prompts, glossary terms, and corresponding build tasks. `npm run typecheck`: passed. `npm run check:bundle`: Android export passed. `git diff --check`: passed. Native accordion state announcements, dock/fallback layout, large text, landscape, and route interactions remain pending.
+
+## Approved Review room implementation
+
+Review now uses the approved clay question card, actual queue count, neutral choices, mint/amber feedback, and study entry below the current question. Global Review uses shared navigation; mission-scoped Review retains its scope and Results return route. The caught-up and invalid-mission states have separate recovery behavior. Existing `getReviewQueue` and `recordReviewSuccess` logic are retained, including the successful-save guard before advancing and the non-animated scroll reset. There are no changes to review scheduling or XP calculation.
+
+`npm test`: all 50 tests passed, including immediate misses, 24-hour review scheduling, restart persistence, preserved first-success XP, and first success through Review. `npm run typecheck`: passed. `npm run check:bundle`: Android export passed. `git diff --check`: passed. Native rendering, queue advancement interactions, TalkBack, large text, and landscape checks remain pending.
