@@ -73,6 +73,10 @@ The approved clay layout shows the next missed/due question directly, with a liv
 
 ## Project Setup device check
 
+The approved clay list uses expandable project tool menus, visible Edit actions, and shared navigation on the global list. Saved plan platforms provide app/website icons; undecided projects use a folder. Plan Mode dropdown headers and choices now include bundled technology/platform icons: brand glyphs where available and labeled category icons for other providers. This icon update does not redesign Plan Mode or change its choices.
+
+The three-field editor keeps required-name validation, field limits, duplicate-save protection, and drafts after failed saves. Navigation hides while editing; Back/Cancel returns to the list, and keyboard avoidance keeps the form scrollable. Returning from Plan Mode refreshes saved project details. Verify mission/milestone parameters still reach the selected project tool. Native menus, keyboard behavior, Back, icon rendering, TalkBack, large text, and landscape checks remain pending.
+
 1. Open **Your projects** from the mission map and tap **New project**. Try saving with an empty name. Confirm the inline error and focus on the name field.
 2. Save an app name with an optional audience and goal. Confirm the project appears in the list. Create a second project, reopen the first, edit it, and confirm only the first project changes.
 3. Restart BuildWisp and reopen both projects. Confirm the details and learning progress are still present. Repeat with TalkBack, larger text, and the keyboard open to check that every field and action is reachable.

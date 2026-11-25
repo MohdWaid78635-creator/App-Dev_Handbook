@@ -9,6 +9,7 @@ import { createPlanDraft, foundationPrompt, maxPlanFieldLength, planDecisions, p
 import type { PlanField, PlanKey } from '../../src/projects/plan';
 import type { Project } from '../../src/projects/store';
 import { colors } from '../../src/theme';
+import { TechnologyIcon } from '../../src/components/TechnologyIcon';
 
 function Action({ label, onPress, primary = false }: { label: string; onPress: () => void; primary?: boolean }) {
   return <Pressable accessibilityRole="button" onPress={onPress}
@@ -31,7 +32,10 @@ function Field({ field, value, suggested, onChange }: {
       <Pressable accessibilityRole="button" accessibilityLabel={`${field.label}, ${chosen?.[1] ?? 'Choose an option'}`}
         accessibilityState={{ expanded }} onPress={() => setExpanded(previous => !previous)}
         style={({ pressed }) => [styles.action, pressed && styles.pressed]}>
-        <Text style={styles.label}>{chosen?.[1] ?? 'Choose an option'}</Text>
+        <View style={styles.choiceTitle}>
+          <TechnologyIcon field={field.key} value={value} />
+          <Text style={[styles.label, styles.choiceLabel]}>{chosen?.[1] ?? 'Choose an option'}</Text>
+        </View>
         {chosen?.[3] ? <Text style={styles.meta}>{chosen[3]}</Text> : null}
       </Pressable>
       {chosen?.[2] && !expanded ? <Text style={styles.body}>{chosen[2]}</Text> : null}
@@ -41,7 +45,10 @@ function Field({ field, value, suggested, onChange }: {
           <Pressable accessibilityRole="radio" accessibilityState={{ checked: value === id }}
             onPress={() => { onChange(id); setExpanded(false); }}
             style={({ pressed }) => [styles.action, value === id && styles.selected, pressed && styles.pressed]}>
-            <Text style={styles.label}>{label}</Text>
+            <View style={styles.choiceTitle}>
+              <TechnologyIcon field={field.key} value={id} />
+              <Text style={[styles.label, styles.choiceLabel]}>{label}</Text>
+            </View>
             {id === suggested ? <Text style={styles.recommended}>Recommended</Text> : null}
             {cost ? <Text style={styles.meta}>{cost}</Text> : null}
             {description ? <Text style={styles.body}>{description}</Text> : null}
@@ -173,6 +180,8 @@ export default function PlanScreen() {
 }
 
 const styles = StyleSheet.create({
+  choiceTitle: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  choiceLabel: { flex: 1 },
   screen: { padding: 18 },
   column: { width: '100%', maxWidth: 720, alignSelf: 'center', gap: 12 },
   hero: { backgroundColor: colors.hero, borderRadius: 24, padding: 22, gap: 8 },

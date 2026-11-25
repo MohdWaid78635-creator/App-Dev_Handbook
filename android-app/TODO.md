@@ -24,7 +24,9 @@
 - [x] Implement both study modes with clay tabs, daily feedback, revealed cards, saved counts, and recall actions.
 - [x] Prototype and approve Start Here / setup checkpoints.
 - [x] Implement Start Here with expandable checkpoints, expected results, saved checkmarks, and the first-mission action.
-- [ ] Prototype Your Projects and the project editor for review before redesigning them.
+- [x] Prototype and approve Your Projects and the project editor.
+- [x] Implement the clay project list/editor, expandable tool menus, project-platform icons, and technology icons in Plan Mode choices.
+- [ ] Prototype Plan Mode for review before its full redesign.
 
 The approved Mission Map is at `/missions`; the remaining screens are awaiting their own prototypes and approvals.
 
