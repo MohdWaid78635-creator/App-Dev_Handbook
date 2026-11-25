@@ -12,7 +12,9 @@
 - [x] Implement the Mission Map journey layout with real mastery, XP, a current mission, and shared navigation.
 - [x] Prototype and approve Practice.
 - [x] Implement the Practice clay layout for matching and ordering, with retry and completion feedback.
-- [ ] Prototype Knowledge Check for review before redesigning it.
+- [x] Prototype and approve Knowledge Check.
+- [x] Implement Knowledge Check with stage progress, selected-answer feedback, retries, and saved-answer handling.
+- [ ] Prototype Mission Results for review before redesigning it.
 
 The approved Mission Map is at `/missions`; the remaining screens are awaiting their own prototypes and approvals.
 

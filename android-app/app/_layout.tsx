@@ -17,7 +17,7 @@ export default function RootLayout() {
         <Stack.Screen name="getting-started" options={{ title: 'Start Here' }} />
         <Stack.Screen name="mission/[id]" options={{ title: 'Lesson' }} />
         <Stack.Screen name="practice/[id]" options={{ title: 'Practice', headerShown: false }} />
-        <Stack.Screen name="quiz/[id]" options={{ title: 'Knowledge Check' }} />
+        <Stack.Screen name="quiz/[id]" options={{ title: 'Knowledge Check', headerShown: false }} />
         <Stack.Screen name="result/[id]" options={{ title: 'Mission Results' }} />
         <Stack.Screen name="review" options={{ title: 'Review' }} />
         <Stack.Screen name="study" options={{ title: 'Daily Practice and Flashcards' }} />

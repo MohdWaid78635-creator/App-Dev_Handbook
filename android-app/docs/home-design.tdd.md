@@ -25,3 +25,9 @@ Validation after the map change: `npm test` passed all 50 tests; `npm run typech
 Practice now uses the approved clay palette, focused header, pair progress, and large matching choices. The incorrect choice is marked amber until another answer is chosen; correct matches still advance immediately. Both matching and ordering use labeled retry/success feedback. Existing scoring, shuffling, ordering, undo, reset, and exercise navigation functions are retained; no progress-writing calls or XP awards were added. The invalid-route recovery now points to `/missions`.
 
 `npm test`: 50 tests passed, including wrong-match retention, correct-match advancement, ordering validation, and shuffled choice coverage. `npm run typecheck`: passed. `npm run check:bundle`: Android export passed. `git diff --check`: passed. These checks cover existing exercise rules, not native rendering or the new selection styling. Device appearance and accessibility checks remain pending.
+
+## Approved Knowledge Check implementation
+
+The question and boss stages now use the approved clay surfaces, question progress markers, labeled correct/retry selections, explanation feedback, and explicit advancement actions. Stage markers reflect the current attempt, so replay does not show old answers as already complete. Existing resume, answer saving, one-time XP, retry, and results navigation logic are preserved. Save failures suppress the saved-answer footer and retain the existing retry path. Header Help opens the current mission's resources, and invalid-route recovery opens `/missions`.
+
+`npm test`: all 50 tests passed, including saved answer persistence, replay preservation, first-success XP, and mastery requirements. `npm run typecheck`: passed. `npm run check:bundle`: Android export passed. `git diff --check`: passed. Native layout, selection styling, stage display, TalkBack, large-text, and landscape checks remain pending; these are not verified by the unit tests.

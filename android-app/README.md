@@ -41,6 +41,8 @@ Open **How apps work → Start practice**. Choose a wrong match and confirm the 
 
 ## Knowledge Check device check
 
+The approved clay layout includes question/boss stage markers, mint correct selections, amber incorrect selections, explanation feedback, and explicit Next question / Try again / See results actions. Verify the current stage changes only after advancing, replay resets the stage markers, and the saved-answer footer is hidden when saving fails. Check the lesson and mission-specific Help links and invalid-route recovery to `/missions`. Native appearance, TalkBack, larger text, and landscape checks remain pending.
+
 Open **Knowledge check** from a lesson or practice. Pick a wrong answer, read or listen to the feedback, and retry. Answer the first question correctly, leave the screen, and reopen it to confirm that the second question is next. Confirm that TalkBack announces response feedback.
 
 ## Mission Results device check

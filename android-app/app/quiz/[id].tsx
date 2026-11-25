@@ -1,10 +1,11 @@
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import missions from '../../src/generated/missions.json';
 import { useProgress } from '../../src/progress/provider';
-import { colors } from '../../src/theme';
+import { homeColors as colors } from '../../src/theme';
 
 type Mission = typeof missions[number];
 
@@ -21,6 +22,7 @@ function Quiz({ mission }: { mission: Mission }) {
   const [selection, setSelection] = useState<number | null>(null);
   const question = mission.quiz[index];
   const correct = selection === question?.answer;
+  const knowledgeCount = mission.quiz.filter(item => item.kind !== 'boss').length;
 
   function selectAnswer(option: number) {
     if (!question || selection !== null) return;
@@ -29,14 +31,35 @@ function Quiz({ mission }: { mission: Mission }) {
 
   return (
     <>
+      <Text style={styles.meta}>{mission.lessonTitle.toUpperCase()}</Text>
+      <Text accessibilityRole="header" style={styles.heading}>Show what you know</Text>
+      <Text style={styles.subtitle}>{knowledgeCount} questions, then a boss challenge.</Text>
+      <View style={styles.steps}>
+        {mission.quiz.map((step, stepIndex) => {
+          const completed = stepIndex < index || (stepIndex === index && correct);
+          const current = stepIndex === index;
+          const label = step.kind === 'boss' ? 'Boss' : `Question ${stepIndex + 1}`;
+          return (
+            <View key={step.id} style={styles.step} accessible
+              accessibilityLabel={`${label}: ${completed ? 'complete' : current ? 'current' : 'upcoming'}`}>
+              {stepIndex + 1 < mission.quiz.length ? <View style={styles.connector} importantForAccessibility="no" /> : null}
+              <View style={[styles.stepCircle, completed && styles.completedStep, current && !completed && styles.currentStep]}>
+                {completed ? <Ionicons name="checkmark" size={24} color={colors.success} importantForAccessibility="no" />
+                  : current ? <View style={styles.currentDot} /> : null}
+              </View>
+              <Text style={styles.stepLabel}>{label}</Text>
+            </View>
+          );
+        })}
+      </View>
       {saveError ? <Text accessibilityRole="alert" style={styles.warning}>{saveError} Try the answer again to save it.</Text> : null}
       {!question ? (
         <View style={styles.complete}>
           <Text style={styles.kicker}>KNOWLEDGE CHECK COMPLETE</Text>
           <Text accessibilityRole="header" style={styles.title}>Boss challenge cleared</Text>
-          <Text style={styles.body}>You answered both knowledge questions and the boss question correctly.</Text>
+          <Text style={styles.body}>You answered all knowledge questions and the boss challenge correctly.</Text>
           <Link href={resultRoute} replace asChild>
-            <Pressable accessibilityRole="link" style={styles.primary}><Text style={styles.primaryLabel}>View mission results</Text></Pressable>
+            <Pressable accessibilityRole="link" style={({ pressed }) => [styles.primary, pressed && styles.pressed]}><Text style={styles.primaryLabel}>View mission results</Text></Pressable>
           </Link>
           <Pressable accessibilityRole="button" style={styles.option}
             onPress={() => { setIndex(0); setSelection(null); }}>
@@ -44,32 +67,39 @@ function Quiz({ mission }: { mission: Mission }) {
           </Pressable>
         </View>
       ) : (
-        <View style={[styles.card, question.kind === 'boss' && styles.boss]}>
-          <Text style={[styles.kicker, question.kind === 'boss' && styles.bossKicker]}>
-            {question.kind === 'boss' ? 'BOSS CHALLENGE' : `QUESTION ${index + 1} OF 2`}
+        <View style={styles.card}>
+          <Text style={styles.kicker}>
+            {question.kind === 'boss' ? 'BOSS CHALLENGE' : `QUESTION ${index + 1} OF ${knowledgeCount}`}
           </Text>
-          <Text accessibilityRole="header" style={[styles.title, question.kind === 'boss' && styles.bossTitle]}>{question.prompt}</Text>
+          <Text accessibilityRole="header" style={styles.title}>{question.prompt}</Text>
           {question.options.map((option, optionIndex) => (
             <Pressable
               key={optionIndex}
               accessibilityRole="button"
               accessibilityState={{ disabled: selection !== null, selected: selection === optionIndex }}
+              accessibilityLabel={selection === optionIndex ? `${option}. ${correct ? 'Correct' : 'Not quite'}.` : option}
               disabled={selection !== null}
               style={({ pressed }) => [
                 styles.option, pressed && styles.pressed,
-                selection === optionIndex && (correct ? styles.right : styles.wrong),
+                selection === optionIndex && (correct ? styles.selectedRight : styles.selectedWrong),
               ]}
               onPress={() => selectAnswer(optionIndex)}
             >
               <Text style={styles.optionLabel}>{option}</Text>
+              <Ionicons name={selection === optionIndex ? correct ? 'checkmark-circle-outline' : 'close-circle-outline' : 'ellipse-outline'}
+                size={24} color={selection === optionIndex ? correct ? colors.success : colors.attention : colors.muted} importantForAccessibility="no" />
             </Pressable>
           ))}
           {selection !== null ? (
-            <View style={[styles.feedback, correct ? styles.right : styles.wrong]}>
-              <Text accessibilityLiveRegion="polite" style={styles.body}>
-                <Text style={styles.strong}>{correct ? 'Correct. ' : 'Not quite. '}</Text>{question.explanation}
-              </Text>
-              <Pressable accessibilityRole="button" style={styles.primary} onPress={() => {
+            <>
+              <View style={[styles.feedback, correct ? styles.right : styles.wrong]}>
+                <Ionicons name={correct ? 'checkmark-circle-outline' : 'sync-outline'} size={28}
+                  color={correct ? colors.success : colors.attention} importantForAccessibility="no" />
+                <Text accessibilityLiveRegion="polite" style={styles.feedbackText}>
+                  <Text style={styles.feedbackTitle}>{correct ? 'Correct' : 'Not quite'}{'\n'}</Text>{question.explanation}
+                </Text>
+              </View>
+              <Pressable accessibilityRole="button" style={({ pressed }) => [styles.primary, pressed && styles.pressed]} onPress={() => {
                 if (correct && index + 1 === mission.quiz.length) {
                   router.replace(resultRoute);
                   return;
@@ -80,56 +110,98 @@ function Quiz({ mission }: { mission: Mission }) {
                 <Text style={styles.primaryLabel}>
                   {correct ? (index + 1 === mission.quiz.length ? 'See results' : 'Next question') : 'Try again'}
                 </Text>
+                <Ionicons name={correct ? 'arrow-forward' : 'refresh-outline'} size={22} color={colors.white} importantForAccessibility="no" />
               </Pressable>
-            </View>
+            </>
           ) : null}
         </View>
       )}
+      {!saveError ? <View style={styles.saveNotice}>
+        <Ionicons name="checkmark-circle-outline" size={22} color={colors.muted} importantForAccessibility="no" />
+        <Text style={styles.saveText}>Your answers are saved as you go.</Text>
+      </View> : null}
+      <Text style={styles.footnote}>Correct answers earn XP once.</Text>
     </>
   );
 }
 
 export default function QuizScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { bottom } = useSafeAreaInsets();
+  const { top, bottom } = useSafeAreaInsets();
   const mission = missions.find(item => String(item.id) === id);
   return (
-    <ScrollView contentContainerStyle={[styles.screen, { paddingBottom: Math.max(bottom, 20) }]}>
+    <View style={[styles.screen, { paddingTop: top }]}>
+    <ScrollView contentContainerStyle={[styles.scroll, { paddingBottom: Math.max(bottom, 20) }]}>
       <View style={styles.column}>
+        <View style={styles.header}>
+          <Link href={mission ? { pathname: '/mission/[id]', params: { id: String(mission.id) } } : '/missions'} dismissTo asChild>
+            <Pressable accessibilityRole="link" style={({ pressed }) => [styles.back, pressed && styles.pressed]}>
+              <Ionicons name="arrow-back" size={25} color={colors.ink} importantForAccessibility="no" />
+              <Text style={styles.backLabel}>{mission ? 'Lesson' : 'Missions'}</Text>
+            </Pressable>
+          </Link>
+          <Text accessibilityRole="header" style={styles.headerTitle}>Knowledge check</Text>
+          <Link href={{ pathname: '/help', params: mission ? { missionId: String(mission.id) } : {} }} asChild>
+            <Pressable accessibilityRole="link" accessibilityLabel="Help with this mission" style={({ pressed }) => [styles.help, pressed && styles.pressed]}>
+              <Ionicons name="help-circle-outline" size={29} color={colors.ink} importantForAccessibility="no" />
+            </Pressable>
+          </Link>
+        </View>
         {mission ? <>
-          <Link href={{ pathname: '/mission/[id]', params: { id: String(mission.id) } }} dismissTo style={styles.back}>← Lesson</Link>
-          <Text style={styles.meta}>{mission.lessonTitle}</Text>
           <Quiz key={mission.id} mission={mission} />
         </> : <>
           <Text accessibilityRole="header" style={styles.title}>Knowledge check unavailable</Text>
-          <Link href="/" dismissTo style={styles.back}>← Mission map</Link>
+          <Link href="/missions" dismissTo style={styles.backLabel}>Return to Mission Map</Link>
         </>}
       </View>
     </ScrollView>
+    </View>
   );
 }
 
+const clay = { boxShadow: [{ offsetX: 0, offsetY: 4, blurRadius: 10, color: '#39205B18' },
+  { offsetX: 2, offsetY: 2, blurRadius: 5, color: '#FFFFFFA0', inset: true }] };
+
 const styles = StyleSheet.create({
-  screen: { padding: 18 },
-  column: { width: '100%', maxWidth: 720, alignSelf: 'center', gap: 12 },
-  back: { alignSelf: 'flex-start', minHeight: 48, color: colors.purple, fontSize: 16, textAlignVertical: 'center' },
-  meta: { color: colors.muted, fontSize: 16, fontWeight: '700' },
-  card: { gap: 12, padding: 16, borderRadius: 18, borderColor: colors.line, borderWidth: 1, backgroundColor: colors.card },
-  boss: { backgroundColor: colors.hero, borderColor: colors.hero },
-  kicker: { color: colors.purple, fontSize: 13, letterSpacing: 1.2, fontWeight: '800' },
-  bossKicker: { color: colors.mint },
-  title: { color: colors.ink, fontSize: 25, fontWeight: '900' },
-  bossTitle: { color: colors.card },
-  body: { color: colors.ink, fontSize: 16, lineHeight: 23 },
-  option: { minHeight: 48, padding: 13, justifyContent: 'center', borderWidth: 1, borderColor: colors.line, borderRadius: 12, backgroundColor: colors.card },
-  optionLabel: { color: colors.ink, fontSize: 16, fontWeight: '700' },
-  pressed: { backgroundColor: colors.lavender },
+  screen: { flex: 1, backgroundColor: colors.background },
+  scroll: { paddingHorizontal: 20, paddingTop: 8 },
+  column: { width: '100%', maxWidth: 680, alignSelf: 'center', gap: 16 },
+  header: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
+  back: { flexDirection: 'row', alignItems: 'center', gap: 4, minHeight: 48, paddingRight: 4 },
+  backLabel: { color: colors.ink, fontSize: 15, fontWeight: '700' },
+  headerTitle: { flex: 1, color: colors.ink, fontSize: 18, fontWeight: '800', textAlign: 'center' },
+  help: { minHeight: 48, minWidth: 48, alignItems: 'center', justifyContent: 'center' },
+  meta: { color: colors.muted, fontSize: 13, fontWeight: '800', letterSpacing: 0.6 },
+  heading: { color: colors.ink, fontSize: 29, fontWeight: '900', letterSpacing: -0.6 },
+  subtitle: { color: colors.muted, fontSize: 16, lineHeight: 24 },
+  steps: { flexDirection: 'row', paddingVertical: 8 },
+  step: { flex: 1, alignItems: 'center', gap: 8 },
+  connector: { position: 'absolute', left: '50%', width: '100%', height: 2, top: 22, backgroundColor: colors.controlLine },
+  stepCircle: { width: 44, height: 44, borderRadius: 24, borderWidth: 2, borderColor: colors.controlLine, backgroundColor: colors.background, alignItems: 'center', justifyContent: 'center' },
+  completedStep: { backgroundColor: colors.mint, borderColor: colors.success },
+  currentStep: { borderColor: colors.purple },
+  currentDot: { width: 14, height: 14, borderRadius: 7, backgroundColor: colors.purple },
+  stepLabel: { color: colors.ink, fontSize: 13, fontWeight: '700', textAlign: 'center' },
+  card: { ...clay, gap: 16, padding: 20, borderRadius: 28, backgroundColor: colors.card },
+  kicker: { color: colors.muted, fontSize: 13, letterSpacing: 0.6, fontWeight: '800' },
+  title: { color: colors.ink, fontSize: 23, fontWeight: '900', lineHeight: 31 },
+  body: { color: colors.ink, fontSize: 16, lineHeight: 24 },
+  option: { ...clay, minHeight: 54, padding: 14, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10,
+    borderWidth: 2, borderColor: colors.controlLine, borderRadius: 20, backgroundColor: colors.card },
+  optionLabel: { flex: 1, color: colors.ink, fontSize: 17, fontWeight: '700', lineHeight: 24 },
+  pressed: { opacity: 0.75 },
   right: { backgroundColor: colors.mint },
-  wrong: { backgroundColor: '#fff0d4' },
-  warning: { color: colors.ink, backgroundColor: '#fff0d4', padding: 12, borderRadius: 12 },
-  feedback: { gap: 12, padding: 12, borderRadius: 12 },
-  strong: { fontWeight: '800' },
-  primary: { minHeight: 48, padding: 13, justifyContent: 'center', borderRadius: 12, backgroundColor: colors.purple },
-  primaryLabel: { color: colors.card, fontSize: 16, fontWeight: '800' },
-  complete: { gap: 12, padding: 16, borderRadius: 18, backgroundColor: colors.mint },
+  wrong: { backgroundColor: colors.attentionSurface },
+  selectedRight: { backgroundColor: colors.mint, borderColor: colors.success },
+  selectedWrong: { backgroundColor: colors.attentionSurface, borderColor: colors.attention },
+  warning: { color: colors.ink, backgroundColor: colors.attentionSurface, padding: 16, borderRadius: 20, fontSize: 16, lineHeight: 24 },
+  feedback: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16, borderRadius: 22 },
+  feedbackText: { flex: 1, color: colors.ink, fontSize: 15, lineHeight: 23 },
+  feedbackTitle: { fontSize: 19, fontWeight: '800' },
+  primary: { ...clay, minHeight: 54, padding: 14, flexDirection: 'row', gap: 8, alignItems: 'center', justifyContent: 'center', borderRadius: 22, backgroundColor: colors.purple },
+  primaryLabel: { color: colors.white, fontSize: 17, fontWeight: '800', flexShrink: 1 },
+  complete: { ...clay, gap: 16, padding: 20, borderRadius: 28, backgroundColor: colors.mint },
+  saveNotice: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingTop: 4 },
+  saveText: { flexShrink: 1, color: colors.muted, fontSize: 14, lineHeight: 21 },
+  footnote: { color: colors.muted, fontSize: 13, lineHeight: 20, textAlign: 'center' },
 });
