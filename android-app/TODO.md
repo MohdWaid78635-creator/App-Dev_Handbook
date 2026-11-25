@@ -1,5 +1,11 @@
 # BuildWisp to-do
 
+## Next session · 27 November 2026
+
+Start with the **Plan Mode redesign prototype**. Show it for approval before implementing the full redesign. Keep the approved clay style and the technology/platform icons already added to its dropdowns.
+
+Approved screens are implemented through Your Projects and the project editor. The latest checks passed: 50 tests, TypeScript, and Android export. Native Android appearance, navigation, TalkBack, large text, and landscape checks remain pending.
+
 ## 25 November 2026 · Approved design session
 
 - [x] Approve the colour card: violet, mint, lilac, porcelain, and plum ink.
