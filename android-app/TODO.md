@@ -22,7 +22,9 @@
 - [x] Implement Review room with the clay question card, saved queue, answer feedback, study entry, and shared navigation.
 - [x] Prototype and approve Daily Practice and Flashcards.
 - [x] Implement both study modes with clay tabs, daily feedback, revealed cards, saved counts, and recall actions.
-- [ ] Prototype Start Here / setup checkpoints for review before redesigning it.
+- [x] Prototype and approve Start Here / setup checkpoints.
+- [x] Implement Start Here with expandable checkpoints, expected results, saved checkmarks, and the first-mission action.
+- [ ] Prototype Your Projects and the project editor for review before redesigning them.
 
 The approved Mission Map is at `/missions`; the remaining screens are awaiting their own prototypes and approvals.
 

@@ -22,7 +22,9 @@ Check Help and each bottom navigation action, Android Back, TalkBack labels, 375
 
 ## Setup device check
 
-1. Open **Start Here** from the mission map and confirm all four checkpoints and their expected results are visible. Open the capstone guide.
+The approved clay layout expands the first unchecked step on entry. Each checkpoint header controls its instructions; the checkbox inside controls saved evidence independently. Checked steps can be reopened and unchecked. The first-edit commands are selectable in a dedicated block. The first-mission action stays enabled regardless of checked count, docked on taller screens and inline for short windows or above 1.5× font scaling. Check Home, Help, the capstone guide, resource errors, and the last checkpoint above the dock. Native rendering, disclosure/checkbox announcements, large text, and landscape checks remain pending.
+
+1. Open **Start Here** from Home, expand each of the four checkpoints, and confirm its instructions and expected results are available. Open the capstone guide.
 2. Mark a checkpoint and open a mission. Use Android Back to return to the map. Confirm the mission is marked **Opened** and that **Resume mission** opens the same mission.
 3. Fully close and reopen BuildWisp. Confirm the saved check and latest mission are restored. Uncheck the milestone, reopen BuildWisp, and verify it remains unchecked.
 4. Repeat the main interactions with TalkBack and a larger system font. Confirm the checkbox announces its state and no required text or control is clipped.
