@@ -117,6 +117,8 @@ The approved clay layout shows the next missed/due question directly, with a liv
 
 ## Daily Practice and Flashcards device check
 
+Both approved study modes use the shared clay tab rail and Review header link. Daily Practice shows the real streak and lesson title, marks the correct answer and any incorrect saved selection, and offers **Review this lesson** after the first saved attempt. Flashcards show real due and recalled counts, the glossary term, **Reveal meaning**, then **I knew it** / **Show again** after reveal. The card face expands to fit longer definitions and text scaling. Caught-up, load-failure, and save-failure states remain available; a failed grade keeps the current card and meaning visible. Native appearance, tab/reveal interactions, TalkBack announcements, and large-text/landscape checks remain pending.
+
 1. Open **Review room → Daily Practice and Flashcards**. Answer today’s question, read the explanation, and open the related lesson. Restart BuildWisp and verify that the first answer is still recorded and the choices are disabled.
 2. Use a test device or emulator to advance the local date and verify that another question is available. Answer it and confirm the streak increments. Leave a day unanswered and confirm the streak restarts when you next answer.
 3. Switch to **Flashcards**. Reveal a term and tap **Show again**. Verify that it returns after the other due terms. Tap **I knew it** on a different card and verify that it leaves today’s queue, including after a restart.

@@ -20,7 +20,9 @@
 - [x] Implement Lesson Detail with clay disclosures, expandable examples, full lesson/build content, and accessible Practice actions.
 - [x] Prototype and approve Review room.
 - [x] Implement Review room with the clay question card, saved queue, answer feedback, study entry, and shared navigation.
-- [ ] Prototype Daily Practice and Flashcards for review before redesigning them.
+- [x] Prototype and approve Daily Practice and Flashcards.
+- [x] Implement both study modes with clay tabs, daily feedback, revealed cards, saved counts, and recall actions.
+- [ ] Prototype Start Here / setup checkpoints for review before redesigning it.
 
 The approved Mission Map is at `/missions`; the remaining screens are awaiting their own prototypes and approvals.
 
