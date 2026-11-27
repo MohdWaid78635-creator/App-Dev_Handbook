@@ -1,6 +1,7 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import type { ComponentProps } from 'react';
+import { View } from 'react-native';
 import { homeColors } from '../theme';
 
 type IconName = ComponentProps<typeof MaterialCommunityIcons>['name'];
@@ -14,6 +15,10 @@ const icons: Record<string, Record<string, IconName>> = {
 };
 
 export function TechnologyIcon({ field, value, size = 24 }: { field: string; value: string; size?: number }) {
+  if (field === 'stack' && (value === 'expo-ts' || value === 'expo-js')) return <View style={{ flexDirection: 'row', gap: 5 }} importantForAccessibility="no-hide-descendants">
+    <MaterialCommunityIcons name={value === 'expo-ts' ? 'language-typescript' : 'language-javascript'} size={size} color={homeColors.purple} />
+    <MaterialCommunityIcons name="react" size={size} color={homeColors.purple} />
+  </View>;
   if (field === 'stack' && value === 'flutter') return <FontAwesome6 name="flutter" iconStyle="brand" size={size}
     color={homeColors.purple} importantForAccessibility="no" />;
   if (!icons[field]) return null;

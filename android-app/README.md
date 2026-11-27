@@ -83,6 +83,10 @@ The three-field editor keeps required-name validation, field limits, duplicate-s
 
 ## Plan Mode device check
 
+The approved clay redesign uses the four stages **Idea**, **Tools**, **Security**, and **Review**. The current stage is highlighted; visiting a stage does not mark it validated. Every existing field, recommendation, description, cost label, official link, conflict, recorded decision, and prompt remains available. Expo choices combine language and React icons. Platform/computer fields share a row only when width and font size allow it. Next, Previous, and Save draft are docked on taller screens, or placed after the content on short windows and above 1.5× font scaling. Next changes the stage without claiming to save; Save draft explicitly stores the draft. Save/copy feedback stays with the action area.
+
+Native form/dropdown appearance, keyboard and dock behavior, TalkBack, large text, landscape, source opening, copy, and navigation checks remain pending.
+
 1. Open **Your projects → Open Plan Mode**. Confirm the draft starts with the saved project’s audience and goal. Enter a first user journey and save the draft. Reopen it after restarting BuildWisp.
 2. Choose **Android** and **No** for device sync. Compare language, storage, and sign-in options. Confirm the recommended Expo, SQLite, and no-account choices, along with descriptions, cost labels, and official links.
 3. Combine local-only storage with cross-device sync and open **Review decisions**. Confirm the conflict appears and the draft prompt asks the coding agent to resolve it before setup. Fix the choices and verify the prompt includes your first-build proof, install checks, and security decisions.
