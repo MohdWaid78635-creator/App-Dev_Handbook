@@ -94,6 +94,10 @@ Native form/dropdown appearance, keyboard and dock behavior, TalkBack, large tex
 
 ## Build Workspace device check
 
+The approved clay layout shows saved proof totals, a mission dropdown, and expandable build cards. The first card opens on entry or mission change; its proof section starts expanded, while instructions and recovery/source guidance expand separately. Copy/Preview actions follow the open card and disappear when no card is open. Preview reveals selectable project-specific text and scrolls to the card. On short windows or above 1.5× text scaling, actions flow after the content instead of docking. Copy results from a previously open card are ignored after switching cards. Optional-card reasons, Resume, saved checkmarks, unchecking, source details, and failed-save handling remain available.
+
+Native disclosure and checkbox interactions, prompt scrolling/copy, clipboard fallback, optional-card editing, keyboard/dock behavior, TalkBack, large text, and landscape checks remain pending.
+
 1. Choose **Your projects → Open Build Workspace**. Select a mission and expand a card. Check that the instructions, official source, and proof checklist match the handbook. Preview and copy the prompt, then paste it into a local note to confirm it uses the project name.
 2. Check all the proof items for a card. Confirm that it shows **Proof recorded** and the project total increases. Restart BuildWisp, reopen the project, and confirm those checks are saved. Uncheck an item and verify the count decreases.
 3. Switch to another project and check that it has separate proof. Open the workspace from a lesson and confirm it starts on that mission after you choose a project.
