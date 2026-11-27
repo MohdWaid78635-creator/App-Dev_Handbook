@@ -77,6 +77,17 @@ test('startup failure is recoverable and does not expose raw error details', asy
   controller.dispose();
 });
 
+test('an unresponsive session check exits loading instead of waiting forever', { timeout: 1000 }, async () => {
+  const fake = fakeAuth();
+  const controller = createSessionController(fake.auth, () => {}, 10);
+  await controller.ready;
+  assert.equal(controller.getSnapshot().status, 'error');
+  fake.finish(session('late'));
+  await Promise.resolve();
+  assert.equal(controller.getSnapshot().userId, null);
+  controller.dispose();
+});
+
 test('native callbacks accept only the intended PKCE callback and reject token injection', () => {
   assert.deepEqual(parseAuthCallback('buildquestacademy://auth-callback?code=abc-123'), { kind: 'code', code: 'abc-123', recovery: false });
   assert.deepEqual(parseAuthCallback('buildquestacademy://auth-callback?code=abc&type=recovery'), { kind: 'code', code: 'abc', recovery: true });
