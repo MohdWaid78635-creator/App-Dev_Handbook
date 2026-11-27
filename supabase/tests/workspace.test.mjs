@@ -72,7 +72,7 @@ test('all saved data kinds validate on the server, including evidence and dates'
     ['readiness', { projectId: id(100), review: legacy.data.readiness[0].record.reviews[0] }],
   ]) {
     const request = mutation(kind, { entityId: kind === 'readiness' ? id(101) : 'singleton', payload });
-    assert.equal((await rpc(db, 'apply_sync_mutation', request)).status, 'applied');
+    assert.equal((await rpc(db, 'apply_sync_mutation', request)).status, 'applied', kind);
   }
   const invalidReview = { projectId: id(100), review: { build: 'bad', items: { 'auth:0': { status: 'passed', evidence: '' } } } };
   const badInputs = [
