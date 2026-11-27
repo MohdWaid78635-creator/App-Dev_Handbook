@@ -15,4 +15,5 @@ export const homeColors = {
   purple: '#6746C3', mint: '#C8EBDD', track: '#D6C5EC', white: '#FFFFFF',
   attention: '#885500', attentionSurface: '#FFF0D4', controlLine: '#8F819E',
   success: '#24664F',
+  blocked: '#B13F4D', blockedSurface: '#FFF0F1',
 };

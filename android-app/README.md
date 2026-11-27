@@ -114,6 +114,8 @@ The approved clay layout shows the four milestones, actual saved count, and dist
 
 ## Production Readiness device check
 
+The approved clay overview and check editor use a build selector, four saved-status counts, section rows, and separate copy/preview controls. Draft edits show **Unsaved changes**; status counts reflect saved results only. Passed, Blocked, and Not applicable still require evidence or a reason before saving. Existing per-project/build storage, failure handling, and prompt generation remain intact. Native appearance, keyboard/navigation behavior, TalkBack, large-text, and landscape checks remain pending.
+
 1. Open **Your projects → Production Readiness** and enter a build number or commit. Confirm the overview lists 133 checks across 17 sections.
 2. Open a section and a check. Preview and copy its prompt. Confirm the text names the project, build, and selected check. Return to the overview and compare it with the full read-only audit prompt.
 3. Try saving **Passed** without evidence. Add a redacted result or reason, save, and verify the status and counts. Restart BuildWisp and reopen the same build. Open another build and another project to confirm each has separate results.

@@ -2,9 +2,9 @@
 
 ## Current session · 27 November 2026
 
-The **Plan Mode**, **Build Workspace**, and **Project Milestones** prototypes were approved and their clay redesigns implemented. Next: show the **Production Readiness prototype** for approval before changing that screen.
+The **Plan Mode**, **Build Workspace**, **Project Milestones**, and **Production Readiness** prototypes were approved and their clay redesigns implemented. Next: show the **Help and Resource Library prototype** for approval before changing that screen.
 
-Approved screens are implemented through Project Milestones. Native Android appearance, navigation, TalkBack, large text, and landscape checks remain pending. Validation details are recorded in `docs/home-design.tdd.md`.
+Approved screens are implemented through Production Readiness. Native Android appearance, navigation, TalkBack, large text, and landscape checks remain pending. Validation details are recorded in `docs/home-design.tdd.md`.
 
 ## 25 November 2026 · Approved design session
 
@@ -38,7 +38,10 @@ Approved screens are implemented through Project Milestones. Native Android appe
 - [x] Implement Build Workspace with the mission selector, proof progress, disclosures, and active-card prompt actions.
 - [x] Prototype and approve Project Milestones.
 - [x] Implement Project Milestones with evidence states, saved counts, note editing, and guarded summary preview/export.
-- [ ] Prototype Production Readiness for review before redesigning it.
+- [x] Prototype and approve Production Readiness overview and check editor.
+- [x] Implement Production Readiness with build selection, saved status counts, evidence validation, and unsaved-edit feedback.
+- [ ] Prototype Help and Resource Library for review before redesigning it.
+- [ ] Prototype Backup and Restore for review before redesigning it.
 
 The approved Mission Map is at `/missions`; the remaining screens are awaiting their own prototypes and approvals.
 
