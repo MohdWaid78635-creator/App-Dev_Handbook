@@ -7,7 +7,7 @@ export type AuthPort = {
 };
 export type SessionState = { status: 'loading' | 'guest' | 'signed-in' | 'error'; userId: string | null; generation: number; error: string };
 
-export function createSessionController(auth: AuthPort, onChange: (state: SessionState) => void) {
+export function createSessionController(auth: AuthPort, onChange: (state: SessionState) => void, timeoutMs = 10000) {
   let alive = true;
   let foreground: boolean | undefined;
   let state: SessionState = { status: 'loading', userId: null, generation: 0, error: '' };
@@ -24,10 +24,12 @@ export function createSessionController(auth: AuthPort, onChange: (state: Sessio
   // Auth callbacks stay synchronous; calling another auth method here can deadlock the SDK.
   const { data: { subscription } } = auth.onAuthStateChange((_event, session) => publish(session));
   const startupGeneration = state.generation;
-  const ready = auth.getSession().then(result => {
+  let timer: ReturnType<typeof setTimeout>;
+  const timeout = new Promise<never>((_resolve, reject) => { timer = setTimeout(() => reject(new Error('Session check timed out.')), timeoutMs); });
+  const ready = Promise.race([auth.getSession(), timeout]).then(result => {
     if (!alive || state.generation !== startupGeneration) return;
     if (result.error) failure(startupGeneration); else publish(result.data.session);
-  }).catch(() => failure(startupGeneration));
+  }).catch(() => failure(startupGeneration)).finally(() => clearTimeout(timer));
 
   return {
     ready,
