@@ -124,13 +124,39 @@ test('project mappings isolate equal numeric IDs across namespaces and reject am
 });
 
 test('import receipts match the account, source dataset and operation before marking import complete', () => {
-  const expected = { ownerId: owner, guestDatasetId: other, operationId };
-  const receipt = { schemaVersion: 1, ...expected, workspaceRevision: 1, mappings: [mapping] };
+  const expected = { ownerId: owner, guestDatasetId: other, operationId, localProjectIds: [1] };
+  const receipt = { schemaVersion: 1, ownerId: owner, guestDatasetId: other, operationId, workspaceRevision: 1, mappings: [mapping] };
   assert.deepEqual(parseImportReceipt(JSON.stringify(receipt), expected), receipt);
   for (const changes of [{ ownerId: other }, { guestDatasetId: owner }, { operationId: other },
     { workspaceRevision: 0 }, { schemaVersion: 2 }, { mappings: [mapping, mapping] }, { extra: 'unexpected' }]) {
     assert.throws(() => parseImportReceipt(JSON.stringify({ ...receipt, ...changes }), expected));
   }
+});
+
+test('an applied response cannot acknowledge different content or the opposite action', () => {
+  const request = mutation();
+  const applied = { schemaVersion: 1, status: 'applied', operationId, record: record() };
+  applied.record.payload.goal = 'A different edit';
+  assert.throws(() => parseSyncResponse(JSON.stringify(applied), request));
+  const deleted = { ...record(), payload: null, deletedAt: '2026-11-27T03:30:00.000Z' };
+  assert.throws(() => parseSyncResponse(JSON.stringify({ ...applied, record: deleted }), request));
+  const deletion = { ...request, action: 'delete', payload: null, baseRevision: 1 };
+  assert.throws(() => parseSyncResponse(JSON.stringify({ ...applied, record: { ...record(), revision: 2, workspaceRevision: 2 } }), deletion));
+  const reorderedPayload = Object.fromEntries(Object.entries(request.payload).reverse());
+  const accepted = { ...applied, record: { ...record(), payload: reorderedPayload } };
+  assert.deepEqual(parseSyncResponse(JSON.stringify(accepted), request), accepted, 'object key order is not content');
+  const deletedResponse = { ...applied, record: { ...deleted, revision: 2, workspaceRevision: 2 } };
+  assert.deepEqual(parseSyncResponse(JSON.stringify(deletedResponse), deletion), deletedResponse);
+});
+
+test('an import receipt must cover exactly the projects in the requested snapshot', () => {
+  const expected = { ownerId: owner, guestDatasetId: other, operationId, localProjectIds: [1, 2] };
+  const receipt = { schemaVersion: 1, ownerId: owner, guestDatasetId: other, operationId, workspaceRevision: 1, mappings: [mapping] };
+  assert.throws(() => parseImportReceipt(JSON.stringify(receipt), expected));
+  assert.throws(() => parseImportReceipt(JSON.stringify({ ...receipt, mappings: [] }), expected));
+  const complete = { ...receipt, mappings: [mapping, { ...mapping, localProjectId: 2, cloudProjectId: other }] };
+  assert.deepEqual(parseImportReceipt(JSON.stringify(complete), expected), complete);
+  assert.throws(() => parseImportReceipt(JSON.stringify(complete), { ...expected, localProjectIds: [1, 3] }));
 });
 
 test('contract limits count UTF-8 bytes and reject oversized or malformed input', () => {

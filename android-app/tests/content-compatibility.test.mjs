@@ -45,6 +45,7 @@ const incompatible = [
   ['changed question meaning', d => { d.missions[0].quiz[0].prompt = 'Different assessment'; }],
   ['reordered answer choices', d => { d.missions[0].quiz[0].options.reverse(); }],
   ['changed answer index', d => { d.missions[0].quiz[0].answer = 0; }],
+  ['changed question scoring kind', d => { d.missions[0].quiz[0].kind = 'boss'; }],
   ['removed build card', d => { d.missions[0].steps.pop(); }],
   ['changed stored proof text', d => { d.missions[0].steps[0].proof[0] = 'Different proof'; }],
   ['removed readiness group', d => { d.readiness.pop(); }],
