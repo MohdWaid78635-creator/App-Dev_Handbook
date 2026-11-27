@@ -4,7 +4,7 @@
 
 Add optional accounts and cloud synchronization for saved work, then make learning content editable through versioned Supabase releases. Keep a local database and bundled lessons so learning and editing continue without internet. Deliver this in separately verified phases; this document authorizes planning only and does not create a Supabase project or change runtime behavior.
 
-Prepared with ECC Planner on 27 November 2026. Repository: `D:/App-Dev_Handbook`; paths below are relative to that root. Proposed files are explicitly marked **new**. Update, 28 November: Phase 1 contracts/fixtures and automated verification are implemented; see [migration evidence](supabase-migration-evidence.md). Installed-device baseline remains a gate before Phase 3 storage cutover. Phases 2–8 are not implemented.
+Prepared with ECC Planner on 27 November 2026. Repository: `D:/App-Dev_Handbook`; paths below are relative to that root. Proposed files are explicitly marked **new**. Update, 28 November: Phase 1 and Phase 2 foundation code/local verification are implemented; see [Phase 1 evidence](supabase-migration-evidence.md) and [Phase 2 evidence](supabase-phase-two-evidence.md). Full Supabase-stack checks and the installed-device baseline remain gates before enabling cloud integration or Phase 3 storage cutover. Phases 3–8 are not implemented.
 
 ## Requirements & Scope
 
@@ -135,7 +135,9 @@ Status: automated baseline/fixture and contract work complete; installed-device 
 
 ### Phase 2: Supabase schema and access rules
 
-3. **Add reproducible backend foundation** (Files: **new** `supabase/config.toml`, **new** `supabase/migrations/202611270001_workspace.sql`, **new** `supabase/migrations/202611270002_content.sql`, **new** `supabase/tests/database/ownership.test.sql`, **new** `supabase/tests/database/sync.test.sql`)
+Status: schema/client foundations and embedded PostgreSQL/pure session checks complete. The verified CLI uses `config.jsonc`; migrations are `202611280001_workspace.sql`, `202611280002_batches.sql`, and `202611280003_content.sql`. The AuthProvider is prepared but intentionally not mounted until Phase 3 isolates stored accounts. Full Supabase/pgTAP, real Auth/API and device integration checks are pending.
+
+3. **Add reproducible backend foundation** (Files: `supabase/config.jsonc`, `supabase/migrations/202611280001_workspace.sql`, `supabase/migrations/202611280002_batches.sql`, `supabase/migrations/202611280003_content.sql`, `supabase/tests/database/ownership.test.sql`, `supabase/tests/database/sync.test.sql`)
    - Action: Initialize a local development project, implement the tables above, grants/RLS, indexes, revision and idempotent write RPCs, and transactional import/replace operations. Test users A/B and signed-out access before exposing data. Generate client database types after schema passes.
    - Why: A publishable app key must never grant access to someone else's work or content publishing.
    - Dependencies: Step 2. Hosted setup needs an identified development project; local SQL/test work can proceed first.

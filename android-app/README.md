@@ -10,13 +10,17 @@ Run `npm test`, `npm run typecheck`, and `npm run check:bundle` to verify this i
 
 ## Expo Android preview build
 
-The app is linked to `@wajid.mohd7866/buildwisp`, following the user's requested Expo account change. From `android-app`, run `eas build --platform android --profile preview` to create an installable APK through Expo EAS. The `preview` profile uses internal distribution; the post-install hook regenerates curriculum JSON from the repository's `guide/` sources before bundling. This build uses the current local-data app; Phase 2 Supabase tests are an unfinished, separate backend checkpoint.
+The app is linked to `@wajid.mohd7866/buildwisp`, following the user's requested Expo account change. From `android-app`, run `eas build --platform android --profile preview` to create an installable APK through Expo EAS. The `preview` profile uses internal distribution; the post-install hook regenerates curriculum JSON from the repository's `guide/` sources before bundling. The preview requested before resuming Phase 2 uses the approved local-data app checkpoint; it does not enable cloud saves.
 
 Initial attempt on 28 November 2026 under `md.wajid.786335`: TypeScript passed; EAS created the remote Android keystore and uploaded the project, then rejected the build because that account's monthly free Android build allowance was exhausted. Expo reported a reset on 1 December 2026. That attempt created no APK or running cloud build; no paid plan was purchased. The user subsequently selected and logged in to `wajid.mohd7866`, and the app was linked to a new EAS project there.
 
+The retry under `wajid.mohd7866` finished successfully: [build details](https://expo.dev/accounts/wajid.mohd7866/projects/buildwisp/builds/eda1d1d1-c089-4879-af01-d606c43106b9), [preview APK](https://expo.dev/artifacts/eas/XcUunWUrXvMXzkhVD5JWvT5i80J3zpv7pxB937HgVF0.apk). It was submitted from checkpoint `7923c03` before Phase 2 resumed; it contains the approved local-data app, not enabled Supabase integration. The APK has not been installed/tested in this environment.
+
 ## Supabase migration status
 
-Phase 1 adds synthetic migration fixtures and pure sync/content contract validators, with 114 tests passing. It does not enable accounts, change local storage, publish remote lessons, or migrate user data. See [the ECC Planner plan](docs/supabase-migration.plan.md) and [step-by-step validation evidence](docs/supabase-migration-evidence.md). The installed Android backup/reopen baseline remains required before storage cutover.
+Phase 1 adds migration fixtures and sync/content contracts. Phase 2 adds owner-isolated PostgreSQL tables, guarded write/import/replace RPCs, immutable content-release guards, and a disabled-by-default typed client/session foundation. All 121 app tests and 14 embedded PostgreSQL checks pass, as do TypeScript, database type drift checks and Android bundling. See [the ECC Planner plan](docs/supabase-migration.plan.md), [Phase 1 evidence](docs/supabase-migration-evidence.md), [Phase 2 evidence](docs/supabase-phase-two-evidence.md), and [database setup](../supabase/README.md).
+
+No hosted Supabase database has been changed. The AuthProvider remains unmounted until Phase 3 adds account-scoped local storage; there is no account UI or cloud upload yet. Full Supabase-stack/JWT/API/concurrency checks need a container runtime or development infrastructure. The installed Android backup/reopen baseline remains required before storage cutover.
 
 ## Approved splash and home design
 
