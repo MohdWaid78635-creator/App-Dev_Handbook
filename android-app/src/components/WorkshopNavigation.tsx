@@ -1,5 +1,5 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Link } from 'expo-router';
+import { Link } from './Link';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { homeColors as c } from '../theme';
@@ -35,8 +35,8 @@ const s = StyleSheet.create({
   nav: { width: '100%', maxWidth: 680, alignSelf: 'center', flexDirection: 'row', borderRadius: 26, paddingVertical: 8, backgroundColor: c.card,
     boxShadow: [{ offsetX: 0, offsetY: 5, blurRadius: 12, color: '#39205B18' },
       { offsetX: 2, offsetY: 2, blurRadius: 5, color: '#FFFFFFA0', inset: true }] },
-  item: { flex: 1, minHeight: 54, gap: 4, alignItems: 'center', justifyContent: 'center', borderRadius: 16, paddingHorizontal: 2 },
-  label: { fontSize: 12, fontWeight: '700', textAlign: 'center', color: c.muted },
+  item: { flex: 1, minWidth: 0, minHeight: 54, gap: 4, alignItems: 'center', justifyContent: 'center', borderRadius: 16, paddingHorizontal: 2 },
+  label: { maxWidth: '100%', flexShrink: 1, fontSize: 12, fontWeight: '700', textAlign: 'center', color: c.muted },
   selected: { color: c.purple },
   pressed: { opacity: 0.65 },
 });

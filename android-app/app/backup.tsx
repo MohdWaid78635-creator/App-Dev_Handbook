@@ -1,7 +1,8 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { getDocumentAsync } from 'expo-document-picker';
 import { File, Paths } from 'expo-file-system';
-import { Link, usePreventRemove } from 'expo-router';
+import { usePreventRemove } from 'expo-router';
+import { Link } from '../src/components/Link';
 import { isAvailableAsync, shareAsync } from 'expo-sharing';
 import { useRef, useState } from 'react';
 import type { ComponentRef } from 'react';
