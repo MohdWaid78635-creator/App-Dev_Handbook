@@ -12,6 +12,8 @@ Run `npm test`, `npm run typecheck`, and `npm run check:bundle` to verify this i
 
 The app is linked to `@md.wajid.786335/buildwisp`. From `android-app`, run `eas build --platform android --profile preview` to create an installable APK through Expo EAS. The `preview` profile uses internal distribution; the post-install hook regenerates curriculum JSON from the repository's `guide/` sources before bundling. This build uses the current local-data app; Phase 2 Supabase tests are an unfinished, separate backend checkpoint.
 
+Attempt on 28 November 2026: TypeScript passed; EAS created the remote Android keystore and uploaded the project, then rejected the build because the personal account's monthly free Android build allowance was exhausted. Expo reported a reset on 1 December 2026. No APK or running cloud build was created. Retry the command after capacity becomes available; no paid plan was purchased.
+
 ## Supabase migration status
 
 Phase 1 adds synthetic migration fixtures and pure sync/content contract validators, with 114 tests passing. It does not enable accounts, change local storage, publish remote lessons, or migrate user data. See [the ECC Planner plan](docs/supabase-migration.plan.md) and [step-by-step validation evidence](docs/supabase-migration-evidence.md). The installed Android backup/reopen baseline remains required before storage cutover.
