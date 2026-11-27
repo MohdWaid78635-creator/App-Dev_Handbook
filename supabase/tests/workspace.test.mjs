@@ -13,7 +13,7 @@ after(async () => { await db?.close(); });
 let sequence = 1;
 function mutation(kind = 'project', overrides = {}) {
   return { schemaVersion: 1, ownerId: users.a, operationId: id(sequence++), kind,
-    entityId: kind === 'learning' || kind === 'study' ? 'singleton' : id(100), baseRevision: 0,
+    entityId: kind === 'learning' || kind === 'study' ? 'singleton' : id(100), baseRevision: 0, workspaceEpoch: 0,
     action: 'upsert', payload: structuredClone(project), ...overrides };
 }
 
@@ -143,6 +143,13 @@ test('replacement is conditional, tombstones removed rows, and stale clients can
   const receipt = await rpc(db, 'commit_workspace_batch', request);
   assert.ok(receipt.workspaceRevision > before.workspaceRevision);
   assert.deepEqual(await rpc(db, 'commit_workspace_batch', request), receipt);
-  assert.equal((await rpc(db, 'apply_sync_mutation', mutation('project', { ownerId: users.b, entityId: id(202) }))).status, 'conflict');
+  assert.equal((await rpc(db, 'apply_sync_mutation', mutation('project', { ownerId: users.b, entityId: id(202), workspaceEpoch: 1 }))).status, 'conflict');
   await assert.rejects(rpc(db, 'commit_workspace_batch', { ...request, operationId: id(221) }), /revision|stale/i);
+});
+
+test('replacement invalidates even offline projects that have never reached the server', async () => {
+  await asRole(db, users.b);
+  const result = await rpc(db, 'apply_sync_mutation', mutation('project', { ownerId: users.b, entityId: id(300) }));
+  assert.equal(result.status, 'rejected');
+  assert.equal(result.code, 'stale_workspace');
 });

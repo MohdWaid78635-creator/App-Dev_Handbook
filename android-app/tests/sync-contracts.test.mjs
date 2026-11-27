@@ -18,7 +18,7 @@ const payloads = {
 function mutation(kind = 'project') {
   return { schemaVersion: 1, ownerId: owner, operationId, kind,
     entityId: kind === 'learning' || kind === 'study' ? 'singleton' : kind === 'project' ? projectId : reviewId,
-    baseRevision: 0, action: 'upsert', payload: structuredClone(payloads[kind]) };
+    baseRevision: 0, workspaceEpoch: 0, action: 'upsert', payload: structuredClone(payloads[kind]) };
 }
 function record(kind = 'project') {
   const input = mutation(kind);
@@ -41,6 +41,7 @@ test('mutation boundary rejects wrong ownership, identity, revision, version, ac
     value => { value.schemaVersion = 2; }, value => { value.operationId = ''; },
     value => { value.entityId = '1'; }, value => { value.baseRevision = -1; },
     value => { value.baseRevision = 0.5; }, value => { value.baseRevision = Number.MAX_SAFE_INTEGER + 1; },
+    value => { value.workspaceEpoch = -1; }, value => { delete value.workspaceEpoch; },
     value => { value.kind = 'unknown'; }, value => { value.action = 'replace-all'; },
     value => { value.access_token = 'never-accept-this'; }, value => { delete value.payload; },
     value => { value.payload.id = 1; }, value => { value.payload.plan = []; },
