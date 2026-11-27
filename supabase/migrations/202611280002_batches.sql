@@ -37,6 +37,7 @@ begin
  for item in select * from jsonb_array_elements(request->'mutations') loop
   key:=(item->>'kind')||':'||(item->>'entityId');
   if key is null or key=any(seen) or item->>'action' is distinct from 'upsert' or item->>'operationId'=op::text
+   or exists(select 1 from public.sync_receipts r where r.user_id=actor and r.operation_id=(item->>'operationId')::uuid)
    or (item->>'kind'='project' and not coalesce((item->>'entityId')::uuid=any(cloud_ids),false))
    then raise invalid_parameter_value using message='Invalid or duplicate batch entity'; end if;
   seen:=array_append(seen,key);
@@ -44,16 +45,17 @@ begin
  if mode='replace' then
   -- Keep tombstones and increasing revisions so old devices cannot recreate removed projects.
   ws:=ws+1;
-  update public.user_workspaces set revision=ws where user_id=actor;
+  update public.user_workspaces set revision=ws,epoch=epoch+1 where user_id=actor;
   update public.projects set payload=null,deleted_at=clock_timestamp(),revision=ws where user_id=actor and deleted_at is null;
   update public.release_reviews set payload=null,deleted_at=clock_timestamp(),revision=ws where user_id=actor and deleted_at is null;
-  delete from public.learning_state where user_id=actor;
-  delete from public.study_state where user_id=actor;
+  update public.learning_state set payload='{"checkpoints":[],"openedMissions":[],"quizResults":[]}'::jsonb,revision=ws where user_id=actor;
+  update public.study_state set payload='{"daily":[],"cards":[]}'::jsonb,revision=ws where user_id=actor;
  end if;
  -- Projects must exist before their reviews, regardless of the submitted order.
  for item in select x from jsonb_array_elements(request->'mutations') x order by case x->>'kind' when 'project' then 0 when 'readiness' then 2 else 1 end loop
   if mode='replace' then
    item:=jsonb_set(item,'{baseRevision}',coalesce(buildwisp_private.record_for(actor,item->>'kind',item->>'entityId')->'revision','0'::jsonb));
+   item:=jsonb_set(item,'{workspaceEpoch}',to_jsonb((select epoch from public.user_workspaces where user_id=actor)));
   end if;
   result:=public.apply_sync_mutation(item);
   if result->>'status'<>'applied' then raise invalid_parameter_value using message='Invalid or conflicting batch mutation'; end if;

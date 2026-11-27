@@ -19,7 +19,7 @@ export type Payloads = {
   readiness: { projectId: string; review: ReleaseReview };
 };
 export type EntityKind = keyof Payloads;
-type RequestIdentity = { schemaVersion: 1; ownerId: string; operationId: string; entityId: string; baseRevision: number };
+type RequestIdentity = { schemaVersion: 1; ownerId: string; operationId: string; entityId: string; baseRevision: number; workspaceEpoch: number };
 export type SyncMutation = {
   [K in EntityKind]: RequestIdentity & { kind: K; action: 'upsert'; payload: Payloads[K] }
 }[EntityKind] | RequestIdentity & { kind: 'project' | 'readiness'; action: 'delete'; payload: null };
@@ -29,7 +29,7 @@ export type CloudRecord = {
 }[EntityKind] | RecordIdentity & { kind: 'project' | 'readiness'; deletedAt: string; payload: null };
 export type SyncResponse = { schemaVersion: 1; operationId: string } & (
   { status: 'applied'; record: CloudRecord } | { status: 'conflict'; current: CloudRecord } |
-  { status: 'rejected'; code: 'invalid' | 'forbidden' | 'quota' | 'unsupported' }
+  { status: 'rejected'; code: 'invalid' | 'forbidden' | 'quota' | 'unsupported' | 'stale_workspace' }
 );
 export type ProjectMapping = { namespace: Namespace; localProjectId: number; cloudProjectId: string };
 export type ImportIdentity = { ownerId: string; guestDatasetId: string; operationId: string };
@@ -78,10 +78,11 @@ function equalJson(left: unknown, right: unknown): boolean {
 
 export function parseMutation(source: string, ownerId: string): SyncMutation {
   const value = object(parseJson(source, contractLimits.mutationBytes), 'mutation',
-    ['schemaVersion', 'ownerId', 'operationId', 'kind', 'entityId', 'baseRevision', 'action', 'payload']);
+    ['schemaVersion', 'ownerId', 'operationId', 'kind', 'entityId', 'baseRevision', 'workspaceEpoch', 'action', 'payload']);
   const kind = identity(value, ownerId);
   uuid(value.operationId);
   const revision = integer(value.baseRevision, 'base revision');
+  integer(value.workspaceEpoch, 'workspace epoch');
   if (value.action === 'delete') {
     requireThat((kind === 'project' || kind === 'readiness') && revision > 0 && value.payload === null, 'Invalid deletion intent.');
   } else {
@@ -113,7 +114,7 @@ export function parseSyncResponse(source: string, request: SyncMutation): SyncRe
   requireThat(value.schemaVersion === syncSchemaVersion && uuid(value.operationId) === request.operationId, 'Sync response does not match the request.');
   if (value.status === 'rejected') {
     object(value, 'rejection', ['schemaVersion', 'operationId', 'status', 'code']);
-    requireThat(['invalid', 'forbidden', 'quota', 'unsupported'].includes(String(value.code)), 'Unknown rejection code.');
+    requireThat(['invalid', 'forbidden', 'quota', 'unsupported', 'stale_workspace'].includes(String(value.code)), 'Unknown rejection code.');
   } else {
     requireThat(value.status === 'applied' || value.status === 'conflict', 'Unknown sync response status.');
     const key = value.status === 'applied' ? 'record' : 'current';

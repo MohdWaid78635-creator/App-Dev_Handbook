@@ -107,7 +107,8 @@ end $$;
 
 create table public.user_workspaces (
  user_id uuid primary key references auth.users(id) on delete cascade,
- revision bigint not null default 0 check(revision between 0 and 9007199254740991)
+ revision bigint not null default 0 check(revision between 0 and 9007199254740991),
+ epoch bigint not null default 0 check(epoch between 0 and 9007199254740991)
 );
 create table public.learning_state (
  user_id uuid primary key references auth.users(id) on delete cascade,
@@ -171,31 +172,31 @@ end $$;
 
 create function public.workspace_snapshot(request jsonb) returns jsonb
 language plpgsql security definer set search_path = '' as $$
-declare actor uuid:=auth.uid(); ws bigint; records jsonb;
+declare actor uuid:=auth.uid(); ws bigint; generation bigint; records jsonb;
 begin
  if actor is null then raise insufficient_privilege using message='Sign in required'; end if;
  if request<>'{}'::jsonb then raise invalid_parameter_value using message='Invalid snapshot request'; end if;
  insert into public.user_workspaces(user_id) values(actor) on conflict do nothing;
- select revision into ws from public.user_workspaces where user_id=actor for share;
+ select revision,epoch into ws,generation from public.user_workspaces where user_id=actor for share;
  select coalesce(jsonb_agg(buildwisp_private.record_for(actor,kind,entity) order by kind,entity),'[]'::jsonb) into records from (
   select 'learning'::text kind,'singleton'::text entity from public.learning_state where user_id=actor union all
   select 'study','singleton' from public.study_state where user_id=actor union all
   select 'project',id::text from public.projects where user_id=actor union all
   select 'readiness',id::text from public.release_reviews where user_id=actor
  ) rows;
- return jsonb_build_object('schemaVersion',1,'workspaceRevision',ws,'records',records);
+ return jsonb_build_object('schemaVersion',1,'workspaceRevision',ws,'workspaceEpoch',generation,'records',records);
 end $$;
 
 create function public.apply_sync_mutation(request jsonb) returns jsonb
 language plpgsql security definer set search_path = '' as $$
 declare actor uuid:=auth.uid(); old jsonb; prior record; ws bigint; kind text:=request->>'kind'; entity text:=request->>'entityId';
- op uuid; p jsonb:=request->'payload'; rev bigint; response jsonb; del timestamptz; project uuid; build text;
+ op uuid; p jsonb:=request->'payload'; rev bigint; generation bigint; response jsonb; del timestamptz; project uuid; build_name text;
  rejected jsonb:=jsonb_build_object('schemaVersion',1,'operationId',request->>'operationId','status','rejected','code','invalid');
 begin
  if actor is null or request->>'ownerId' is distinct from actor::text then raise insufficient_privilege using message='Invalid owner'; end if;
- if not buildwisp_private.keys(request,array['schemaVersion','ownerId','operationId','kind','entityId','baseRevision','action','payload'])
+ if not buildwisp_private.keys(request,array['schemaVersion','ownerId','operationId','kind','entityId','baseRevision','workspaceEpoch','action','payload'])
   or request->'schemaVersion' is distinct from '1'::jsonb or not buildwisp_private.uuid(request->'operationId') or not buildwisp_private.int(request->'baseRevision')
-  or not coalesce(kind=any(array['learning','study','project','readiness']),false)
+  or not buildwisp_private.int(request->'workspaceEpoch') or not coalesce(kind=any(array['learning','study','project','readiness']),false)
   or not coalesce(request->>'action'=any(array['upsert','delete']),false) or octet_length(request::text)>262144 then return rejected; end if;
  if (kind in ('learning','study') and entity is distinct from 'singleton') or (kind in ('project','readiness') and not buildwisp_private.uuid(request->'entityId')) then return rejected; end if;
  if request->>'action'='delete' then
@@ -203,12 +204,13 @@ begin
  elsif request->>'action'<>'upsert' or not buildwisp_private.valid_payload(kind,p) then return rejected; end if;
  op:=(request->>'operationId')::uuid;
  insert into public.user_workspaces(user_id) values(actor) on conflict do nothing;
- select revision into ws from public.user_workspaces where user_id=actor for update;
+ select revision,epoch into ws,generation from public.user_workspaces where user_id=actor for update;
  select * into prior from public.sync_receipts where user_id=actor and operation_id=op;
  if found then
   if prior.request<>request then raise invalid_parameter_value using message='Operation ID reused with different request'; end if;
   return prior.response;
  end if;
+ if (request->>'workspaceEpoch')::bigint<>generation then return rejected||'{"code":"stale_workspace"}'::jsonb; end if;
  old:=buildwisp_private.record_for(actor,kind,entity); rev:=(request->>'baseRevision')::bigint;
  if coalesce((old->>'revision')::bigint,0)<>rev then
   if old is null or (old->>'revision')::bigint<rev then return rejected; end if;
@@ -216,9 +218,9 @@ begin
  end if;
  if request->>'action'='delete' then del:=clock_timestamp(); p:=null; end if;
  if kind='readiness' and del is null then
-  project:=(p->>'projectId')::uuid; build:=p->'review'->>'build';
+  project:=(p->>'projectId')::uuid; build_name:=p->'review'->>'build';
   if not exists(select 1 from public.projects where user_id=actor and id=project and deleted_at is null)
-   or (old is not null and (old->'payload'->>'projectId' is distinct from p->>'projectId' or old->'payload'->'review'->>'build' is distinct from build)) then return rejected; end if;
+   or exists(select 1 from public.release_reviews r where r.user_id=actor and r.id=entity::uuid and (r.project_id<>project or r.build<>build_name)) then return rejected; end if;
  end if;
  begin
   ws:=ws+1;
@@ -230,7 +232,7 @@ begin
    insert into public.projects values(actor,entity::uuid,p,ws,del) on conflict(user_id,id) do update set payload=excluded.payload,revision=excluded.revision,deleted_at=excluded.deleted_at;
    if del is not null then update public.release_reviews set payload=null,deleted_at=del,revision=ws where user_id=actor and project_id=entity::uuid and deleted_at is null; end if;
   when 'readiness' then
-   if del is null then insert into public.release_reviews values(actor,entity::uuid,project,build,p,ws,null)
+   if del is null then insert into public.release_reviews values(actor,entity::uuid,project,build_name,p,ws,null)
     on conflict(user_id,id) do update set payload=excluded.payload,revision=excluded.revision,deleted_at=null;
    else update public.release_reviews set payload=null,revision=ws,deleted_at=del where user_id=actor and id=entity::uuid; end if;
   end case;
