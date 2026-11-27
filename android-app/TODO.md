@@ -1,15 +1,18 @@
 # BuildWisp to-do
 
-## Current session · 27 November 2026
+## Current session · 28 November 2026
 
-The **Backup and Restore** prototype was approved and its clay redesign implemented. All screens in the agreed screen-by-screen redesign sequence are now implemented. The requested ECC Planner Supabase migration plan is ready in [supabase-migration.plan.md](docs/supabase-migration.plan.md); implementation has not started.
+All screens in the agreed redesign sequence are implemented. Supabase migration Phase 1 contracts, fixtures, and automated checks are complete; see [the plan](docs/supabase-migration.plan.md) and [per-step ECC Planner/TDD evidence](docs/supabase-migration-evidence.md). Next implementation phase: Supabase schema and access rules. The app still uses local storage.
 
 Native Android appearance, navigation, file picker/sharing, restore confirmation, TalkBack, large text, and landscape checks remain pending. Validation details are recorded in `docs/home-design.tdd.md`.
 
-## Supabase migration · planned, not implemented
+## Supabase migration · Phase 1 automated work complete
 
 - [x] Inspect the current local stores, content pipeline, project identities, and backup format.
 - [x] Write the ECC Planner implementation plan, dependencies, risks, tests, and rollback strategy.
+- [x] Phase 1: freeze synthetic legacy backups and content identities; verify round-trip and invalid-input behavior.
+- [x] Phase 1: implement/test versioned sync contracts, ownership/identity/revision checks, import receipts, and content compatibility.
+- [ ] Capture installed Android backup/export/reopen baseline before Phase 3 storage cutover (SDK/device unavailable here).
 - [ ] Confirm the proposed account/content-management defaults and development project setup before dependent integration work.
 - [ ] Implement verified local migration, accounts, cloud sync, and cloud-aware restore in the plan's dependency order.
 - [ ] Prototype and approve new account, import, conflict, and sync screens before implementing them.

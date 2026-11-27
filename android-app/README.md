@@ -8,6 +8,10 @@ From this directory, run `npm ci`, then `npm start`. Open a compatible Expo Go b
 
 Run `npm test`, `npm run typecheck`, and `npm run check:bundle` to verify this increment. Curriculum JSON is regenerated from the handbook for type checking, bundling, and local startup.
 
+## Supabase migration status
+
+Phase 1 adds synthetic migration fixtures and pure sync/content contract validators, with 114 tests passing. It does not enable accounts, change local storage, publish remote lessons, or migrate user data. See [the ECC Planner plan](docs/supabase-migration.plan.md) and [step-by-step validation evidence](docs/supabase-migration-evidence.md). The installed Android backup/reopen baseline remains required before storage cutover.
+
 ## Approved splash and home design
 
 The home screen uses the approved powder lilac, violet, mint, and porcelain clay palette. It reads saved XP and mastery, offers setup for new learners, resumes an unfinished mission, advances after mastery, and offers Review when all missions are mastered. The bottom navigation opens Home, the existing Mission Map, Projects, and Review. The workshop options button opens setup, Help, and Backup and Restore.

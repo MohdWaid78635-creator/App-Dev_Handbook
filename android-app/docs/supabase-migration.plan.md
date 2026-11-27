@@ -4,7 +4,7 @@
 
 Add optional accounts and cloud synchronization for saved work, then make learning content editable through versioned Supabase releases. Keep a local database and bundled lessons so learning and editing continue without internet. Deliver this in separately verified phases; this document authorizes planning only and does not create a Supabase project or change runtime behavior.
 
-Prepared with ECC Planner on 27 November 2026. Repository: `D:/App-Dev_Handbook`; paths below are relative to that root. Proposed files are explicitly marked **new**. No implementation or migration checks have been run for this plan.
+Prepared with ECC Planner on 27 November 2026. Repository: `D:/App-Dev_Handbook`; paths below are relative to that root. Proposed files are explicitly marked **new**. Update, 28 November: Phase 1 contracts/fixtures and automated verification are implemented; see [migration evidence](supabase-migration-evidence.md). Installed-device baseline remains a gate before Phase 3 storage cutover. Phases 2–8 are not implemented.
 
 ## Requirements & Scope
 
@@ -118,6 +118,8 @@ Expose owner reads through RLS. Writes use narrowly scoped RPCs that validate id
 ## Implementation Steps
 
 ### Phase 1: Contracts, fixtures, and recovery baseline
+
+Status: automated baseline/fixture and contract work complete; installed-device baseline pending. ECC Planner checkpoints and TDD proof are recorded in `android-app/docs/supabase-migration-evidence.md`.
 
 1. **Freeze baseline and verify migration fixtures** (Files: `android-app/tests/backup.test.mjs`, `android-app/tests/projects.test.mjs`, `android-app/tests/readiness.test.mjs`, **new** `android-app/tests/fixtures/legacy-workspace.json`, **new** `android-app/docs/supabase-migration-evidence.md`)
    - Action: Confirm actual test filenames, capture representative valid version-1 records using synthetic data, including all nested project fields, two projects, cleared notes, multiple builds, quiz review dates, first daily answers and card schedules. Record current test/typecheck/bundle results and an installed-device backup/reopen baseline before storage cutover.
