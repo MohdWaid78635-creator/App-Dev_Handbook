@@ -24,6 +24,8 @@ No hosted Supabase database has been changed. The AuthProvider remains unmounted
 
 ## Approved splash and home design
 
+The initial native preview exposed a shared Router Slot issue that discarded function-based styles on linked Pressables. All screens now use `src/components/Link.tsx` to preserve callback/static-array styles, ref/event forwarding and native touch geometry. Use that wrapper for new linked controls. See [layout regression evidence](docs/linked-layout-fix.tdd.md). The corrected native preview still requires phone review across all screens; automatic checks alone do not establish prototype fidelity.
+
 The home screen uses the approved powder lilac, violet, mint, and porcelain clay palette. It reads saved XP and mastery, offers setup for new learners, resumes an unfinished mission, advances after mastery, and offers Review when all missions are mastered. The bottom navigation opens Home, the existing Mission Map, Projects, and Review. The workshop options button opens setup, Help, and Backup and Restore.
 
 Device checks still required: cold-start an installed Android build; follow every home action; reopen after earning XP; test 375px and landscape layouts, TalkBack, large system text, and reduced motion. The home layout stacks cards at larger text sizes and does not add looping animation or an artificial splash delay.

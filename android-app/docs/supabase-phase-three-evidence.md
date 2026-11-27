@@ -20,4 +20,6 @@ Date: 28 November 2026. Source: [migration plan](supabase-migration.plan.md), st
 
 ## Validation record
 
-Append actual RED/GREEN evidence and unresolved native gates after execution. No real device records are read by the synthetic test harness.
+Storage-core RED checkpoint `88fbe4f`: all 10 new acceptance tests failed on explicitly unimplemented storage exports. GREEN checkpoint `c41c6fc`: the same 10 tests passed against SQLite, including a real file close/reopen, fault rollback, isolated account IDs/leases, scoped backup and paused restore. TypeScript passed. One test's Windows cleanup hook was corrected to close the SQLite handle before deleting its owned temporary file; the assertions were already passing. Recovery snapshot comparison ignores its newly captured timestamp and compares all backed-up data.
+
+The user then prioritized fixing native layout across all screens. Phase 3 is intentionally unfinished at the tested storage-core checkpoint. No native adapter/provider/root/store-caller cutover has been enabled. See [layout correction](linked-layout-fix.tdd.md). No real device records were read by the synthetic test harness.

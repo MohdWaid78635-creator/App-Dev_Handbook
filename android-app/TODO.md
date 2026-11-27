@@ -2,7 +2,7 @@
 
 ## Current session · 28 November 2026
 
-All screens in the agreed redesign sequence are implemented. Supabase migration Phase 1 and Phase 2 foundation code and local checks are complete; see [the plan](docs/supabase-migration.plan.md) and [Phase 2 evidence](docs/supabase-phase-two-evidence.md). Full Supabase-stack and Android checks remain open. Next: Phase 3 account-scoped local storage, with a real-device backup baseline before storage cutover. The app still uses local storage and cloud remains disabled.
+Priority change: correct the installed APK layouts before continuing Phase 3. The shared Router/Slot style-loss bug is fixed across all 59 linked controls; [regression evidence](docs/linked-layout-fix.tdd.md). A corrected preview is being prepared for phone review. Phase 3's storage core has 10 passing SQLite tests, but provider/screen integration and the phone backup gate remain unfinished. Storage and cloud cutover remain disabled.
 
 Native Android appearance, navigation, file picker/sharing, restore confirmation, TalkBack, large text, and landscape checks remain pending. Validation details are recorded in `docs/home-design.tdd.md`.
 
