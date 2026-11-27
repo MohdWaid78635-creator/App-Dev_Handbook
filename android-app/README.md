@@ -128,6 +128,8 @@ The approved clay overview and check editor use a build selector, four saved-sta
 
 ## Help and Resource Library device check
 
+The approved clay design now uses the lilac background, labeled search with a clear control, wrapping icon/category pills, resource disclosure cards, and an expanded detail area. Counts come from the actual search results. Mission scope, full resource content, selectable/copyable prompts, official source links, the separate Compose course, and empty-result guidance remain available. Back returns to the previous screen, with a Mission Map fallback for direct entry. Native appearance, search/disclosure interactions, keyboard behavior, navigation, TalkBack, large-text, and landscape checks remain pending.
+
 1. Open **Help and Resource Library** from the mission map. Search `login` and filter to **Glossary** or **Prompts**. Open a result, clear the search, and verify an unmatched query shows a recovery hint.
 2. From a lesson, tap **Troubleshoot this mission**. Confirm the library starts with that mission’s fixes and **Show all missions** removes the restriction.
 3. Open a prompt and copy it into a local note. In airplane mode, repeat search and open a handbook article to confirm the library content is available offline. External sources and the separate Kotlin/Compose course require a connection.

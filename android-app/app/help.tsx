@@ -1,5 +1,6 @@
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { setStringAsync } from 'expo-clipboard';
-import { Link, useLocalSearchParams } from 'expo-router';
+import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -7,10 +8,14 @@ import articles from '../src/generated/articles.json';
 import missions from '../src/generated/missions.json';
 import { buildLibrary, categories, searchLibrary } from '../src/library/search';
 import type { Category, Resource } from '../src/library/search';
-import { colors } from '../src/theme';
+import { homeColors as colors } from '../src/theme';
 
 const library = buildLibrary(missions, articles);
 const filters = Object.keys(categories) as Category[];
+const categoryIcons = {
+  all: 'grid-outline', learn: 'book-outline', glossary: 'library-outline',
+  troubleshooting: 'build-outline', prompt: 'code-slash-outline',
+} as const;
 
 function ResourceContent({ resource }: { resource: Resource }) {
   const [status, setStatus] = useState('');
@@ -33,21 +38,23 @@ function ResourceContent({ resource }: { resource: Resource }) {
     {prompt ? <>
       {prompt.includes('[APP_NAME]') ? <Text style={styles.meta}>Replace [APP_NAME] with the name of your app before using this prompt.</Text> : null}
       <Pressable accessibilityRole="button" onPress={() => { void copy(prompt); }} style={({ pressed }) => [styles.primary, pressed && styles.pressed]}>
+        <Ionicons name="copy-outline" size={24} color={colors.white} importantForAccessibility="no" />
         <Text style={styles.primaryLabel}>Copy prompt</Text>
       </Pressable>
       {status ? <Text accessibilityLiveRegion="polite" style={styles.body}>{status}</Text> : null}
       <Text selectable style={styles.prompt}>{prompt}</Text>
     </> : null}
-    {resource.sourceUrl ? <Link href={resource.sourceUrl} style={styles.link}>Open official source</Link> : null}
+    {resource.sourceUrl ? <Link href={resource.sourceUrl} style={styles.link}>Open official source ↗</Link> : null}
     {resource.missionId !== undefined ? <Link href={{ pathname: '/mission/[id]', params: { id: String(resource.missionId) } }} style={styles.link}>
-      Open related mission
+      Open related mission →
     </Link> : null}
   </View>;
 }
 
 export default function HelpScreen() {
   const { missionId } = useLocalSearchParams<{ missionId?: string }>();
-  const { bottom } = useSafeAreaInsets();
+  const { top, bottom } = useSafeAreaInsets();
+  const router = useRouter();
   const initialMission = missions.find(mission => String(mission.id) === missionId);
   const [mission, setMission] = useState(initialMission);
   const [category, setCategory] = useState<Category>(initialMission ? 'troubleshooting' : 'all');
@@ -55,85 +62,125 @@ export default function HelpScreen() {
   const [expandedId, setExpandedId] = useState<string>();
   const results = searchLibrary(library, query, category, mission?.id);
 
-  return <FlatList
+  return <View style={[styles.screen, { paddingTop: top }]}><FlatList
     data={results}
     keyExtractor={item => item.id}
     keyboardShouldPersistTaps="handled"
     style={styles.list}
-    contentContainerStyle={[styles.screen, { paddingBottom: Math.max(bottom, 20) }]}
+    contentContainerStyle={[styles.content, { paddingBottom: Math.max(bottom, 20) }]}
     ListHeaderComponent={<View style={styles.header}>
+      <View style={styles.navigation}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Go back" onPress={() => {
+          if (router.canGoBack()) router.back(); else router.replace('/missions');
+        }} style={({ pressed }) => [styles.back, pressed && styles.pressed]}>
+          <Ionicons name="arrow-back" size={25} color={colors.ink} importantForAccessibility="no" />
+          <Text style={styles.backLabel}>Back</Text>
+        </Pressable>
+        <Text accessibilityRole="header" style={styles.headerTitle}>Help</Text>
+        <View style={styles.headerSpacer} />
+      </View>
       <View style={styles.hero}>
         <Text accessibilityRole="header" style={styles.title}>Resource Library</Text>
-        <Text style={styles.heroBody}>Look up a concept, find a fix, or copy a prompt.</Text>
+        <Text style={styles.body}>Look up a concept, find a fix, or copy a prompt.</Text>
+        <View style={styles.field}>
+        <Text style={styles.meta}>Search resources</Text>
+        <View style={styles.search}>
+        <Ionicons name="search-outline" size={25} color={colors.ink} importantForAccessibility="no" />
         <TextInput accessibilityLabel="Search resources" value={query} onChangeText={value => { setQuery(value); setExpandedId(undefined); }}
-          placeholder="Search, e.g. login, backup, or testing" placeholderTextColor={colors.muted}
+          placeholder="Search login, backup, testing" placeholderTextColor={colors.muted}
           autoCapitalize="none" returnKeyType="search" style={styles.input} />
-        {query ? <Pressable accessibilityRole="button" onPress={() => setQuery('')} style={styles.clear}>
-          <Text style={styles.clearLabel}>Clear search</Text>
+        {query ? <Pressable accessibilityRole="button" accessibilityLabel="Clear search" onPress={() => { setQuery(''); setExpandedId(undefined); }}
+          style={({ pressed }) => [styles.clear, pressed && styles.pressed]}>
+          <Ionicons name="close" size={25} color={colors.ink} importantForAccessibility="no" />
         </Pressable> : null}
+        </View>
+        </View>
       </View>
       <View style={styles.filters}>
         {filters.map(filter => <Pressable key={filter} accessibilityRole="button" accessibilityState={{ selected: filter === category }}
           onPress={() => { setCategory(filter); setExpandedId(undefined); }}
           style={({ pressed }) => [styles.filter, category === filter && styles.selected, pressed && styles.pressed]}>
-          <Text style={styles.label}>{categories[filter]}</Text>
+          <Ionicons name={categoryIcons[filter]} size={23} color={category === filter ? colors.white : colors.ink} importantForAccessibility="no" />
+          <Text style={[styles.filterLabel, category === filter && styles.selectedLabel]}>{categories[filter]}</Text>
         </Pressable>)}
       </View>
       {mission ? <View style={styles.card}>
         <Text style={styles.body}>Showing resources for {mission.lessonTitle}.</Text>
-        <Pressable accessibilityRole="button" onPress={() => setMission(undefined)} style={styles.linkButton}>
+        <Pressable accessibilityRole="button" onPress={() => setMission(undefined)} style={({ pressed }) => [styles.linkButton, pressed && styles.pressed]}>
           <Text style={styles.linkLabel}>Show all missions</Text>
         </Pressable>
       </View> : null}
-      {!query.trim() && category === 'all' && !mission ? <View style={styles.card}>
+      {!query.trim() && category === 'all' && !mission ? <View style={[styles.card, styles.course]}>
+        <View style={[styles.iconBadge, styles.mint]}><Ionicons name="book-outline" size={29} color={colors.ink} importantForAccessibility="no" /></View>
+        <View style={styles.rowText}>
         <Text accessibilityRole="header" style={styles.label}>Kotlin and Jetpack Compose</Text>
         <Text style={styles.body}>A separate Android learning track. BuildWisp’s missions use Expo and TypeScript.</Text>
-        <Link href="https://developer.android.com/courses/android-basics-compose/course" style={styles.link}>Open Android Basics with Compose</Link>
+        <Link href="https://developer.android.com/courses/android-basics-compose/course" style={styles.link}>Open Android Basics with Compose ↗</Link>
+        </View>
       </View> : null}
-      <Text accessibilityLiveRegion="polite" style={styles.meta}>{results.length} {results.length === 1 ? 'resource' : 'resources'}</Text>
+      <Text accessibilityLiveRegion="polite" style={styles.label}>{results.length} {results.length === 1 ? 'resource' : 'resources'}</Text>
     </View>}
     ListEmptyComponent={<View style={styles.card}>
       <Text accessibilityRole="header" style={styles.label}>No matching resources</Text>
       <Text style={styles.body}>Try a shorter keyword, or choose All to search across categories.</Text>
     </View>}
+    ListFooterComponent={<Text style={styles.footnote}>Library content works offline. External links need internet.</Text>}
     renderItem={({ item }) => {
       const expanded = expandedId === item.id;
       return <View style={styles.card}>
         <Pressable accessibilityRole="button" accessibilityState={{ expanded }}
           onPress={() => setExpandedId(expanded ? undefined : item.id)} style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
-          <Text style={styles.label}>{item.title}</Text>
-          <Text style={styles.meta}>{categories[item.kind]} · {item.subtitle}</Text>
+          <View style={styles.iconBadge}><Ionicons name={categoryIcons[item.kind]} size={27} color={colors.ink} importantForAccessibility="no" /></View>
+          <View style={styles.rowText}><Text style={styles.label}>{item.title}</Text>
+          <Text style={styles.meta}>{categories[item.kind]} · {item.subtitle}</Text></View>
+          <Ionicons name={expanded ? 'chevron-up' : 'chevron-down'} size={23} color={colors.ink} importantForAccessibility="no" />
         </Pressable>
         {expanded ? <ResourceContent resource={item} /> : null}
       </View>;
     }}
-  />;
+  /></View>;
 }
 
+const clay = { boxShadow: [{ offsetX: 0, offsetY: 4, blurRadius: 10, color: '#39205B18' },
+  { offsetX: 2, offsetY: 2, blurRadius: 5, color: '#FFFFFFA0', inset: true }] };
+
 const styles = StyleSheet.create({
-  list: { flex: 1, width: '100%', maxWidth: 720, alignSelf: 'center' },
-  screen: { padding: 18, gap: 10 },
-  header: { gap: 12 },
-  hero: { padding: 20, gap: 10, borderRadius: 22, backgroundColor: colors.hero },
-  title: { color: colors.card, fontSize: 28, fontWeight: '900' },
-  heroBody: { color: colors.lavender, fontSize: 16, lineHeight: 23 },
-  input: { minHeight: 48, borderRadius: 12, padding: 12, color: colors.ink, backgroundColor: colors.card, fontSize: 16 },
-  clear: { minHeight: 48, justifyContent: 'center', alignSelf: 'flex-start', paddingHorizontal: 8 },
-  clearLabel: { color: colors.mint, fontSize: 16, fontWeight: '800' },
-  filters: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  filter: { minHeight: 48, paddingHorizontal: 12, borderRadius: 12, justifyContent: 'center', backgroundColor: colors.lavender },
-  selected: { backgroundColor: colors.mint, borderWidth: 1, borderColor: colors.purple },
-  card: { padding: 12, gap: 8, borderRadius: 16, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.card },
-  row: { minHeight: 52, padding: 8, gap: 4, justifyContent: 'center', borderRadius: 10 },
-  detail: { gap: 10, padding: 8 },
-  label: { color: colors.ink, fontWeight: '800', fontSize: 16 },
-  body: { color: colors.ink, fontSize: 16, lineHeight: 23 },
+  screen: { flex: 1, backgroundColor: colors.background },
+  list: { flex: 1, width: '100%', maxWidth: 680, alignSelf: 'center' },
+  content: { paddingHorizontal: 20, paddingTop: 8, gap: 16 },
+  header: { gap: 20 },
+  navigation: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  back: { minHeight: 48, flexDirection: 'row', alignItems: 'center', gap: 6, flexShrink: 1 },
+  backLabel: { color: colors.ink, fontSize: 16, fontWeight: '700' },
+  headerTitle: { flex: 1, color: colors.ink, fontSize: 20, fontWeight: '800', textAlign: 'center' },
+  headerSpacer: { width: 64 },
+  hero: { gap: 12 },
+  title: { color: colors.ink, fontSize: 29, fontWeight: '900' },
+  field: { gap: 8 },
+  search: { ...clay, minHeight: 56, flexDirection: 'row', alignItems: 'center', gap: 10, paddingLeft: 14, paddingRight: 4, borderRadius: 22, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.controlLine },
+  input: { flex: 1, minWidth: 0, minHeight: 54, paddingVertical: 12, color: colors.ink, fontSize: 16 },
+  clear: { minHeight: 48, minWidth: 48, justifyContent: 'center', alignItems: 'center' },
+  filters: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  filter: { ...clay, minHeight: 48, maxWidth: '100%', paddingHorizontal: 14, paddingVertical: 10, flexDirection: 'row', alignItems: 'center', gap: 8, borderRadius: 22, backgroundColor: colors.card },
+  filterLabel: { color: colors.ink, fontSize: 16, lineHeight: 24, fontWeight: '700', flexShrink: 1 },
+  selected: { backgroundColor: colors.purple },
+  selectedLabel: { color: colors.white },
+  card: { ...clay, padding: 16, gap: 12, borderRadius: 24, backgroundColor: colors.card },
+  course: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
+  mint: { backgroundColor: colors.mint },
+  row: { minHeight: 54, flexDirection: 'row', alignItems: 'center', gap: 12 },
+  rowText: { flex: 1, gap: 6 },
+  iconBadge: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background, borderRadius: 16 },
+  detail: { gap: 14, paddingTop: 14, borderTopWidth: 1, borderTopColor: colors.track },
+  label: { color: colors.ink, fontWeight: '800', fontSize: 18, lineHeight: 26 },
+  body: { color: colors.ink, fontSize: 16, lineHeight: 24 },
   meta: { color: colors.muted, fontSize: 14, lineHeight: 21 },
-  link: { minHeight: 48, color: colors.purple, fontSize: 16, fontWeight: '800', textAlignVertical: 'center' },
+  link: { minHeight: 48, color: colors.purple, fontSize: 16, lineHeight: 24, fontWeight: '800', textAlignVertical: 'center' },
   linkButton: { minHeight: 48, justifyContent: 'center' },
   linkLabel: { color: colors.purple, fontSize: 16, fontWeight: '800' },
-  primary: { minHeight: 48, padding: 12, borderRadius: 12, justifyContent: 'center', backgroundColor: colors.purple },
-  primaryLabel: { color: colors.card, fontSize: 16, fontWeight: '800' },
+  primary: { ...clay, minHeight: 54, padding: 14, gap: 10, flexDirection: 'row', alignItems: 'center', borderRadius: 22, justifyContent: 'center', backgroundColor: colors.purple },
+  primaryLabel: { color: colors.white, fontSize: 17, fontWeight: '800', flexShrink: 1 },
   pressed: { opacity: 0.75 },
-  prompt: { padding: 12, borderRadius: 12, color: colors.ink, backgroundColor: colors.lavender, fontSize: 16, lineHeight: 23 },
+  prompt: { padding: 14, borderRadius: 18, color: colors.ink, backgroundColor: colors.background, fontSize: 16, lineHeight: 24 },
+  footnote: { color: colors.muted, fontSize: 13, lineHeight: 20, textAlign: 'center', paddingVertical: 8 },
 });
