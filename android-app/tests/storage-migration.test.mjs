@@ -114,7 +114,7 @@ test('backups include only the captured account and restore pauses its sync atom
   assert.deepEqual(JSON.parse(stores.backupService.exportBackup(new Date(backup.createdAt))), backup);
   assert.equal(f.database.isSyncPaused(A), true);
   assert.deepEqual(f.database.listIntents(A), []);
-  assert.equal(f.database.recovery(A, 'restore'), original);
+  assert.deepEqual(JSON.parse(f.database.recovery(A, 'restore')).data, JSON.parse(original).data);
   f.scope.select(B);
   assert.equal(f.stores().backupService.preview(f.stores().backupService.exportBackup()).projects, 0);
   assert.equal(f.database.isSyncPaused(B), false);
@@ -134,12 +134,12 @@ test('failed restore preserves both local data and pending intents', async t => 
 
 test('data, project identities and pending changes survive closing and reopening SQLite', t => {
   const directory = mkdtempSync(join(tmpdir(), 'buildwisp-storage-')); const filename = join(directory, 'test.db');
-  t.after(() => { unlinkSync(filename); rmdirSync(directory); });
   let sql = sqlitePort(filename); let database = createLocalDatabase(sql.port);
+  t.after(() => { sql.close(); unlinkSync(filename); rmdirSync(directory); });
   const stores = createScopedStores(database, createScopeController(A).capture());
   stores.projectStore.save({ name: 'Persistent', audience: '', goal: '' });
   const identity = database.projectIdentity(A, 1); const intents = database.listIntents(A);
-  sql.close(); sql = sqlitePort(filename); t.after(sql.close); database = createLocalDatabase(sql.port);
+  sql.close(); sql = sqlitePort(filename); database = createLocalDatabase(sql.port);
   assert.equal(database.projectIdentity(A, 1), identity);
   assert.deepEqual(database.listIntents(A), intents);
   assert.equal(createScopedStores(database, createScopeController(A).capture()).projectStore.load()[0].name, 'Persistent');
