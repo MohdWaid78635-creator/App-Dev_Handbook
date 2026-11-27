@@ -6,15 +6,29 @@
     "version": "0.1.0",
     "plugins": [
       "expo-router",
-      ["expo-splash-screen", {
-        "image": "./assets/clay-logo.png",
-        "backgroundColor": "#E8DFF5",
-        "imageWidth": 240,
-        "resizeMode": "contain"
-      }]
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/clay-logo.png",
+          "backgroundColor": "#E8DFF5",
+          "imageWidth": 240,
+          "resizeMode": "contain"
+        }
+      ]
     ],
     "android": {
       "package": "com.buildquestacademy.preview"
-    }
+    },
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "69265701-8dff-4368-928d-1cb709e99269"
+      }
+    },
+    "owner": "md.wajid.786335"
   }
 }
