@@ -2,9 +2,9 @@
 
 ## Current session · 27 November 2026
 
-The **Plan Mode**, **Build Workspace**, **Project Milestones**, **Production Readiness**, and **Help and Resource Library** prototypes were approved and their clay redesigns implemented. Next: show the **Backup and Restore prototype** for approval before changing that screen.
+The **Backup and Restore** prototype was approved and its clay redesign implemented. All screens in the agreed screen-by-screen redesign sequence are now implemented. Next: verify the redesigned app on Android.
 
-Approved screens are implemented through Help and Resource Library. Native Android appearance, navigation, TalkBack, large text, and landscape checks remain pending. Validation details are recorded in `docs/home-design.tdd.md`.
+Native Android appearance, navigation, file picker/sharing, restore confirmation, TalkBack, large text, and landscape checks remain pending. Validation details are recorded in `docs/home-design.tdd.md`.
 
 ## 25 November 2026 · Approved design session
 
@@ -42,9 +42,10 @@ Approved screens are implemented through Help and Resource Library. Native Andro
 - [x] Implement Production Readiness with build selection, saved status counts, evidence validation, and unsaved-edit feedback.
 - [x] Prototype and approve Help and Resource Library.
 - [x] Implement the clay library with search, labeled category icons, expandable resources, and contextual help.
-- [ ] Prototype Backup and Restore for review before redesigning it.
+- [x] Prototype and approve Backup and Restore.
+- [x] Implement the clay export/preview states, actual backup counts, replacement warning, and guarded restore action.
 
-The approved Mission Map is at `/missions`; the remaining screens are awaiting their own prototypes and approvals.
+The approved Mission Map is at `/missions`; the agreed prototype and implementation sequence is complete. Device validation remains open.
 
 ## 26 November 2026 · Redesign the Android app
 

@@ -146,6 +146,8 @@ Both approved study modes use the shared clay tab rail and Review header link. D
 
 ## Backup and Restore device check
 
+The approved clay design separates backup options from the selected-file preview. The preview shows the real filename, creation date, and five record counts. Amber replacement warnings precede the restore action, which still opens the native **Cancel / Replace and restore** confirmation. The 8 MB limit, file validation, operation guard, disabled busy actions, progress reload, and failure messages are retained. Returning to the Mission Map now targets `/missions`. Native file picker/sharing, preview scrolling, confirmation/cancel, restored progress, TalkBack, large-text, and landscape checks remain pending.
+
 1. On a test install, create a project with a plan, build proof, a milestone note, and one release review. Earn quiz XP and complete a daily question and a flashcard.
 2. Open **Backup and Restore → Save or share backup** from the mission map. Save the JSON file with the Android share sheet. Change some local data, then select the saved JSON using **Choose backup file**.
 3. Verify the file preview and counts. Cancel the confirmation and confirm local data stays unchanged. Repeat and choose **Replace and restore**. Verify the mission map refreshes immediately and the saved project, review, and practice state are restored after reopening the app.

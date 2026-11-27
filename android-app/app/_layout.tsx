@@ -27,7 +27,7 @@ export default function RootLayout() {
         <Stack.Screen name="milestones/[id]" options={{ title: 'Project Milestones', headerShown: false }} />
         <Stack.Screen name="readiness/[id]" options={{ title: 'Production Readiness', headerShown: false }} />
         <Stack.Screen name="help" options={{ title: 'Help', headerShown: false }} />
-        <Stack.Screen name="backup" options={{ title: 'Backup and Restore' }} />
+        <Stack.Screen name="backup" options={{ title: 'Backup and Restore', headerShown: false }} />
       </Stack>
     </ProgressProvider>
   );
