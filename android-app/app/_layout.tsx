@@ -24,7 +24,7 @@ export default function RootLayout() {
         <Stack.Screen name="project" options={{ title: 'Project Setup', headerShown: false }} />
         <Stack.Screen name="plan/[id]" options={{ title: 'Plan Mode', headerShown: false }} />
         <Stack.Screen name="build/[id]" options={{ title: 'Build Workspace', headerShown: false }} />
-        <Stack.Screen name="milestones/[id]" options={{ title: 'Project Milestones' }} />
+        <Stack.Screen name="milestones/[id]" options={{ title: 'Project Milestones', headerShown: false }} />
         <Stack.Screen name="readiness/[id]" options={{ title: 'Production Readiness' }} />
         <Stack.Screen name="help" options={{ title: 'Help' }} />
         <Stack.Screen name="backup" options={{ title: 'Backup and Restore' }} />

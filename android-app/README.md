@@ -105,6 +105,8 @@ Native disclosure and checkbox interactions, prompt scrolling/copy, clipboard fa
 
 ## Project Milestones device check
 
+The approved clay layout shows the four milestones, actual saved count, and distinct **Evidence recorded**, **Evidence needed**, and **Unsaved changes** states. Expansion stays separate from saving. Each editor has a visible evidence label, Save/Clear action, and related build-card link; Release readiness also opens Production Readiness. Summary preview uses saved notes. A visible warning appears for unsaved edits, and Copy/Share remain hidden until those edits are saved. Keyboard avoidance keeps the form scrollable. Native note/disclosure behavior, keyboard handling, summary selection/copy/sharing, contextual links, TalkBack, large text, and landscape checks remain pending.
+
 1. Open **Your projects → Project Milestones**. Save evidence for **Problem and audience**. Restart BuildWisp and verify the note and recorded count. Edit the note, then clear it and verify the count decreases.
 2. Open a second project and confirm its notes are separate. Finish a milestone mission and use **Record project milestone** from its results to open the matching note in the chosen project.
 3. Open the saved summary preview. Check the brief, plan choices, milestone notes, and build proof against the project. Leave an edit unsaved and confirm export asks you to save it. Save the note, then copy and paste the summary into a local note and open the Android share sheet.
