@@ -121,7 +121,7 @@ export function createContentIdentityManifest(documents: ContentDocuments) {
     schemaVersion: 1 as const,
     missions: documents.missions.map(mission => ({ id: mission.id, lessons: mission.lessons.map(lesson => lesson.id),
       practice: mission.practice.map(practice => practice.id),
-      quiz: mission.quiz.map(({ id, prompt, options, answer }) => ({ id, prompt, options: [...options], answer })),
+      quiz: mission.quiz.map(({ id, kind, prompt, options, answer }) => ({ id, kind, prompt, options: [...options], answer })),
       steps: mission.steps.map(({ id, proof }) => ({ id, proof: [...proof] })) })),
     readiness: documents.readiness.map(({ id, missionId, checks }) => ({ id, missionId, checks: checks.map(check => ({ ...check })) })),
     glossary: documents.glossary.map(({ id, term }) => ({ id, term })),

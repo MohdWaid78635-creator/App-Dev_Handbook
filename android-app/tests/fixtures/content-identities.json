@@ -16,6 +16,7 @@
       "quiz": [
         {
           "id": "m0-how-apps-work-q1",
+          "kind": "question",
           "prompt": "Where should a rule like “a user cannot book with unpaid bills” live?",
           "options": [
             "Only on the screen",
@@ -26,6 +27,7 @@
         },
         {
           "id": "m0-how-apps-work-q2",
+          "kind": "question",
           "prompt": "Why is it risky to keep a payment secret in the frontend?",
           "options": [
             "It makes the screen slow",
@@ -36,6 +38,7 @@
         },
         {
           "id": "m0-boss",
+          "kind": "boss",
           "prompt": "When should you move from Expo Go to a development build?",
           "options": [
             "Expo Go was completely removed from the Google Play Store.",
@@ -89,6 +92,7 @@
       "quiz": [
         {
           "id": "m1-plan-first-q1",
+          "kind": "question",
           "prompt": "There is no workaround today for the problem. What does the course say?",
           "options": [
             "Great, no competition",
@@ -99,6 +103,7 @@
         },
         {
           "id": "m1-plan-first-q2",
+          "kind": "question",
           "prompt": "Which question is better to ask a possible user?",
           "options": [
             "“Would you use this?”",
@@ -109,6 +114,7 @@
         },
         {
           "id": "m1-boss",
+          "kind": "boss",
           "prompt": "Why is it dangerous to change your Android package identifier (`android.package` in app.json) after uploading your first release to Google Play Console?",
           "options": [
             "Google Play allows package name updates only if you pay an additional $100 fee.",
@@ -155,6 +161,7 @@
       "quiz": [
         {
           "id": "m2-ship-and-run-q1",
+          "kind": "question",
           "prompt": "Why have a staging copy?",
           "options": [
             "To look professional",
@@ -165,6 +172,7 @@
         },
         {
           "id": "m2-ship-and-run-q2",
+          "kind": "question",
           "prompt": "What is a commit?",
           "options": [
             "A saved snapshot with a message",
@@ -175,6 +183,7 @@
         },
         {
           "id": "m2-boss",
+          "kind": "boss",
           "prompt": "What is the most reliable way to connect your physical Android phone to the local Metro dev server if local Wi-Fi router blocks peer-to-peer device traffic?",
           "options": [
             "Upload the project to GitHub and pull it from the phone.",
@@ -241,6 +250,7 @@
       "quiz": [
         {
           "id": "m3-backend-q1",
+          "kind": "question",
           "prompt": "You push a secret key to GitHub by mistake. What is the right reaction?",
           "options": [
             "Delete the file, that is enough",
@@ -251,6 +261,7 @@
         },
         {
           "id": "m3-backend-q2",
+          "kind": "question",
           "prompt": "What does “middleware” do?",
           "options": [
             "Runs between a request arriving and your code, as a checkpoint",
@@ -261,6 +272,7 @@
         },
         {
           "id": "m3-boss",
+          "kind": "boss",
           "prompt": "What is the consequence of bundling your Supabase secret key (`sb_secret_...` or legacy `service_role`) inside your client-side mobile app?",
           "options": [
             "App queries execute 30% faster by caching credentials locally.",
@@ -328,6 +340,7 @@
       "quiz": [
         {
           "id": "m4-security-basics-q1",
+          "kind": "question",
           "prompt": "A user changes /bills/456 to /bills/789 and sees another person’s bill. Which check is missing?",
           "options": [
             "Authentication",
@@ -338,6 +351,7 @@
         },
         {
           "id": "m4-security-basics-q2",
+          "kind": "question",
           "prompt": "Which is the right way to store passwords?",
           "options": [
             "Plain text, it is simpler",
@@ -348,6 +362,7 @@
         },
         {
           "id": "m4-boss",
+          "kind": "boss",
           "prompt": "What happens if you launch your app with the default Supabase email provider instead of setting up custom SMTP?",
           "options": [
             "Email verification will work normally for up to 10,000 sign-ups per day.",
@@ -403,6 +418,7 @@
       "quiz": [
         {
           "id": "m5-databases-q1",
+          "kind": "question",
           "prompt": "You have a many-to-many link between users and posts. You need…",
           "options": [
             "A junction table",
@@ -413,6 +429,7 @@
         },
         {
           "id": "m5-databases-q2",
+          "kind": "question",
           "prompt": "What does Row Level Security (RLS) do?",
           "options": [
             "Makes queries faster",
@@ -423,6 +440,7 @@
         },
         {
           "id": "m5-boss",
+          "kind": "boss",
           "prompt": "Why is wrapping `auth.uid()` in `(select auth.uid())` inside Supabase Row Level Security policies considered an essential performance rule?",
           "options": [
             "Postgres evaluates `auth.uid()` only once per SQL statement and caches the value, avoiding calling the function thousands of times for every row examined in the table.",
@@ -478,6 +496,7 @@
       "quiz": [
         {
           "id": "m6-frontend-q1",
+          "kind": "question",
           "prompt": "A component is…",
           "options": [
             "A reusable piece of screen",
@@ -488,6 +507,7 @@
         },
         {
           "id": "m6-frontend-q2",
+          "kind": "question",
           "prompt": "A user opens a private screen while logged out. A “protected route” should…",
           "options": [
             "Show it anyway",
@@ -498,6 +518,7 @@
         },
         {
           "id": "m6-boss",
+          "kind": "boss",
           "prompt": "The Save request times out. What should the app do before retrying?",
           "options": [
             "Immediately insert another record.",
@@ -553,6 +574,7 @@
       "quiz": [
         {
           "id": "m7-money-q1",
+          "kind": "question",
           "prompt": "When should a user be marked “subscribed”?",
           "options": [
             "When the screen says success",
@@ -563,6 +585,7 @@
         },
         {
           "id": "m7-money-q2",
+          "kind": "question",
           "prompt": "A user cancels a monthly plan on day 10. What is best?",
           "options": [
             "Cut access immediately",
@@ -573,6 +596,7 @@
         },
         {
           "id": "m7-boss",
+          "kind": "boss",
           "prompt": "Can a SQLite cache automatically synchronize itself with Supabase?",
           "options": [
             "Yes, installing the package enables sync.",
@@ -626,6 +650,7 @@
       "quiz": [
         {
           "id": "m8-testing-basics-q1",
+          "kind": "question",
           "prompt": "A save times out. Which test catches a duplicate record?",
           "options": [
             "Check the Save button colour.",
@@ -636,6 +661,7 @@
         },
         {
           "id": "m8-testing-basics-q2",
+          "kind": "question",
           "prompt": "Which result shows the user can recover?",
           "options": [
             "The app keeps the draft and succeeds after reconnecting.",
@@ -646,6 +672,7 @@
         },
         {
           "id": "m8-boss",
+          "kind": "boss",
           "prompt": "Do passing mocked JavaScript tests prove the Android release works?",
           "options": [
             "Yes, native behaviour is identical.",
@@ -702,6 +729,7 @@
       "quiz": [
         {
           "id": "m9-lock-mobile-q1",
+          "kind": "question",
           "prompt": "Why can’t you keep an API key safe by putting it in the app?",
           "options": [
             "The app is too small",
@@ -712,6 +740,7 @@
         },
         {
           "id": "m9-lock-mobile-q2",
+          "kind": "question",
           "prompt": "Which instruction is best to give the AI?",
           "options": [
             "“Make my app secure”",
@@ -722,6 +751,7 @@
         },
         {
           "id": "m9-boss",
+          "kind": "boss",
           "prompt": "A hidden admin button calls an endpoint using a secret key. Is hiding it sufficient?",
           "options": [
             "Yes, users cannot tap it.",
@@ -775,6 +805,7 @@
       "quiz": [
         {
           "id": "m10-mobile-store-q1",
+          "kind": "question",
           "prompt": "A user refuses the camera permission. Your app should…",
           "options": [
             "Crash",
@@ -785,6 +816,7 @@
         },
         {
           "id": "m10-mobile-store-q2",
+          "kind": "question",
           "prompt": "What must you do with the app signing key?",
           "options": [
             "Post it in your README",
@@ -795,6 +827,7 @@
         },
         {
           "id": "m10-boss",
+          "kind": "boss",
           "prompt": "For a personal Play account created after November 13, 2023, what is required before applying for production access?",
           "options": [
             "Twelve downloads at any time.",
@@ -848,6 +881,7 @@
       "quiz": [
         {
           "id": "m11-ship-and-run-q2",
+          "kind": "question",
           "prompt": "What is a commit?",
           "options": [
             "A saved snapshot with a message",
@@ -858,6 +892,7 @@
         },
         {
           "id": "m11-ship-and-run-q3",
+          "kind": "question",
           "prompt": "How should you first hear that your app crashed?",
           "options": [
             "From a user review",
@@ -868,6 +903,7 @@
         },
         {
           "id": "m11-boss",
+          "kind": "boss",
           "prompt": "Does a Supabase database backup plus Spend Cap cover all files and every possible bill?",
           "options": [
             "Yes, both provide complete protection.",
@@ -928,6 +964,7 @@
       "quiz": [
         {
           "id": "m12-after-launch-q1",
+          "kind": "question",
           "prompt": "What should you do in week 1 after launch?",
           "options": [
             "Add many new features",
@@ -938,6 +975,7 @@
         },
         {
           "id": "m12-after-launch-q2",
+          "kind": "question",
           "prompt": "Why set up analytics before launch?",
           "options": [
             "It looks good",
@@ -948,6 +986,7 @@
         },
         {
           "id": "m12-boss",
+          "kind": "boss",
           "prompt": "Can halting a Play staged rollout undo the update already installed by affected users?",
           "options": [
             "Yes, it downgrades everyone.",

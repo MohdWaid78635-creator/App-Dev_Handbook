@@ -33,6 +33,7 @@ export type SyncResponse = { schemaVersion: 1; operationId: string } & (
 );
 export type ProjectMapping = { namespace: Namespace; localProjectId: number; cloudProjectId: string };
 export type ImportIdentity = { ownerId: string; guestDatasetId: string; operationId: string };
+export type ImportRequest = ImportIdentity & { localProjectIds: number[] };
 export type ImportReceipt = ImportIdentity & { schemaVersion: 1; workspaceRevision: number; mappings: ProjectMapping[] };
 
 function identity(value: Record<string, unknown>, ownerId: string): EntityKind {
@@ -62,6 +63,17 @@ function validatePayload(kind: EntityKind, payload: unknown): void {
     uuid(data.projectId);
     createReadinessStore(slot({ version: 1, reviews: [data.review] })).load();
   }
+}
+
+function equalJson(left: unknown, right: unknown): boolean {
+  if (left === right) return true;
+  if (Array.isArray(left) && Array.isArray(right)) {
+    return left.length === right.length && left.every((item, index) => equalJson(item, right[index]));
+  }
+  if (typeof left !== 'object' || left === null || typeof right !== 'object' || right === null || Array.isArray(left) || Array.isArray(right)) return false;
+  const a = left as Record<string, unknown>;
+  const b = right as Record<string, unknown>;
+  return Object.keys(a).length === Object.keys(b).length && Object.keys(a).every(key => Object.hasOwn(b, key) && equalJson(a[key], b[key]));
 }
 
 export function parseMutation(source: string, ownerId: string): SyncMutation {
@@ -109,6 +121,10 @@ export function parseSyncResponse(source: string, request: SyncMutation): SyncRe
     const result = cloudRecord(value[key], request.ownerId);
     requireThat(result.kind === request.kind && result.entityId === request.entityId && result.revision > request.baseRevision,
       'Sync response entity or revision does not match the request.');
+    if (value.status === 'applied') {
+      requireThat((request.action === 'delete') === (result.deletedAt !== null) && equalJson(request.payload, result.payload),
+        'Acknowledgement does not match the submitted action and content.');
+    }
   }
   return value as SyncResponse;
 }
@@ -135,7 +151,7 @@ export function parseProjectMappings(source: string, namespace: string): Project
   return projectMappings(parseJson(source, contractLimits.mutationBytes), namespace);
 }
 
-export function parseImportReceipt(source: string, expected: ImportIdentity): ImportReceipt {
+export function parseImportReceipt(source: string, expected: ImportRequest): ImportReceipt {
   const value = object(parseJson(source, contractLimits.mutationBytes), 'import receipt',
     ['schemaVersion', 'ownerId', 'guestDatasetId', 'operationId', 'workspaceRevision', 'mappings']);
   requireThat(value.schemaVersion === syncSchemaVersion, 'Unsupported import receipt version.');
@@ -143,6 +159,9 @@ export function parseImportReceipt(source: string, expected: ImportIdentity): Im
     requireThat(uuid(value[key]) === uuid(expected[key]), 'Import receipt does not match the requested import.');
   }
   integer(value.workspaceRevision, 'workspace revision', 1);
-  projectMappings(value.mappings, `user:${expected.ownerId}`);
+  const mappings = projectMappings(value.mappings, `user:${expected.ownerId}`);
+  const expectedIds = expected.localProjectIds.map(id => integer(id, 'import project ID', 1));
+  requireThat(new Set(expectedIds).size === expectedIds.length && mappings.length === expectedIds.length &&
+    mappings.every(mapping => expectedIds.includes(mapping.localProjectId)), 'Incomplete or unexpected import project mapping.');
   return value as ImportReceipt;
 }
