@@ -2,9 +2,19 @@
 
 ## Current session · 27 November 2026
 
-The **Backup and Restore** prototype was approved and its clay redesign implemented. All screens in the agreed screen-by-screen redesign sequence are now implemented. Next: verify the redesigned app on Android.
+The **Backup and Restore** prototype was approved and its clay redesign implemented. All screens in the agreed screen-by-screen redesign sequence are now implemented. The requested ECC Planner Supabase migration plan is ready in [supabase-migration.plan.md](docs/supabase-migration.plan.md); implementation has not started.
 
 Native Android appearance, navigation, file picker/sharing, restore confirmation, TalkBack, large text, and landscape checks remain pending. Validation details are recorded in `docs/home-design.tdd.md`.
+
+## Supabase migration · planned, not implemented
+
+- [x] Inspect the current local stores, content pipeline, project identities, and backup format.
+- [x] Write the ECC Planner implementation plan, dependencies, risks, tests, and rollback strategy.
+- [ ] Confirm the proposed account/content-management defaults and development project setup before dependent integration work.
+- [ ] Implement verified local migration, accounts, cloud sync, and cloud-aware restore in the plan's dependency order.
+- [ ] Prototype and approve new account, import, conflict, and sync screens before implementing them.
+- [ ] Add validated remote content releases with a local cache and bundled fallback.
+- [ ] Complete two-device Android, isolation, offline, recovery, and accessibility verification before rollout.
 
 ## 25 November 2026 · Approved design session
 

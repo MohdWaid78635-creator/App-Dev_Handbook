@@ -1,0 +1,1980 @@
+{
+  "schemaVersion": 1,
+  "missions": [
+    {
+      "id": 0,
+      "lessons": [
+        "how-apps-work",
+        "direct-the-ai"
+      ],
+      "practice": [
+        "how-apps-work-1",
+        "how-apps-work-2",
+        "direct-the-ai-1",
+        "direct-the-ai-2"
+      ],
+      "quiz": [
+        {
+          "id": "m0-how-apps-work-q1",
+          "prompt": "Where should a rule like “a user cannot book with unpaid bills” live?",
+          "options": [
+            "Only on the screen",
+            "In the backend",
+            "In the app’s icon file"
+          ],
+          "answer": 1
+        },
+        {
+          "id": "m0-how-apps-work-q2",
+          "prompt": "Why is it risky to keep a payment secret in the frontend?",
+          "options": [
+            "It makes the screen slow",
+            "Anyone who knows where to look can read it",
+            "The database will delete it"
+          ],
+          "answer": 1
+        },
+        {
+          "id": "m0-boss",
+          "prompt": "When should you move from Expo Go to a development build?",
+          "options": [
+            "Expo Go was completely removed from the Google Play Store.",
+            "Use a compatible Expo Go build for supported beginner exercises. Use a development build when the project needs a native dependency or configuration Expo Go does not include.",
+            "Physical Android devices are restricted to installing apps only from the official Play Store.",
+            "Expo charges a mandatory $25/month fee to open apps inside Expo Go."
+          ],
+          "answer": 1
+        }
+      ],
+      "steps": [
+        {
+          "id": "s0-step1",
+          "proof": [
+            "Running `node -v` outputs v22.x, v24.x, or v26.x.",
+            "Running `git --version` prints Git 2.28 or higher.",
+            "Running `git config init.defaultBranch` prints main."
+          ]
+        },
+        {
+          "id": "s0-step2",
+          "proof": [
+            "Running `adb --version` displays Android Debug Bridge version in terminal.",
+            "Environment variable `ANDROID_HOME` is set to the valid SDK path."
+          ]
+        },
+        {
+          "id": "s0-step3",
+          "proof": [
+            "`adb devices` lists a serial number followed by the word \"device\".",
+            "The phone displays no unresolved permission or driver alerts."
+          ]
+        },
+        {
+          "id": "s0-step4",
+          "proof": [
+            "Running `eas --version` prints the CLI version (>= 14.x).",
+            "Running `eas whoami` returns your Expo account username."
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "lessons": [
+        "plan-first"
+      ],
+      "practice": [
+        "plan-first-1"
+      ],
+      "quiz": [
+        {
+          "id": "m1-plan-first-q1",
+          "prompt": "There is no workaround today for the problem. What does the course say?",
+          "options": [
+            "Great, no competition",
+            "A possible red flag: the problem may not be real",
+            "It proves people will pay"
+          ],
+          "answer": 1
+        },
+        {
+          "id": "m1-plan-first-q2",
+          "prompt": "Which question is better to ask a possible user?",
+          "options": [
+            "“Would you use this?”",
+            "“Would you pay for this?”",
+            "“Do you like blue?”"
+          ],
+          "answer": 1
+        },
+        {
+          "id": "m1-boss",
+          "prompt": "Why is it dangerous to change your Android package identifier (`android.package` in app.json) after uploading your first release to Google Play Console?",
+          "options": [
+            "Google Play allows package name updates only if you pay an additional $100 fee.",
+            "Google Play treats a new package name as an entirely different application, permanently severing all existing users, ratings, push notification tokens, and OAuth credentials.",
+            "Expo CLI permanently blocks builds if the package name changes.",
+            "Android devices will show an operating system warning stating the phone is damaged."
+          ],
+          "answer": 1
+        }
+      ],
+      "steps": [
+        {
+          "id": "s1-step1",
+          "proof": [
+            "Value proposition is written and under 30 words.",
+            "Exactly 3 core screens are specified with one clear primary action each."
+          ]
+        },
+        {
+          "id": "s1-step2",
+          "proof": [
+            "Package name strictly matches regex `^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$`.",
+            "Navigating to `https://play.google.com/store/apps/details?id=<YOUR_ID>` returns a 404 page (confirming it is available)."
+          ]
+        },
+        {
+          "id": "s1-step3",
+          "proof": [
+            "You have written feedback notes from at least 5 distinct individuals.",
+            "At least 3 confirmed they want the core problem solved."
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "lessons": [
+        "ship-and-run"
+      ],
+      "practice": [
+        "ship-and-run-1",
+        "ship-and-run-2"
+      ],
+      "quiz": [
+        {
+          "id": "m2-ship-and-run-q1",
+          "prompt": "Why have a staging copy?",
+          "options": [
+            "To look professional",
+            "To test safely without touching real users’ data",
+            "Because Git needs it"
+          ],
+          "answer": 1
+        },
+        {
+          "id": "m2-ship-and-run-q2",
+          "prompt": "What is a commit?",
+          "options": [
+            "A saved snapshot with a message",
+            "A password",
+            "A paid plan"
+          ],
+          "answer": 0
+        },
+        {
+          "id": "m2-boss",
+          "prompt": "What is the most reliable way to connect your physical Android phone to the local Metro dev server if local Wi-Fi router blocks peer-to-peer device traffic?",
+          "options": [
+            "Upload the project to GitHub and pull it from the phone.",
+            "Connect the phone with a USB cable and run `adb reverse tcp:8081 tcp:8081`, then open `localhost:8081` in the dev client.",
+            "Turn off the router and restart the computer 3 times.",
+            "Convert all TypeScript files to plain CSS."
+          ],
+          "answer": 1
+        }
+      ],
+      "steps": [
+        {
+          "id": "s2-step1",
+          "proof": [
+            "`package.json` contains `expo`, `expo-router`, and `react-native`.",
+            "`app.json` contains configured `android.package` matching your Stage 1 identifier.",
+            "`app/` folder exists containing `_layout.tsx`."
+          ]
+        },
+        {
+          "id": "s2-step2",
+          "proof": [
+            "Running `git status` does not show `.env` or `.env.local`.",
+            "`.gitignore` contains `.env*` and android keystore patterns."
+          ]
+        },
+        {
+          "id": "s2-step3",
+          "proof": [
+            "`eas.json` exists in root folder.",
+            "`build.development.android.buildType` is set to \"apk\".",
+            "`build.development.developmentClient` is set to true."
+          ]
+        },
+        {
+          "id": "s2-step4",
+          "proof": [
+            "EAS build finishes successfully in terminal with a green checkmark.",
+            "`adb install ...` prints \"Success\".",
+            "The [APP_NAME] app icon appears on your physical phone launcher."
+          ]
+        },
+        {
+          "id": "s2-step5",
+          "proof": [
+            "Modifying text in `app/index.tsx` updates on the phone screen in under 1 second.",
+            "Terminal prints \"Android Bundled ...ms\"."
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "lessons": [
+        "backend",
+        "apis"
+      ],
+      "practice": [
+        "backend-1",
+        "backend-2",
+        "apis-1",
+        "apis-2"
+      ],
+      "quiz": [
+        {
+          "id": "m3-backend-q1",
+          "prompt": "You push a secret key to GitHub by mistake. What is the right reaction?",
+          "options": [
+            "Delete the file, that is enough",
+            "Rotate the key: make a new one and stop the old one",
+            "Wait and see"
+          ],
+          "answer": 1
+        },
+        {
+          "id": "m3-backend-q2",
+          "prompt": "What does “middleware” do?",
+          "options": [
+            "Runs between a request arriving and your code, as a checkpoint",
+            "Stores photos",
+            "Draws buttons"
+          ],
+          "answer": 0
+        },
+        {
+          "id": "m3-boss",
+          "prompt": "What is the consequence of bundling your Supabase secret key (`sb_secret_...` or legacy `service_role`) inside your client-side mobile app?",
+          "options": [
+            "App queries execute 30% faster by caching credentials locally.",
+            "Any user who downloads your APK can decompile it in seconds, extract the secret key, and bypass all Row Level Security to read, modify, or erase your entire database.",
+            "Google Play will reject your app during automated review for having a long string.",
+            "Supabase will automatically upgrade your account to the Enterprise tier."
+          ],
+          "answer": 1
+        }
+      ],
+      "steps": [
+        {
+          "id": "s3-step1",
+          "proof": [
+            "Supabase dashboard lists both `[APP_NAME]-dev` and `[APP_NAME]-prod` with active green status.",
+            "Each project has a distinct project reference and URL."
+          ]
+        },
+        {
+          "id": "s3-step2",
+          "proof": [
+            "`.env` has `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.",
+            "Searching your repository for `sb_secret_` or `service_role` yields zero matches."
+          ]
+        },
+        {
+          "id": "s3-step3",
+          "proof": [
+            "`supabase/config.toml` exists in project root.",
+            "`npx supabase projects list` marks the intended development project as linked."
+          ]
+        },
+        {
+          "id": "s3-step4",
+          "proof": [
+            "SQL migration file exists in `supabase/migrations/`.",
+            "`npx supabase db push` finishes with \"Finished supabase db push\".",
+            "In Supabase Table Editor, the table displays the padlock badge indicating RLS is active."
+          ]
+        },
+        {
+          "id": "s3-step5",
+          "proof": [
+            "`types/database.ts` exists and contains type definitions for your tables.",
+            "Calling `supabase.from('items').select(...)` provides full TypeScript column autocomplete."
+          ]
+        },
+        {
+          "id": "s3-step6",
+          "proof": [
+            "Current plan, relevant limits and Spend Cap status where applicable are recorded.",
+            "A usage review date and a response to rising costs are recorded."
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "lessons": [
+        "security-basics"
+      ],
+      "practice": [
+        "security-basics-1"
+      ],
+      "quiz": [
+        {
+          "id": "m4-security-basics-q1",
+          "prompt": "A user changes /bills/456 to /bills/789 and sees another person’s bill. Which check is missing?",
+          "options": [
+            "Authentication",
+            "Authorisation: does this user own bill 789?",
+            "HTTPS"
+          ],
+          "answer": 1
+        },
+        {
+          "id": "m4-security-basics-q2",
+          "prompt": "Which is the right way to store passwords?",
+          "options": [
+            "Plain text, it is simpler",
+            "A slow, salted one-way hash",
+            "Encrypted, with the key beside it"
+          ],
+          "answer": 1
+        },
+        {
+          "id": "m4-boss",
+          "prompt": "What happens if you launch your app with the default Supabase email provider instead of setting up custom SMTP?",
+          "options": [
+            "Email verification will work normally for up to 10,000 sign-ups per day.",
+            "The default provider is strictly limited to 2 emails per hour project-wide and delivers ONLY to project team members, causing all external user sign-ups to immediately fail.",
+            "Google Play Console will automatically provide an SMTP relay server for your app.",
+            "Supabase will charge $0.50 for every email sent."
+          ],
+          "answer": 1
+        }
+      ],
+      "steps": [
+        {
+          "id": "s4-step1",
+          "proof": [
+            "`lib/supabase.ts` exports typed `supabase` client.",
+            "No warnings or missing module errors when starting the app."
+          ]
+        },
+        {
+          "id": "s4-step2",
+          "proof": [
+            "Root layout includes `AppState.addEventListener` listener.",
+            "App refreshes tokens only when in foreground."
+          ]
+        },
+        {
+          "id": "s4-step3",
+          "proof": [
+            "Supabase dashboard shows Custom SMTP status as active.",
+            "Request a code, verify it, and test expired and incorrect codes. Confirm the resend UI respects configured limits."
+          ]
+        },
+        {
+          "id": "s4-step4",
+          "proof": [
+            "Opening app when logged out displays login screen.",
+            "Logging in immediately transitions to main app tabs.",
+            "Tapping Sign Out redirects back to login screen.",
+            "Relaunching app maintains active session without flickering login screen."
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "lessons": [
+        "databases"
+      ],
+      "practice": [
+        "databases-1",
+        "databases-2"
+      ],
+      "quiz": [
+        {
+          "id": "m5-databases-q1",
+          "prompt": "You have a many-to-many link between users and posts. You need…",
+          "options": [
+            "A junction table",
+            "A second database",
+            "Nothing"
+          ],
+          "answer": 0
+        },
+        {
+          "id": "m5-databases-q2",
+          "prompt": "What does Row Level Security (RLS) do?",
+          "options": [
+            "Makes queries faster",
+            "Controls which user can see which row",
+            "Encrypts the app"
+          ],
+          "answer": 1
+        },
+        {
+          "id": "m5-boss",
+          "prompt": "Why is wrapping `auth.uid()` in `(select auth.uid())` inside Supabase Row Level Security policies considered an essential performance rule?",
+          "options": [
+            "Postgres evaluates `auth.uid()` only once per SQL statement and caches the value, avoiding calling the function thousands of times for every row examined in the table.",
+            "It changes the return type from a UUID to a string so JavaScript can read it.",
+            "It is required by the React Native bundler to compile without warnings.",
+            "Without it, Supabase databases automatically shut down after 24 hours."
+          ],
+          "answer": 0
+        }
+      ],
+      "steps": [
+        {
+          "id": "s5-step1",
+          "proof": [
+            "Query `SELECT tablename, rowsecurity FROM pg_tables WHERE schemaname = 'public';` returns true for all rows.",
+            "Table Editor displays padlock badge next to every table name."
+          ]
+        },
+        {
+          "id": "s5-step2",
+          "proof": [
+            "Policies are active and listed under Authentication > Policies.",
+            "Index `idx_items_user_id` exists on the table."
+          ]
+        },
+        {
+          "id": "s5-step3",
+          "proof": [
+            "All view DDL statements include `WITH (security_invoker = true)`.",
+            "Querying views returns only rows that the querying user is permitted to see."
+          ]
+        },
+        {
+          "id": "s5-step4",
+          "proof": [
+            "User B cannot see User A's records in lists.",
+            "Direct fetch of User A's record ID by User B returns empty array `data: []`.",
+            "Direct update or delete of User A's record ID by User B fails with permission denied or 0 modified rows."
+          ]
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "lessons": [
+        "frontend",
+        "design-basics"
+      ],
+      "practice": [
+        "frontend-1",
+        "design-basics-1"
+      ],
+      "quiz": [
+        {
+          "id": "m6-frontend-q1",
+          "prompt": "A component is…",
+          "options": [
+            "A reusable piece of screen",
+            "A kind of database",
+            "A password rule"
+          ],
+          "answer": 0
+        },
+        {
+          "id": "m6-frontend-q2",
+          "prompt": "A user opens a private screen while logged out. A “protected route” should…",
+          "options": [
+            "Show it anyway",
+            "Send them to login",
+            "Crash"
+          ],
+          "answer": 1
+        },
+        {
+          "id": "m6-boss",
+          "prompt": "The Save request times out. What should the app do before retrying?",
+          "options": [
+            "Immediately insert another record.",
+            "Keep the draft and reconcile the original operation ID before retrying.",
+            "Show success without checking.",
+            "Disable access rules."
+          ],
+          "answer": 1
+        }
+      ],
+      "steps": [
+        {
+          "id": "s6-step1",
+          "proof": [
+            "Every core route opens without a blank screen.",
+            "Android Back returns safely; a missing record offers a route home."
+          ]
+        },
+        {
+          "id": "s6-step2",
+          "proof": [
+            "An empty account sees a create action.",
+            "More records load without duplicates; a failed request shows Retry.",
+            "Details match the selected record."
+          ]
+        },
+        {
+          "id": "s6-step3",
+          "proof": [
+            "A double tap or uncertain retry leaves one record.",
+            "Saved edits survive relaunch; cancelled deletion changes nothing.",
+            "Invalid input stays visible with a useful message."
+          ]
+        },
+        {
+          "id": "s6-step4",
+          "proof": [
+            "TalkBack announces each field and action meaningfully.",
+            "Large text stays readable and primary actions remain reachable."
+          ]
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "lessons": [
+        "money"
+      ],
+      "practice": [
+        "money-1",
+        "money-2"
+      ],
+      "quiz": [
+        {
+          "id": "m7-money-q1",
+          "prompt": "When should a user be marked “subscribed”?",
+          "options": [
+            "When the screen says success",
+            "When your backend verifies the payment service’s webhook",
+            "When they tap Subscribe"
+          ],
+          "answer": 1
+        },
+        {
+          "id": "m7-money-q2",
+          "prompt": "A user cancels a monthly plan on day 10. What is best?",
+          "options": [
+            "Cut access immediately",
+            "Keep access until the period ends",
+            "Charge a fee"
+          ],
+          "answer": 1
+        },
+        {
+          "id": "m7-boss",
+          "prompt": "Can a SQLite cache automatically synchronize itself with Supabase?",
+          "options": [
+            "Yes, installing the package enables sync.",
+            "Yes, when the phone restarts.",
+            "No. Choose read-only caching or explicitly implement and test synchronization.",
+            "Only when RLS is disabled."
+          ],
+          "answer": 2
+        }
+      ],
+      "steps": [
+        {
+          "id": "s7-step1",
+          "proof": [
+            "All three module decisions have reasons.",
+            "Payment choice cites current policy or the app has no purchase flow."
+          ]
+        },
+        {
+          "id": "s7-step2",
+          "proof": [
+            "A recorded skip matches the app, OR test purchases grant only verified access.",
+            "If included, cancellation grants nothing and restore recovers the correct account entitlement."
+          ]
+        },
+        {
+          "id": "s7-step3",
+          "proof": [
+            "Skip is recorded, OR a test push arrives on the phone.",
+            "If included, denied permission and sign-out do not break the app or notify the wrong account."
+          ]
+        },
+        {
+          "id": "s7-step4",
+          "proof": [
+            "Skip is recorded, OR cached content opens with a stale/offline label.",
+            "Switching accounts never reveals the previous user cache.",
+            "Reconnect does not duplicate writes."
+          ]
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "lessons": [
+        "testing-basics"
+      ],
+      "practice": [
+        "testing-basics-1"
+      ],
+      "quiz": [
+        {
+          "id": "m8-testing-basics-q1",
+          "prompt": "A save times out. Which test catches a duplicate record?",
+          "options": [
+            "Check the Save button colour.",
+            "Retry the same save and verify exactly one record exists.",
+            "Confirm the spinner disappeared."
+          ],
+          "answer": 1
+        },
+        {
+          "id": "m8-testing-basics-q2",
+          "prompt": "Which result shows the user can recover?",
+          "options": [
+            "The app keeps the draft and succeeds after reconnecting.",
+            "The developer says it should work.",
+            "The error message is hidden."
+          ],
+          "answer": 0
+        },
+        {
+          "id": "m8-boss",
+          "prompt": "Do passing mocked JavaScript tests prove the Android release works?",
+          "options": [
+            "Yes, native behaviour is identical.",
+            "Yes, screenshots prove everything.",
+            "No. Test the installed build, native integrations, network failures, and user isolation too.",
+            "Only if every test is a snapshot."
+          ],
+          "answer": 2
+        }
+      ],
+      "steps": [
+        {
+          "id": "s8-step1",
+          "proof": [
+            "The focused tests pass in a one-shot run.",
+            "Deliberately breaking the validation assertion causes a failure before it is restored."
+          ]
+        },
+        {
+          "id": "s8-step2",
+          "proof": [
+            "Tests reach the expected destinations after session changes.",
+            "A private deep link while logged out reveals no private content."
+          ]
+        },
+        {
+          "id": "s8-step3",
+          "proof": [
+            "The workflow installs the intended Android build and passes the core journey.",
+            "The run link identifies the tested build; no real user data was modified."
+          ]
+        },
+        {
+          "id": "s8-step4",
+          "proof": [
+            "Each case has a recorded result tied to a build number.",
+            "No release-blocking failure remains; affected cases were rerun after fixes."
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "lessons": [
+        "lock-mobile",
+        "security-tools"
+      ],
+      "practice": [
+        "lock-mobile-1",
+        "lock-mobile-2",
+        "security-tools-1",
+        "security-tools-2"
+      ],
+      "quiz": [
+        {
+          "id": "m9-lock-mobile-q1",
+          "prompt": "Why can’t you keep an API key safe by putting it in the app?",
+          "options": [
+            "The app is too small",
+            "Anyone can unpack the app and read it",
+            "Keys expire in a day"
+          ],
+          "answer": 1
+        },
+        {
+          "id": "m9-lock-mobile-q2",
+          "prompt": "Which instruction is best to give the AI?",
+          "options": [
+            "“Make my app secure”",
+            "“Search for hardcoded secrets and show me the results”",
+            "“Fix everything”"
+          ],
+          "answer": 1
+        },
+        {
+          "id": "m9-boss",
+          "prompt": "A hidden admin button calls an endpoint using a secret key. Is hiding it sufficient?",
+          "options": [
+            "Yes, users cannot tap it.",
+            "No. Authenticate and authorize every server request; secrets must stay on the server.",
+            "Yes, if the key is in an EXPO_PUBLIC variable.",
+            "Yes, if the endpoint name is unusual."
+          ],
+          "answer": 1
+        }
+      ],
+      "steps": [
+        {
+          "id": "s9-step1",
+          "proof": [
+            "No privileged credential is shipped or tracked.",
+            "Any discovered exposed secret has been revoked, not merely deleted from a file."
+          ]
+        },
+        {
+          "id": "s9-step2",
+          "proof": [
+            "Unsigned/wrong-user requests cannot read or change protected resources.",
+            "Malformed requests fail safely without internal details."
+          ]
+        },
+        {
+          "id": "s9-step3",
+          "proof": [
+            "User B and signed-out clients cannot access A private resources.",
+            "Relevant Advisor findings are fixed or have a documented, reviewed explanation."
+          ]
+        },
+        {
+          "id": "s9-step4",
+          "proof": [
+            "A disposable account can request deletion via both required paths, OR applicability is documented.",
+            "The declared cleanup/retention outcome matches the test evidence."
+          ]
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "lessons": [
+        "mobile-store"
+      ],
+      "practice": [
+        "mobile-store-1",
+        "mobile-store-2"
+      ],
+      "quiz": [
+        {
+          "id": "m10-mobile-store-q1",
+          "prompt": "A user refuses the camera permission. Your app should…",
+          "options": [
+            "Crash",
+            "Keep working and offer another way",
+            "Ask again every second"
+          ],
+          "answer": 1
+        },
+        {
+          "id": "m10-mobile-store-q2",
+          "prompt": "What must you do with the app signing key?",
+          "options": [
+            "Post it in your README",
+            "Back it up safely, offline and in a password manager",
+            "Email it to the AI"
+          ],
+          "answer": 1
+        },
+        {
+          "id": "m10-boss",
+          "prompt": "For a personal Play account created after November 13, 2023, what is required before applying for production access?",
+          "options": [
+            "Twelve downloads at any time.",
+            "An internal test alone.",
+            "At least 12 testers opted into closed testing continuously for the preceding 14 days, followed by an application and review.",
+            "A successful EAS build automatically publishes the app."
+          ],
+          "answer": 2
+        }
+      ],
+      "steps": [
+        {
+          "id": "s10-step1",
+          "proof": [
+            "EAS reports a successful production AAB.",
+            "Play accepts the package/signature/versionCode/target API; the artifact uses the intended backend."
+          ]
+        },
+        {
+          "id": "s10-step2",
+          "proof": [
+            "Required Play setup tasks are complete and declarations match the candidate.",
+            "Privacy/deletion links work and reviewers can reach protected features."
+          ]
+        },
+        {
+          "id": "s10-step4",
+          "proof": [
+            "The test-track candidate installs and passes sign-in plus one core action.",
+            "A versioned production checklist exists with unfinished prerequisites marked blocked; production publication is held."
+          ]
+        },
+        {
+          "id": "s10-step3",
+          "proof": [
+            "Console shows the applicable test criteria are met, or documents an exemption.",
+            "Production access is approved before public release is attempted."
+          ]
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "lessons": [
+        "ship-and-run"
+      ],
+      "practice": [
+        "ship-and-run-1",
+        "ship-and-run-2"
+      ],
+      "quiz": [
+        {
+          "id": "m11-ship-and-run-q2",
+          "prompt": "What is a commit?",
+          "options": [
+            "A saved snapshot with a message",
+            "A password",
+            "A paid plan"
+          ],
+          "answer": 0
+        },
+        {
+          "id": "m11-ship-and-run-q3",
+          "prompt": "How should you first hear that your app crashed?",
+          "options": [
+            "From a user review",
+            "From your error tracker’s alert",
+            "Never"
+          ],
+          "answer": 1
+        },
+        {
+          "id": "m11-boss",
+          "prompt": "Does a Supabase database backup plus Spend Cap cover all files and every possible bill?",
+          "options": [
+            "Yes, both provide complete protection.",
+            "No. Storage objects need separate backups and opted-in costs such as compute can be outside Spend Cap.",
+            "Yes, if backups are daily.",
+            "Only if the app is Android."
+          ],
+          "answer": 1
+        }
+      ],
+      "steps": [
+        {
+          "id": "s11-step1",
+          "proof": [
+            "A controlled test event appears with a readable mapped location and release ID.",
+            "Event details contain no credentials or private user content."
+          ]
+        },
+        {
+          "id": "s11-step2",
+          "proof": [
+            "The compatible preview build receives the expected update.",
+            "Rollback returns that build to the documented known-good state."
+          ]
+        },
+        {
+          "id": "s11-step3",
+          "proof": [
+            "An isolated restore recovers sample records and file contents.",
+            "Recovery time and data-loss window are recorded; access isolation still passes."
+          ]
+        },
+        {
+          "id": "s11-step4",
+          "proof": [
+            "Coverage and exclusions are documented and dashboard settings are verified.",
+            "The owner can locate failures, pause costly work, and contact users safely."
+          ]
+        },
+        {
+          "id": "s11-step5",
+          "proof": [
+            "Every required gate has passing evidence tied to this candidate.",
+            "The owner approved publication; Console availability and a store-installed test confirm the intended version."
+          ]
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "lessons": [
+        "after-launch"
+      ],
+      "practice": [
+        "after-launch-1",
+        "after-launch-2"
+      ],
+      "quiz": [
+        {
+          "id": "m12-after-launch-q1",
+          "prompt": "What should you do in week 1 after launch?",
+          "options": [
+            "Add many new features",
+            "Fix what is broken and listen to users",
+            "Stop checking"
+          ],
+          "answer": 1
+        },
+        {
+          "id": "m12-after-launch-q2",
+          "prompt": "Why set up analytics before launch?",
+          "options": [
+            "It looks good",
+            "You cannot improve what you did not measure",
+            "It is required by Google"
+          ],
+          "answer": 1
+        },
+        {
+          "id": "m12-boss",
+          "prompt": "Can halting a Play staged rollout undo the update already installed by affected users?",
+          "options": [
+            "Yes, it downgrades everyone.",
+            "Yes, after a restart.",
+            "No. It stops further distribution; affected users need a corrected higher-version release or a compatible fix.",
+            "Yes, deleting the release restores user data."
+          ],
+          "answer": 2
+        }
+      ],
+      "steps": [
+        {
+          "id": "s12-step1",
+          "proof": [
+            "Dependency diagnostics and relevant tests pass.",
+            "A new installed candidate passes core and selected module checks."
+          ]
+        },
+        {
+          "id": "s12-step2",
+          "proof": [
+            "Migration applies cleanly to a disposable copy.",
+            "Old and new client core operations work and isolation tests pass."
+          ]
+        },
+        {
+          "id": "s12-step3",
+          "proof": [
+            "An update has an owner, observation window, and explicit stop criteria.",
+            "A rehearsal identifies the halt control and corrected-build procedure."
+          ]
+        },
+        {
+          "id": "s12-step4",
+          "proof": [
+            "Review log identifies each changed fact and affected card.",
+            "Recovery/access checks have recent evidence and the next review has an owner/date."
+          ]
+        }
+      ]
+    }
+  ],
+  "readiness": [
+    {
+      "id": "auth",
+      "missionId": 4,
+      "checks": [
+        {
+          "id": "auth:0",
+          "title": "Production authentication configured"
+        },
+        {
+          "id": "auth:1",
+          "title": "Session persistence matches the app’s security needs"
+        },
+        {
+          "id": "auth:2",
+          "title": "Token refresh works"
+        },
+        {
+          "id": "auth:3",
+          "title": "Email verification works if used"
+        },
+        {
+          "id": "auth:4",
+          "title": "Password recovery works if used"
+        },
+        {
+          "id": "auth:5",
+          "title": "Signed-out users are redirected from private screens"
+        },
+        {
+          "id": "auth:6",
+          "title": "Logout clears private app state"
+        },
+        {
+          "id": "auth:7",
+          "title": "Account deletion works where applicable"
+        },
+        {
+          "id": "auth:8",
+          "title": "Sensitive session storage is protected"
+        }
+      ]
+    },
+    {
+      "id": "database",
+      "missionId": 5,
+      "checks": [
+        {
+          "id": "database:0",
+          "title": "Row Level Security or equivalent rules are enabled"
+        },
+        {
+          "id": "database:1",
+          "title": "Two ordinary accounts cannot access each other’s records"
+        },
+        {
+          "id": "database:2",
+          "title": "Roles match the product’s access rules"
+        },
+        {
+          "id": "database:3",
+          "title": "Database privileges are limited to needed operations"
+        },
+        {
+          "id": "database:4",
+          "title": "Privileged database keys stay on the server"
+        },
+        {
+          "id": "database:5",
+          "title": "Database-facing input is validated"
+        },
+        {
+          "id": "database:6",
+          "title": "Constraints enforce data integrity"
+        },
+        {
+          "id": "database:7",
+          "title": "Backup and restore have been rehearsed"
+        }
+      ]
+    },
+    {
+      "id": "api",
+      "missionId": 9,
+      "checks": [
+        {
+          "id": "api:0",
+          "title": "Server-side rate limits are enforced"
+        },
+        {
+          "id": "api:1",
+          "title": "The server verifies caller identity"
+        },
+        {
+          "id": "api:2",
+          "title": "The server checks ownership and permissions"
+        },
+        {
+          "id": "api:3",
+          "title": "Request payloads are validated"
+        },
+        {
+          "id": "api:4",
+          "title": "Request sizes are limited"
+        },
+        {
+          "id": "api:5",
+          "title": "Requests have timeouts"
+        },
+        {
+          "id": "api:6",
+          "title": "Environment secrets are protected"
+        },
+        {
+          "id": "api:7",
+          "title": "Webhook signatures are verified where used"
+        },
+        {
+          "id": "api:8",
+          "title": "Dependencies are checked for known vulnerabilities"
+        },
+        {
+          "id": "api:9",
+          "title": "Sensitive data is redacted from logs"
+        }
+      ]
+    },
+    {
+      "id": "money",
+      "missionId": 7,
+      "checks": [
+        {
+          "id": "money:0",
+          "title": "Privileged AI calls run on the server"
+        },
+        {
+          "id": "money:1",
+          "title": "Per-user AI quotas are enforced"
+        },
+        {
+          "id": "money:2",
+          "title": "AI request and response token budgets are capped"
+        },
+        {
+          "id": "money:3",
+          "title": "Credit deductions are atomic under concurrency"
+        },
+        {
+          "id": "money:4",
+          "title": "Retries cannot duplicate charges or credits"
+        },
+        {
+          "id": "money:5",
+          "title": "Subscriptions are verified server-side"
+        },
+        {
+          "id": "money:6",
+          "title": "Billable actions stop at spending limits"
+        },
+        {
+          "id": "money:7",
+          "title": "Abuse signals can be reviewed"
+        }
+      ]
+    },
+    {
+      "id": "queries",
+      "missionId": 5,
+      "checks": [
+        {
+          "id": "queries:0",
+          "title": "Indexes reflect real query patterns"
+        },
+        {
+          "id": "queries:1",
+          "title": "Foreign key indexes are reviewed for benefit"
+        },
+        {
+          "id": "queries:2",
+          "title": "Slow queries are measured and tuned"
+        },
+        {
+          "id": "queries:3",
+          "title": "Large result sets are paginated"
+        },
+        {
+          "id": "queries:4",
+          "title": "Only needed data is fetched"
+        },
+        {
+          "id": "queries:5",
+          "title": "Connections and pooling are appropriate"
+        },
+        {
+          "id": "queries:6",
+          "title": "Transactions preserve data integrity"
+        }
+      ]
+    },
+    {
+      "id": "performance",
+      "missionId": 6,
+      "checks": [
+        {
+          "id": "performance:0",
+          "title": "Caching has a clear scope and invalidation rule"
+        },
+        {
+          "id": "performance:1",
+          "title": "Images are sized and compressed"
+        },
+        {
+          "id": "performance:2",
+          "title": "Expensive resources are loaded when needed"
+        },
+        {
+          "id": "performance:3",
+          "title": "Long lists use appropriate virtualization"
+        },
+        {
+          "id": "performance:4",
+          "title": "Search requests are debounced where useful"
+        },
+        {
+          "id": "performance:5",
+          "title": "Repeated renders are measured and reduced where needed"
+        },
+        {
+          "id": "performance:6",
+          "title": "Release bundle size is measured"
+        },
+        {
+          "id": "performance:7",
+          "title": "Network retries are bounded"
+        }
+      ]
+    },
+    {
+      "id": "ux",
+      "missionId": 6,
+      "checks": [
+        {
+          "id": "ux:0",
+          "title": "Loading feedback or a skeleton is shown where useful"
+        },
+        {
+          "id": "ux:1",
+          "title": "Empty screens explain the next action"
+        },
+        {
+          "id": "ux:2",
+          "title": "Errors explain how to recover"
+        },
+        {
+          "id": "ux:3",
+          "title": "Offline behavior is clear"
+        },
+        {
+          "id": "ux:4",
+          "title": "Screen failures have an error boundary or fallback"
+        },
+        {
+          "id": "ux:5",
+          "title": "Repeated taps do not duplicate writes"
+        },
+        {
+          "id": "ux:6",
+          "title": "The keyboard does not hide key fields or actions"
+        },
+        {
+          "id": "ux:7",
+          "title": "Core tasks work with accessibility settings"
+        },
+        {
+          "id": "ux:8",
+          "title": "Feedback is consistent across screens"
+        }
+      ]
+    },
+    {
+      "id": "testing",
+      "missionId": 8,
+      "checks": [
+        {
+          "id": "testing:0",
+          "title": "Unit tests cover important rules"
+        },
+        {
+          "id": "testing:1",
+          "title": "Integration tests cover the core journey"
+        },
+        {
+          "id": "testing:2",
+          "title": "Authentication flow is tested"
+        },
+        {
+          "id": "testing:3",
+          "title": "Cross-account isolation is tested with disposable data"
+        },
+        {
+          "id": "testing:4",
+          "title": "Rate limiting is tested safely in development"
+        },
+        {
+          "id": "testing:5",
+          "title": "Crash reports identify the release"
+        },
+        {
+          "id": "testing:6",
+          "title": "Performance signals are monitored"
+        },
+        {
+          "id": "testing:7",
+          "title": "Backend errors reach an owner"
+        }
+      ]
+    },
+    {
+      "id": "release",
+      "missionId": 10,
+      "checks": [
+        {
+          "id": "release:0",
+          "title": "Development and production environments are separate"
+        },
+        {
+          "id": "release:1",
+          "title": "Production EAS or equivalent build configuration is correct"
+        },
+        {
+          "id": "release:2",
+          "title": "Signing and upload keys are handled securely"
+        },
+        {
+          "id": "release:3",
+          "title": "Android permissions match the features"
+        },
+        {
+          "id": "release:4",
+          "title": "Sensitive debug logs are absent in the release"
+        },
+        {
+          "id": "release:5",
+          "title": "Privacy policy reflects the app"
+        },
+        {
+          "id": "release:6",
+          "title": "Play Data Safety matches the app and SDKs"
+        },
+        {
+          "id": "release:7",
+          "title": "The installed release build passes the smoke test"
+        },
+        {
+          "id": "release:8",
+          "title": "Rollback or recovery is documented"
+        }
+      ]
+    },
+    {
+      "id": "security-extra",
+      "missionId": 9,
+      "checks": [
+        {
+          "id": "security-extra:0",
+          "title": "Applicable mobile and API security controls are reviewed"
+        },
+        {
+          "id": "security-extra:1",
+          "title": "HTTPS is enforced"
+        },
+        {
+          "id": "security-extra:2",
+          "title": "Token expiry and revocation are tested"
+        },
+        {
+          "id": "security-extra:3",
+          "title": "Sign-in has brute-force protection"
+        },
+        {
+          "id": "security-extra:4",
+          "title": "Secrets can be rotated with minimal interruption"
+        },
+        {
+          "id": "security-extra:5",
+          "title": "Uploads are validated if used"
+        },
+        {
+          "id": "security-extra:6",
+          "title": "Storage bucket access policies are reviewed"
+        },
+        {
+          "id": "security-extra:7",
+          "title": "Deep links validate destinations and respect authorization"
+        },
+        {
+          "id": "security-extra:8",
+          "title": "Admin privileges are independently enforced"
+        },
+        {
+          "id": "security-extra:9",
+          "title": "AI inputs and model-suggested actions are treated as untrusted"
+        }
+      ]
+    },
+    {
+      "id": "scale",
+      "missionId": 11,
+      "checks": [
+        {
+          "id": "scale:0",
+          "title": "Expected concurrency is tested in a safe environment"
+        },
+        {
+          "id": "scale:1",
+          "title": "Database resource usage is monitored"
+        },
+        {
+          "id": "scale:2",
+          "title": "Repeated upstream failures have an appropriate stop or fallback"
+        },
+        {
+          "id": "scale:3",
+          "title": "Retries back off and stop after a limit"
+        },
+        {
+          "id": "scale:4",
+          "title": "Background work handles interruptions"
+        },
+        {
+          "id": "scale:5",
+          "title": "Provider outages degrade gracefully"
+        },
+        {
+          "id": "scale:6",
+          "title": "Migrations are reviewed and rehearsed"
+        }
+      ]
+    },
+    {
+      "id": "code",
+      "missionId": 2,
+      "checks": [
+        {
+          "id": "code:0",
+          "title": "Strict type checks are enabled where the stack supports them"
+        },
+        {
+          "id": "code:1",
+          "title": "Repeated UI uses shared components where it helps"
+        },
+        {
+          "id": "code:2",
+          "title": "Errors are handled consistently"
+        },
+        {
+          "id": "code:3",
+          "title": "API calls share configuration and timeouts"
+        },
+        {
+          "id": "code:4",
+          "title": "Project structure is documented and consistent"
+        },
+        {
+          "id": "code:5",
+          "title": "Unused dependencies are removed"
+        },
+        {
+          "id": "code:6",
+          "title": "Dead or duplicate code is reviewed"
+        },
+        {
+          "id": "code:7",
+          "title": "Repository documentation covers architecture, security, tests, deployment and changes"
+        },
+        {
+          "id": "code:8",
+          "title": "Automated checks run before release"
+        }
+      ]
+    },
+    {
+      "id": "operations",
+      "missionId": 11,
+      "checks": [
+        {
+          "id": "operations:0",
+          "title": "Global spend limits are enforced where applicable"
+        },
+        {
+          "id": "operations:1",
+          "title": "Usage and billing alerts have an owner"
+        },
+        {
+          "id": "operations:2",
+          "title": "Free-tier abuse is addressed"
+        },
+        {
+          "id": "operations:3",
+          "title": "Subscription expiry removes access at the right time"
+        },
+        {
+          "id": "operations:4",
+          "title": "Refunds and cancellations are handled"
+        },
+        {
+          "id": "operations:5",
+          "title": "Retention and deletion rules are documented"
+        },
+        {
+          "id": "operations:6",
+          "title": "Applicable terms are available"
+        },
+        {
+          "id": "operations:7",
+          "title": "Incident response and communication are rehearsed"
+        }
+      ]
+    },
+    {
+      "id": "android-extra",
+      "missionId": 12,
+      "checks": [
+        {
+          "id": "android-extra:0",
+          "title": "Version numbers and build identifiers are recorded"
+        },
+        {
+          "id": "android-extra:1",
+          "title": "Older apps can still use newer APIs during rollout"
+        },
+        {
+          "id": "android-extra:2",
+          "title": "Target SDK meets applicable requirements"
+        },
+        {
+          "id": "android-extra:3",
+          "title": "Core journey is tested on a low-end phone"
+        },
+        {
+          "id": "android-extra:4",
+          "title": "Slow network behavior is tested"
+        },
+        {
+          "id": "android-extra:5",
+          "title": "Cold startup is measured"
+        },
+        {
+          "id": "android-extra:6",
+          "title": "Background, resume and process restart are tested"
+        },
+        {
+          "id": "android-extra:7",
+          "title": "App integrity checks are considered where appropriate"
+        }
+      ]
+    },
+    {
+      "id": "control-plane",
+      "missionId": 9,
+      "checks": [
+        {
+          "id": "control-plane:0",
+          "title": "An owner can identify sensitive data, trust boundaries, and which services process it"
+        },
+        {
+          "id": "control-plane:1",
+          "title": "Privileged repository, store, CI and backend accounts have MFA and least-privilege access where supported"
+        },
+        {
+          "id": "control-plane:2",
+          "title": "There is an inventory of live API routes, versions, owners and retired or debug endpoints"
+        },
+        {
+          "id": "control-plane:3",
+          "title": "APIs restrict which record fields callers may read and change"
+        },
+        {
+          "id": "control-plane:4",
+          "title": "Server features that fetch external URLs restrict destinations and validate third-party responses where applicable"
+        },
+        {
+          "id": "control-plane:5",
+          "title": "Third-party SDK data collection, telemetry and consent are reviewed against privacy disclosures"
+        }
+      ]
+    },
+    {
+      "id": "artifact",
+      "missionId": 10,
+      "checks": [
+        {
+          "id": "artifact:0",
+          "title": "The merged release manifest exposes only intended Android components with appropriate permissions"
+        },
+        {
+          "id": "artifact:1",
+          "title": "Android backups and device transfers exclude sensitive app data as appropriate"
+        },
+        {
+          "id": "artifact:2",
+          "title": "The production network configuration disallows unintended cleartext and debug trust settings"
+        },
+        {
+          "id": "artifact:3",
+          "title": "The signed release bundle and its native dependencies meet applicable 16 KB page-size requirements"
+        },
+        {
+          "id": "artifact:4",
+          "title": "Over-the-air updates target the intended channel and compatible runtime where used"
+        },
+        {
+          "id": "artifact:5",
+          "title": "A static security report for the Android release was reviewed and applicable findings were verified"
+        }
+      ]
+    },
+    {
+      "id": "recovery-proof",
+      "missionId": 11,
+      "checks": [
+        {
+          "id": "recovery-proof:0",
+          "title": "The exact release artifact can be traced to a commit, dependencies and its build record"
+        },
+        {
+          "id": "recovery-proof:1",
+          "title": "The restore rehearsal covers database records and any separately stored files, with time and data loss recorded"
+        },
+        {
+          "id": "recovery-proof:2",
+          "title": "Release and rollback decisions have a named owner, measurable stop criteria, and a known recovery procedure"
+        }
+      ]
+    }
+  ],
+  "glossary": [
+    {
+      "id": "AAB (Android App Bundle)",
+      "term": "AAB (Android App Bundle)"
+    },
+    {
+      "id": "Access matrix",
+      "term": "Access matrix"
+    },
+    {
+      "id": "Accessibility",
+      "term": "Accessibility"
+    },
+    {
+      "id": "Admin dashboard",
+      "term": "Admin dashboard"
+    },
+    {
+      "id": "ANR",
+      "term": "ANR"
+    },
+    {
+      "id": "Android vitals",
+      "term": "Android vitals"
+    },
+    {
+      "id": "API",
+      "term": "API"
+    },
+    {
+      "id": "API level / target API",
+      "term": "API level / target API"
+    },
+    {
+      "id": "Audit log",
+      "term": "Audit log"
+    },
+    {
+      "id": "Authentication",
+      "term": "Authentication"
+    },
+    {
+      "id": "Authorization",
+      "term": "Authorization"
+    },
+    {
+      "id": "Backend",
+      "term": "Backend"
+    },
+    {
+      "id": "Backup / restore",
+      "term": "Backup / restore"
+    },
+    {
+      "id": "Baseline Profile",
+      "term": "Baseline Profile"
+    },
+    {
+      "id": "Bucket",
+      "term": "Bucket"
+    },
+    {
+      "id": "Cache",
+      "term": "Cache"
+    },
+    {
+      "id": "CAPTCHA",
+      "term": "CAPTCHA"
+    },
+    {
+      "id": "CI (continuous integration)",
+      "term": "CI (continuous integration)"
+    },
+    {
+      "id": "Cleartext",
+      "term": "Cleartext"
+    },
+    {
+      "id": "Closed testing",
+      "term": "Closed testing"
+    },
+    {
+      "id": "Cold start",
+      "term": "Cold start"
+    },
+    {
+      "id": "Commit / save point",
+      "term": "Commit / save point"
+    },
+    {
+      "id": "Compose (Jetpack Compose)",
+      "term": "Compose (Jetpack Compose)"
+    },
+    {
+      "id": "Consent",
+      "term": "Consent"
+    },
+    {
+      "id": "Crash rate",
+      "term": "Crash rate"
+    },
+    {
+      "id": "Data safety form",
+      "term": "Data safety form"
+    },
+    {
+      "id": "Debug / release build",
+      "term": "Debug / release build"
+    },
+    {
+      "id": "Deep link",
+      "term": "Deep link"
+    },
+    {
+      "id": "Dependency / library",
+      "term": "Dependency / library"
+    },
+    {
+      "id": "Dependabot",
+      "term": "Dependabot"
+    },
+    {
+      "id": "DPDP Act",
+      "term": "DPDP Act"
+    },
+    {
+      "id": "Edge case",
+      "term": "Edge case"
+    },
+    {
+      "id": "Edge Function",
+      "term": "Edge Function"
+    },
+    {
+      "id": "Encryption",
+      "term": "Encryption"
+    },
+    {
+      "id": "Environment (dev / staging / prod)",
+      "term": "Environment (dev / staging / prod)"
+    },
+    {
+      "id": "Feature flag / kill switch",
+      "term": "Feature flag / kill switch"
+    },
+    {
+      "id": "Force update",
+      "term": "Force update"
+    },
+    {
+      "id": "Git / GitHub",
+      "term": "Git / GitHub"
+    },
+    {
+      "id": "HTTPS",
+      "term": "HTTPS"
+    },
+    {
+      "id": "Idempotent",
+      "term": "Idempotent"
+    },
+    {
+      "id": "Jank",
+      "term": "Jank"
+    },
+    {
+      "id": "Key (API key, secret key)",
+      "term": "Key (API key, secret key)"
+    },
+    {
+      "id": "Key rotation",
+      "term": "Key rotation"
+    },
+    {
+      "id": "Kotlin",
+      "term": "Kotlin"
+    },
+    {
+      "id": "Lazy list",
+      "term": "Lazy list"
+    },
+    {
+      "id": "Load test",
+      "term": "Load test"
+    },
+    {
+      "id": "Lock-in",
+      "term": "Lock-in"
+    },
+    {
+      "id": "MASVS",
+      "term": "MASVS"
+    },
+    {
+      "id": "Material Design 3",
+      "term": "Material Design 3"
+    },
+    {
+      "id": "MCP",
+      "term": "MCP"
+    },
+    {
+      "id": "MFA / 2-step verification",
+      "term": "MFA / 2-step verification"
+    },
+    {
+      "id": "Migration",
+      "term": "Migration"
+    },
+    {
+      "id": "MVP",
+      "term": "MVP"
+    },
+    {
+      "id": "Obfuscation (R8)",
+      "term": "Obfuscation (R8)"
+    },
+    {
+      "id": "OTP",
+      "term": "OTP"
+    },
+    {
+      "id": "OWASP",
+      "term": "OWASP"
+    },
+    {
+      "id": "Permission (Android)",
+      "term": "Permission (Android)"
+    },
+    {
+      "id": "PITR",
+      "term": "PITR"
+    },
+    {
+      "id": "Play App Signing",
+      "term": "Play App Signing"
+    },
+    {
+      "id": "Play Integrity API",
+      "term": "Play Integrity API"
+    },
+    {
+      "id": "Plugin",
+      "term": "Plugin"
+    },
+    {
+      "id": "Pre-launch report",
+      "term": "Pre-launch report"
+    },
+    {
+      "id": "Privacy policy",
+      "term": "Privacy policy"
+    },
+    {
+      "id": "Production",
+      "term": "Production"
+    },
+    {
+      "id": "Prompt injection",
+      "term": "Prompt injection"
+    },
+    {
+      "id": "Rate limit",
+      "term": "Rate limit"
+    },
+    {
+      "id": "Red team",
+      "term": "Red team"
+    },
+    {
+      "id": "Repository (repo)",
+      "term": "Repository (repo)"
+    },
+    {
+      "id": "RLS (Row Level Security)",
+      "term": "RLS (Row Level Security)"
+    },
+    {
+      "id": "Rollback",
+      "term": "Rollback"
+    },
+    {
+      "id": "Runbook",
+      "term": "Runbook"
+    },
+    {
+      "id": "SDK",
+      "term": "SDK"
+    },
+    {
+      "id": "Service-role / secret key",
+      "term": "Service-role / secret key"
+    },
+    {
+      "id": "Session / token",
+      "term": "Session / token"
+    },
+    {
+      "id": "Skill",
+      "term": "Skill"
+    },
+    {
+      "id": "Spend cap",
+      "term": "Spend cap"
+    },
+    {
+      "id": "Staged rollout",
+      "term": "Staged rollout"
+    },
+    {
+      "id": "Staging",
+      "term": "Staging"
+    },
+    {
+      "id": "Supabase",
+      "term": "Supabase"
+    },
+    {
+      "id": "TalkBack",
+      "term": "TalkBack"
+    },
+    {
+      "id": "Threat model",
+      "term": "Threat model"
+    },
+    {
+      "id": "Unit / integration / UI test",
+      "term": "Unit / integration / UI test"
+    },
+    {
+      "id": "Upload key",
+      "term": "Upload key"
+    },
+    {
+      "id": "Webhook",
+      "term": "Webhook"
+    },
+    {
+      "id": "Wireframe",
+      "term": "Wireframe"
+    }
+  ],
+  "articles": [
+    "0-5",
+    "1-4",
+    "3.2",
+    "3.3",
+    "4.4",
+    "4.6",
+    "5.1"
+  ]
+}

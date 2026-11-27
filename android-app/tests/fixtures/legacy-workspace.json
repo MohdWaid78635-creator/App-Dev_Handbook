@@ -1,0 +1,160 @@
+{
+  "app": "buildwisp-backup",
+  "version": 1,
+  "createdAt": "2026-11-27T03:30:00.000Z",
+  "data": {
+    "progress": {
+      "version": 1,
+      "checkpoints": [
+        "tools"
+      ],
+      "openedMissions": [
+        0,
+        3
+      ],
+      "quizResults": [
+        {
+          "id": "m0-how-apps-work-q1",
+          "firstCorrectAt": 1795686400000,
+          "missed": true,
+          "reviewDueAt": 1795772800000
+        },
+        {
+          "id": "m0-how-apps-work-q2",
+          "firstCorrectAt": 1795686400100,
+          "missed": false
+        },
+        {
+          "id": "m1-plan-first-q1",
+          "firstCorrectAt": null,
+          "missed": true
+        }
+      ]
+    },
+    "projects": {
+      "version": 1,
+      "projects": [
+        {
+          "id": 1,
+          "name": "Pocket Budget",
+          "audience": "Synthetic students",
+          "goal": "Track sample purchases",
+          "plan": {
+            "target": "android",
+            "audience": "Synthetic students",
+            "goal": "Track sample purchases",
+            "stack": "expo",
+            "offline": "yes"
+          },
+          "milestones": {
+            "1": "Synthetic interview notes",
+            "8": "Synthetic build 12: retry passed"
+          },
+          "build": {
+            "s0-step1": {
+              "checked": [
+                "Running `node -v` outputs v22.x, v24.x, or v26.x."
+              ]
+            },
+            "s7-step2": {
+              "checked": [],
+              "skipReason": "Synthetic project does not use this optional feature"
+            }
+          }
+        },
+        {
+          "id": 2,
+          "name": "Habit Garden",
+          "audience": "Synthetic learners",
+          "goal": "Record sample habits",
+          "plan": {
+            "target": "android",
+            "journey": "Create a habit and reopen it"
+          },
+          "milestones": {
+            "6": "Synthetic core journey"
+          }
+        }
+      ]
+    },
+    "study": {
+      "version": 1,
+      "daily": [
+        {
+          "day": "2026-11-25",
+          "id": "m0-how-apps-work-q1",
+          "pick": 1
+        },
+        {
+          "day": "2026-11-26",
+          "id": "m1-plan-first-q1",
+          "pick": 0
+        }
+      ],
+      "cards": [
+        {
+          "id": "AAB (Android App Bundle)",
+          "level": 1,
+          "due": "2026-11-26"
+        },
+        {
+          "id": "Access matrix",
+          "level": 0,
+          "due": "2026-11-26"
+        }
+      ]
+    },
+    "readiness": [
+      {
+        "projectId": 1,
+        "record": {
+          "version": 1,
+          "reviews": [
+            {
+              "build": "Android build 12",
+              "items": {
+                "auth:0": {
+                  "status": "passed",
+                  "evidence": "Synthetic redacted evidence 0"
+                },
+                "auth:1": {
+                  "status": "blocked",
+                  "evidence": "Synthetic redacted evidence 1"
+                },
+                "auth:2": {
+                  "status": "na",
+                  "evidence": "Synthetic redacted evidence 2"
+                },
+                "auth:3": {
+                  "status": "pending",
+                  "evidence": "Synthetic redacted evidence 3"
+                }
+              }
+            },
+            {
+              "build": "Android build 13",
+              "items": {}
+            }
+          ]
+        }
+      },
+      {
+        "projectId": 2,
+        "record": {
+          "version": 1,
+          "reviews": [
+            {
+              "build": "Android build 1",
+              "items": {
+                "auth:0": {
+                  "status": "passed",
+                  "evidence": "Synthetic independent project evidence"
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
