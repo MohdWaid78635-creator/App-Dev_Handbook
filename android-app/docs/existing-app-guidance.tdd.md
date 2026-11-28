@@ -2,6 +2,8 @@
 
 28 November 2026. Source plan: [existing-app guidance](existing-app-guidance.plan.md). User authorised proceeding without an AI API. This increment implements the assessment and current-library matching; it does not complete the handbook import or resume Supabase storage integration.
 
+Subsequent update: the handbook was imported in the next increment; see [handbook import evidence](handbook-import.tdd.md). The original seven-article limitations below describe this assessment checkpoint, not the latest library. The project is now on hold; resume from the root `RESUME_HERE.md`.
+
 ## What changed and why
 
 1. **Project assessment and local rules:** each app records its reported position, current goal, data applicability, and six capability checks. Unknown answers lead to verification. Repair, exposure, performance, and cost goals take priority. This lets existing builders pick up their work without repeating the course.

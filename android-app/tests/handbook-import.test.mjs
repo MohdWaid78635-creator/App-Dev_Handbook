@@ -68,3 +68,12 @@ test('the importer fails clearly for unknown blocks and duplicate source identit
   duplicate.sections.push(duplicate.sections[0]);
   assert.throws(() => importHandbook([duplicate]), /duplicate handbook section/);
 });
+
+test('phone-friendly tables retain column labels and definitions retain both halves', () => {
+  assert.deepEqual(handbookBlockText({ t: 'table', head: ['Action', 'Expected result'], rows: [['Retry', 'One saved record']] }),
+    ['Action · Expected result', 'Action: Retry\nExpected result: One saved record']);
+  assert.deepEqual(handbookBlockText({ t: 'table', head: ['Known column'], rows: [['Value', 'Extra cell']] }),
+    ['Known column', 'Known column: Value\nColumn 2: Extra cell']);
+  assert.deepEqual(handbookBlockText({ t: 'dl', items: [['API', 'A way for programs to communicate.']] }), ['API\nA way for programs to communicate.']);
+  assert.deepEqual(handbookBlockText({ t: 'p', text: ' ' }), []);
+});

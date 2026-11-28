@@ -1,5 +1,7 @@
 # App Builder's Handbook – Interactive Guide
 
+**Project on hold (28 November 2026). Start with [RESUME_HERE.md](RESUME_HERE.md) when returning.**
+
 A searchable, gamified web companion to *The App Builder's Handbook*, built from the PDFs with no server required.
 
 ## Live site

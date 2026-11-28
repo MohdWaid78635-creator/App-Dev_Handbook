@@ -6,7 +6,13 @@ BuildWisp is an Expo React Native app for learning and building first Android pr
 
 Home → **Start Here** or **Find my app’s next step** opens the new/existing app choice. Existing builders select or add a project, describe its current state and goal, and check capabilities. Each project keeps its own assessment. Recommendations explain the suggested focus and open matching resources; **Browse all resources** removes the recommendation filter. Project cards include **My app’s next move** to revise answers later.
 
-Matching runs locally with no AI API, account, or per-request cost. Saved tool choices are reused, with general references when the guided Expo/Supabase labs do not match. Assessments are included in backup/restore and validated by the prepared sync contract. They do not award XP or certify a release. This increment uses the current curated library; the complete 191-section library remains planned. See [implementation evidence](docs/existing-app-guidance.tdd.md).
+Matching runs locally with no AI API, account, or per-request cost. Saved tool choices are reused, with general references when the guided Expo/Supabase labs do not match. Assessments are included in backup/restore and validated by the prepared sync contract. They do not award XP or certify a release. See [implementation evidence](docs/existing-app-guidance.tdd.md).
+
+## Complete offline handbook
+
+Help / Resource Library includes all 191 sections from the structured handbook: 23 numbered chapters plus Print Pack, 125 copyable handbook prompts, and 85 glossary terms. Browse chapters or search full text. All eight source block types are retained in readable text; tables use labelled rows and worksheet sheets remain readable templates. Project suggestions include related chapters. The complete library has 540 entries including existing course resources. [Import evidence](docs/handbook-import.tdd.md).
+
+Project is on hold at the user's request. Start from [the resume note](../RESUME_HERE.md). These changes need a fresh preview APK before they appear in the installed app.
 
 ## Run the first screen
 

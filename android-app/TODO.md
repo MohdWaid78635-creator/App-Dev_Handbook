@@ -2,11 +2,18 @@
 
 ## Current session · 28 November 2026
 
+**ON HOLD at the user's request.** Handbook import is complete; finish the Git push and stop. Resume from [the root handoff](../RESUME_HERE.md).
+
+- [x] Import all 191 handbook sections, 125 prompts, and 85 glossary terms; preserve tables, definitions, and source identities.
+- [x] Connect chapter browsing, full search, and relevant handbook chapters for assessed projects.
+- [x] Verify 156 app tests, type checking, and Android export; [import evidence](docs/handbook-import.tdd.md).
+
 Latest priority: existing-app assessment and relevant resources. Implemented Home entry, project-specific questionnaire/results, tool-aware matching, backups, scoped-storage compatibility, and a forward SQL validator migration. No AI API. [Plan](docs/existing-app-guidance.plan.md) · [Evidence](docs/existing-app-guidance.tdd.md).
 
 - [x] Existing-app assessment and matching from the current curated library; 149 app tests and 15 database tests pass.
 - [ ] Verify new native screens on Android, including TalkBack, large text, and interrupted forms.
-- [ ] Import the complete handbook and support resources using [the content expansion plan](docs/content-expansion-research.plan.md).
+- [x] Import the complete structured handbook using [the content expansion plan](docs/content-expansion-research.plan.md).
+- [ ] Port the separate guided rescue flows and bonus quests; extend practical labs and editable worksheets after resuming.
 - [ ] Submit a new APK when a preview build is requested; this increment has not been built through EAS.
 
 Previous priority: correct the installed APK layouts before continuing Phase 3. The shared Router/Slot style-loss bug is fixed across all 59 linked controls; [regression evidence](docs/linked-layout-fix.tdd.md). The user is reviewing the corrected preview. Phase 3's storage core has 11 passing SQLite tests including assessment isolation, but provider/screen integration and the phone backup gate remain unfinished. Storage and cloud cutover remain disabled.

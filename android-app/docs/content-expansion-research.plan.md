@@ -3,11 +3,11 @@
 ## Overview
 Research completed 28 November 2026 against the repository's current structured handbook, web learning tools, native app importer, screens, content contracts, and previous curriculum audits. The mobile app contains a curated beginner journey, not the complete reference library. Restore the missing reference material first, then add the worked examples needed to turn instructions into an independently usable course.
 
-This began as a research and proposed implementation plan. The subsequent existing-app guidance increment is implemented and documented in `existing-app-guidance.tdd.md`; full curriculum expansion below remains pending. Supabase migration Phase 3 remains paused; the content phases below are a separate sequence.
+This began as a research and proposed implementation plan. Existing-app guidance is implemented (`existing-app-guidance.tdd.md`), and all 191 handbook sections, 125 prompts, glossary search, and chapter browsing are now imported (`handbook-import.tdd.md`). Tables use readable labelled rows in the existing compatible text reader. Richer reader styling, interactive worksheet tools, web-only guided rescue/bonus interfaces, and deeper labs remain future work. The entire project is now on hold at the user's request; see the root `RESUME_HERE.md`. Supabase migration Phase 3 remains paused.
 
 ## Requirements & Scope
 
-### Verified inventory
+### Verified inventory at the initial research checkpoint (before full import)
 
 | Source or app surface | Verified scope | Meaning |
 |---|---|---|
