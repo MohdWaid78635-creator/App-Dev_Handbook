@@ -42,7 +42,7 @@ const focusDetails = {
   costs: { title: 'Investigate the unexpected usage', missionId: 11, task: 'Find the service and usage item that increased. Check abuse, retries, and controls supported by your plan. Confirm what each cost limit actually covers.' },
 } as const;
 export type Focus = keyof typeof focusDetails;
-export type Guidance = { focus: Focus; stage: string; reason: string; generalOnly: boolean; relatedMissions: readonly number[] } & { title: string; missionId: number; task: string };
+export type Guidance = { focus: Focus; stage: string; reason: string; generalOnly: boolean; startHere: boolean; relatedMissions: readonly number[] } & { title: string; missionId: number; task: string };
 
 export function recommendProject(project: Pick<Project, 'assessment' | 'plan'>): Guidance | null {
   const a = project.assessment;
@@ -61,9 +61,11 @@ export function recommendProject(project: Pick<Project, 'assessment' | 'plan'>):
     reason = gap ? `${capabilityLabels[gap]} is ${a.checks[gap] === 'no' ? 'marked as needing work' : 'not yet verified for this app'}.`
       : 'Your reported checks support working on your selected goal. They do not certify the app for release.';
   }
-  const generalOnly = !['expo-ts', 'expo-js'].includes(project.plan?.stack ?? '') || project.plan?.target === 'web';
-  const detail = focusDetails[focus];
-  return { focus, ...detail, stage: a.mode === 'new' ? 'Fresh start' : appStages[a.stage], reason, generalOnly,
+  const localLab = focus === 'data' && project.plan?.data === 'sqlite';
+  const backendMismatch = (focus === 'data' && !localLab || focus === 'access') && project.plan?.data !== 'supabase';
+  const generalOnly = !['expo-ts', 'expo-js'].includes(project.plan?.stack ?? '') || project.plan?.target === 'web' || backendMismatch;
+  const detail = localLab ? { ...focusDetails.data, missionId: 0 } : focusDetails[focus];
+  return { focus, ...detail, stage: a.mode === 'new' ? 'Fresh start' : appStages[a.stage], reason, generalOnly, startHere: focus === 'start' || localLab,
     relatedMissions: [...new Set([detail.missionId, ...(a.accounts !== 'local' ? [5] : []), ...(a.goal === 'release' ? [8, 10] : [])])] };
 }
 
