@@ -1,4 +1,6 @@
 import type { PlanDraft } from './plan';
+import { isAssessment } from './assessment.ts';
+import type { Assessment } from './assessment.ts';
 
 export const projectLimits = { name: 80, audience: 160, goal: 600 };
 export type ProjectBrief = { name: string; audience: string; goal: string };
@@ -15,6 +17,7 @@ type MilestoneNotes = Partial<Record<MilestoneId, string>>;
 export const maxMilestoneNoteLength = 1200;
 export type Project = ProjectBrief & {
   id: number;
+  assessment?: Assessment;
   plan?: PlanDraft;
   build?: Record<string, BuildEvidence | undefined>;
   milestones?: MilestoneNotes;
@@ -66,13 +69,13 @@ export function projectFieldError(field: keyof ProjectBrief, value: string) {
 
 function isProject(value: unknown): value is Project {
   if (typeof value !== 'object' || value === null) return false;
-  const { id, name, audience, goal, plan, build, milestones } = value as Partial<Project>;
+  const { id, name, audience, goal, plan, build, milestones, assessment } = value as Partial<Project>;
   return typeof id === 'number' && Number.isSafeInteger(id) && id > 0 &&
     typeof name === 'string' && !projectFieldError('name', name) &&
     typeof audience === 'string' && !projectFieldError('audience', audience) &&
     typeof goal === 'string' && !projectFieldError('goal', goal) &&
     (plan === undefined || isPlanDraft(plan)) && (build === undefined || isBuildRecord(build)) &&
-    (milestones === undefined || isMilestoneRecord(milestones));
+    (milestones === undefined || isMilestoneRecord(milestones)) && (assessment === undefined || isAssessment(assessment));
 }
 
 function isMilestoneRecord(value: unknown): value is MilestoneNotes {
@@ -156,6 +159,13 @@ export function createProjectStore(storage: Storage) {
     updateProject(id, project => ({ ...project, plan }));
   }
 
+  function saveAssessment(id: number, assessment: Assessment, plan?: PlanDraft) {
+    if (!isAssessment(assessment)) throw new Error('The assessment is invalid or unsupported.');
+    if (plan !== undefined && !isPlanDraft(plan)) throw new Error('The plan could not be saved.');
+    return updateProject(id, project => ({ ...project, assessment,
+      ...(plan ? { plan: { ...project.plan, ...plan } } : {}) }));
+  }
+
   function saveMilestone(id: number, milestoneId: MilestoneId, note: string) {
     if (!projectMilestones.some(item => item.id === milestoneId)) throw new Error('Unknown milestone.');
     if (note.length > maxMilestoneNoteLength) throw new Error(`Use ${maxMilestoneNoteLength} characters or fewer.`);
@@ -194,5 +204,5 @@ export function createProjectStore(storage: Storage) {
     return updateBuildCard(id, card, evidence => ({ checked: evidence.checked, skipReason }));
   }
 
-  return { load, save, savePlan, saveMilestone, setBuildProof, setBuildSkip };
+  return { load, save, savePlan, saveAssessment, saveMilestone, setBuildProof, setBuildSkip };
 }

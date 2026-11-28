@@ -56,7 +56,7 @@ function validatePayload(kind: EntityKind, payload: unknown): void {
     const data = object(payload, 'study payload', ['daily', 'cards']);
     createStudyStore(slot({ ...data, version: 1 })).load();
   } else if (kind === 'project') {
-    const data = object(payload, 'project payload', ['name', 'audience', 'goal', 'plan', 'build', 'milestones'], ['name', 'audience', 'goal']);
+    const data = object(payload, 'project payload', ['name', 'audience', 'goal', 'plan', 'build', 'milestones', 'assessment'], ['name', 'audience', 'goal']);
     createProjectStore(slot({ version: 1, projects: [{ ...data, id: 1 }] })).load();
   } else {
     const data = object(payload, 'readiness payload', ['projectId', 'review']);
