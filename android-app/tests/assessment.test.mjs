@@ -118,3 +118,12 @@ test('local storage and other backends never lead directly into a Supabase-speci
   const firebase = await guidance({}, { stack: 'expo-ts', data: 'firebase', target: 'android' });
   assert.equal(firebase.generalOnly, true);
 });
+
+test('a fresh assessment starts with uncertainty and a legacy project has no invented result', async () => {
+  const { isAssessment, newAssessment, recommendProject } = await import('../src/projects/assessment.ts');
+  const fresh = newAssessment();
+  assert.equal(isAssessment(fresh), true);
+  assert.ok(Object.values(fresh.checks).every(value => value === 'unsure'));
+  assert.equal(recommendProject({}), null);
+  assert.equal(recommendProject({ assessment: fresh }).focus, 'inventory');
+});

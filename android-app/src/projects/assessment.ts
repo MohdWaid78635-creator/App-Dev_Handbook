@@ -66,7 +66,7 @@ export function recommendProject(project: Pick<Project, 'assessment' | 'plan'>):
   const generalOnly = !['expo-ts', 'expo-js'].includes(project.plan?.stack ?? '') || project.plan?.target === 'web' || backendMismatch;
   const detail = localLab ? { ...focusDetails.data, missionId: 0 } : focusDetails[focus];
   return { focus, ...detail, stage: a.mode === 'new' ? 'Fresh start' : appStages[a.stage], reason, generalOnly, startHere: focus === 'start' || localLab,
-    relatedMissions: [...new Set([detail.missionId, ...(a.accounts !== 'local' ? [5] : []), ...(a.goal === 'release' ? [8, 10] : [])])] };
+    relatedMissions: [...new Set([detail.missionId, ...(a.accounts !== 'local' && project.plan?.data === 'supabase' ? [5] : []), ...(a.goal === 'release' ? [8, 10] : [])])] };
 }
 
 // General handbook references remain available when the app has no matching stack-specific lab.

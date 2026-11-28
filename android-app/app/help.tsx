@@ -1,8 +1,8 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { setStringAsync } from 'expo-clipboard';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { Link } from '../src/components/Link';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import articles from '../src/generated/articles.json';
@@ -10,6 +10,9 @@ import missions from '../src/generated/missions.json';
 import { buildLibrary, categories, searchLibrary } from '../src/library/search';
 import type { Category, Resource } from '../src/library/search';
 import { homeColors as colors } from '../src/theme';
+import { projectStore } from '../src/projects/local';
+import type { Project } from '../src/projects/store';
+import { matchProjectResources, recommendProject } from '../src/projects/assessment';
 
 const library = buildLibrary(missions, articles);
 const filters = Object.keys(categories) as Category[];
@@ -53,7 +56,7 @@ function ResourceContent({ resource }: { resource: Resource }) {
 }
 
 export default function HelpScreen() {
-  const { missionId } = useLocalSearchParams<{ missionId?: string }>();
+  const { missionId, projectId } = useLocalSearchParams<{ missionId?: string; projectId?: string }>();
   const { top, bottom } = useSafeAreaInsets();
   const router = useRouter();
   const initialMission = missions.find(mission => String(mission.id) === missionId);
@@ -61,7 +64,20 @@ export default function HelpScreen() {
   const [category, setCategory] = useState<Category>(initialMission ? 'troubleshooting' : 'all');
   const [query, setQuery] = useState('');
   const [expandedId, setExpandedId] = useState<string>();
-  const results = searchLibrary(library, query, category, mission?.id);
+  const [project, setProject] = useState<Project>();
+  const [projectError, setProjectError] = useState('');
+  const [personalised, setPersonalised] = useState(Boolean(projectId));
+  useFocusEffect(useCallback(() => {
+    if (!projectId) { setProject(undefined); setProjectError(''); setPersonalised(false); return; }
+    try {
+      const saved = projectStore.load().find(item => String(item.id) === projectId);
+      setProject(saved); setPersonalised(true);
+      setProjectError(saved?.assessment ? '' : 'No saved assessment for this project. All resources are available below.');
+    } catch { setProject(undefined); setProjectError('Couldn’t read the project assessment. All resources are available below.'); }
+  }, [projectId]));
+  const guidance = project ? recommendProject(project) : null;
+  const source = personalised && guidance ? matchProjectResources(library, guidance) : library;
+  const results = searchLibrary(source, query, category, mission?.id);
 
   return <View style={[styles.screen, { paddingTop: top }]}><FlatList
     data={results}
@@ -97,6 +113,18 @@ export default function HelpScreen() {
         </View>
         </View>
       </View>
+      {projectError ? <Text accessibilityRole="alert" style={styles.body}>{projectError}</Text> : null}
+      {project && guidance ? <View style={[styles.card, styles.mint]}>
+        <Text accessibilityRole="header" style={styles.label}>{personalised ? 'Suggested for' : 'Project'} {project.name}</Text>
+        <Text style={styles.body}>{guidance.stage} · {guidance.title}</Text>
+        <Text style={styles.body}>{guidance.reason}</Text>
+        {guidance.generalOnly && personalised ? <Text style={styles.body}>General handbook references only. A matching guided lab for your tools may not be available.</Text> : null}
+        <Text style={styles.meta}>Based on your answers. These are selected resources from the current course; the full handbook library is still being added.</Text>
+        <Pressable accessibilityRole="button" onPress={() => { setPersonalised(previous => !previous); setExpandedId(undefined); setMission(undefined); }} style={styles.linkButton}>
+          <Text style={styles.linkLabel}>{personalised ? 'Browse all resources' : 'Show suggestions for this app'}</Text>
+        </Pressable>
+        <Link href={{ pathname: '/assessment/[id]', params: { id: String(project.id) } }} style={styles.link}>Review my answers →</Link>
+      </View> : null}
       <View style={styles.filters}>
         {filters.map(filter => <Pressable key={filter} accessibilityRole="button" accessibilityState={{ selected: filter === category }}
           onPress={() => { setCategory(filter); setExpandedId(undefined); }}
@@ -111,7 +139,7 @@ export default function HelpScreen() {
           <Text style={styles.linkLabel}>Show all missions</Text>
         </Pressable>
       </View> : null}
-      {!query.trim() && category === 'all' && !mission ? <View style={[styles.card, styles.course]}>
+      {!query.trim() && category === 'all' && !mission && !(personalised && guidance) ? <View style={[styles.card, styles.course]}>
         <View style={[styles.iconBadge, styles.mint]}><Ionicons name="book-outline" size={29} color={colors.ink} importantForAccessibility="no" /></View>
         <View style={styles.rowText}>
         <Text accessibilityRole="header" style={styles.label}>Kotlin and Jetpack Compose</Text>

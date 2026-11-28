@@ -1,5 +1,5 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { Link } from '../src/components/Link';
 import { useCallback, useRef, useState } from 'react';
 import type { ComponentRef } from 'react';
@@ -103,6 +103,13 @@ function ProjectCard({ project, initiallyOpen, missionId, milestoneId, onEdit }:
     {open ? <>
       {project.audience ? <Text style={s.body}>{project.audience}</Text> : null}
       {project.goal ? <Text style={s.body}>{project.goal}</Text> : null}
+      <Link href={{ pathname: '/assessment/[id]', params: { id: String(project.id) } }} asChild>
+        <Pressable accessibilityRole="link" accessibilityLabel={`Find the next step for ${project.name}`} style={({ pressed }) => [s.tool, pressed && s.pressed]}>
+          <Ionicons name="compass-outline" size={25} color={c.purple} importantForAccessibility="no" />
+          <Text style={s.toolLabel}>{project.assessment ? 'My app’s next move' : 'Find my app’s stage and next step'}</Text>
+          <Ionicons name="chevron-forward" size={22} color={c.muted} importantForAccessibility="no" />
+        </Pressable>
+      </Link>
       <Link href={{ pathname: '/plan/[id]', params: { id: String(project.id) } }} asChild>
         <Pressable accessibilityRole="link" accessibilityLabel={`Open Plan Mode for ${project.name}`}
           style={({ pressed }) => [s.action, pressed && s.pressed]}>
@@ -139,7 +146,7 @@ function readProjects(): Project[] | null {
 }
 
 export default function ProjectScreen() {
-  const { missionId, milestoneId } = useLocalSearchParams<{ missionId?: string; milestoneId?: string }>();
+  const { missionId, milestoneId, assess } = useLocalSearchParams<{ missionId?: string; milestoneId?: string; assess?: string }>();
   const { top, bottom } = useSafeAreaInsets();
   const [projects, setProjects] = useState(readProjects);
   const [editor, setEditor] = useState<{ project?: Project } | null>(null);
@@ -188,10 +195,14 @@ export default function ProjectScreen() {
           setProjects(savedProjects); setEditor(null);
           setStatus(editor.project ? 'Changes saved on this device.' : 'Project saved on this device.');
           scroll.current?.scrollTo({ y: 0, animated: false });
+          if (assess === '1') {
+            const saved = editor.project ? savedProjects.find(item => item.id === editor.project!.id) : savedProjects.at(-1);
+            if (saved) router.push({ pathname: '/assessment/[id]', params: { id: String(saved.id) } });
+          }
         }} /> : <>
-          <Text accessibilityRole="header" style={s.title}>Your ideas, taking shape.</Text>
+          <Text accessibilityRole="header" style={s.title}>{assess === '1' ? 'Choose your existing app.' : 'Your ideas, taking shape.'}</Text>
           <Text style={s.body}>{milestoneId !== undefined ? 'Choose a project to record milestone evidence.'
-            : missionId !== undefined ? 'Choose a project for this mission’s build cards.' : 'Save your app idea and build its first version.'}</Text>
+            : missionId !== undefined ? 'Choose a project for this mission’s build cards.' : assess === '1' ? 'Open a saved project below to assess it, or add your app. Your code is not scanned.' : 'Save your app idea or continue an existing app.'}</Text>
           {projects === null ? <View style={s.card}>
             <Text accessibilityRole="alert" style={s.error}>Couldn’t load your saved projects.</Text>
             <Pressable accessibilityRole="button" onPress={() => setProjects(readProjects())} style={({ pressed }) => [s.action, pressed && s.pressed]}>
@@ -200,7 +211,7 @@ export default function ProjectScreen() {
           </View> : <>
             {status ? <Text accessibilityLiveRegion="polite" style={s.success}>{status}</Text> : null}
             <Pressable accessibilityRole="button" onPress={() => showEditor()} style={({ pressed }) => [s.action, pressed && s.pressed]}>
-              <Ionicons name="add" size={25} color={c.white} importantForAccessibility="no" /><Text style={s.actionLabel}>New project</Text>
+              <Ionicons name="add" size={25} color={c.white} importantForAccessibility="no" /><Text style={s.actionLabel}>{assess === '1' ? 'Add an existing app' : 'New project'}</Text>
             </Pressable>
             <View style={s.deviceNotice}>
               <Ionicons name="phone-portrait-outline" size={22} color={c.muted} importantForAccessibility="no" /><Text style={s.meta}>Saved on this device</Text>

@@ -15,6 +15,8 @@ export default function RootLayout() {
         <Stack.Screen name="index" options={{ title: 'BuildWisp', headerShown: false }} />
         <Stack.Screen name="missions" options={{ title: 'Mission map', headerShown: false }} />
         <Stack.Screen name="getting-started" options={{ title: 'Start Here', headerShown: false }} />
+        <Stack.Screen name="start" options={{ title: 'Your starting point', headerShown: false }} />
+        <Stack.Screen name="assessment/[id]" options={{ title: 'Your next move', headerShown: false }} />
         <Stack.Screen name="mission/[id]" options={{ title: 'Lesson', headerShown: false }} />
         <Stack.Screen name="practice/[id]" options={{ title: 'Practice', headerShown: false }} />
         <Stack.Screen name="quiz/[id]" options={{ title: 'Knowledge Check', headerShown: false }} />

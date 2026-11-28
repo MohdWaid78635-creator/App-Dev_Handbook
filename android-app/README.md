@@ -1,6 +1,12 @@
 # BuildWisp for Android
 
-BuildWisp is an Expo React Native app for learning and building first Android projects. It includes the mission map, Start Here, Lesson Detail, Practice games, Knowledge Checks with boss questions, Mission Results, and a Review room. It imports 13 missions, 15 lesson modules including Testing, and 55 build cards. Setup checks, the latest opened mission, quiz progress, and review dates are saved locally with Expo SQLite.
+BuildWisp is an Expo React Native app for learning and building first Android projects. It includes the mission map, Start Here, Lesson Detail, Practice games, Knowledge Checks with boss questions, Mission Results, and a Review room. It imports 13 missions, 16 lesson modules including Testing and Security Tools, and 55 build cards. Setup checks, the latest opened mission, quiz progress, and review dates are saved locally with Expo SQLite.
+
+## New or existing app guidance
+
+Home → **Start Here** or **Find my app’s next step** opens the new/existing app choice. Existing builders select or add a project, describe its current state and goal, and check capabilities. Each project keeps its own assessment. Recommendations explain the suggested focus and open matching resources; **Browse all resources** removes the recommendation filter. Project cards include **My app’s next move** to revise answers later.
+
+Matching runs locally with no AI API, account, or per-request cost. Saved tool choices are reused, with general references when the guided Expo/Supabase labs do not match. Assessments are included in backup/restore and validated by the prepared sync contract. They do not award XP or certify a release. This increment uses the current curated library; the complete 191-section library remains planned. See [implementation evidence](docs/existing-app-guidance.tdd.md).
 
 ## Run the first screen
 

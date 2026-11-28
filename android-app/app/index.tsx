@@ -11,7 +11,7 @@ import { WorkshopNavigation } from '../src/components/WorkshopNavigation';
 
 function showOptions() {
   Alert.alert('Your workshop', 'Setup, resources, and saved data', [
-    { text: 'Start Here', onPress: () => router.push('/getting-started') },
+    { text: 'Find my starting point', onPress: () => router.push('/start') },
     { text: 'Help and Resource Library', onPress: () => router.push('/help') },
     { text: 'Backup and Restore', onPress: () => router.push('/backup') },
   ], { cancelable: true });
@@ -23,7 +23,7 @@ export default function Home() {
   const { progress, saveError } = useProgress();
   const home = createHomeSummary(missions, progress);
   const stacked = width < 380 || fontScale > 1.2;
-  const primaryHref = home.mode === 'new' ? '/getting-started' : home.mission
+  const primaryHref = home.mode === 'new' ? '/start' : home.mission
     ? { pathname: '/mission/[id]' as const, params: { id: String(home.mission.id) } } : '/review';
   const headline = home.mode === 'new' ? 'Your first app starts here.' : home.mode === 'complete'
     ? 'Look how far you’ve come.' : home.mode === 'mastered' ? 'One mission stronger.' : 'Welcome back, builder.';
@@ -61,9 +61,9 @@ export default function Home() {
             <Text style={s.eyebrow}>{home.mode === 'complete' ? 'ALL MISSIONS MASTERED' : home.mode === 'new' ? 'START HERE' : 'YOUR NEXT MISSION'}</Text>
             <View style={[s.missionContent, stacked && s.stacked]}>
               <View style={s.missionText}>
-                <Text accessibilityRole="header" style={s.missionTitle}>{home.mode === 'new' ? 'Get your workshop ready' : home.mission?.lessonTitle ?? 'Keep your skills fresh'}</Text>
+                <Text accessibilityRole="header" style={s.missionTitle}>{home.mode === 'new' ? 'Build from where you are' : home.mission?.lessonTitle ?? 'Keep your skills fresh'}</Text>
                 <Text style={s.body}>{home.mode === 'new'
-                  ? `${progress.checkpoints.length} of 4 setup checkpoints checked. Get the tools for your first Android app.`
+                  ? 'Start a new app or find the next step for an app you already have.'
                   : home.mode === 'complete' ? 'Revisit what you learned in the Review room.'
                     : `${home.mission?.steps.length ?? 0} build cards to explore, practise, and put to work.`}</Text>
               </View>
@@ -77,6 +77,7 @@ export default function Home() {
             </Link>
           </View>
           <Text accessibilityRole="header" style={s.section}>Your workshop</Text>
+          <Link href="/start" style={s.linkText}>Find my app’s next step →</Link>
           <View style={[s.workshop, stacked && s.stacked]}>
             <Link href="/project" asChild>
               <Pressable accessibilityRole="link" style={({ pressed }) => [s.toolCard, s.mintCard, pressed && s.pressed]}>

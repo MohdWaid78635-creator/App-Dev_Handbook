@@ -2,7 +2,14 @@
 
 ## Current session · 28 November 2026
 
-Priority change: correct the installed APK layouts before continuing Phase 3. The shared Router/Slot style-loss bug is fixed across all 59 linked controls; [regression evidence](docs/linked-layout-fix.tdd.md). A corrected preview is being prepared for phone review. Phase 3's storage core has 10 passing SQLite tests, but provider/screen integration and the phone backup gate remain unfinished. Storage and cloud cutover remain disabled.
+Latest priority: existing-app assessment and relevant resources. Implemented Home entry, project-specific questionnaire/results, tool-aware matching, backups, scoped-storage compatibility, and a forward SQL validator migration. No AI API. [Plan](docs/existing-app-guidance.plan.md) · [Evidence](docs/existing-app-guidance.tdd.md).
+
+- [x] Existing-app assessment and matching from the current curated library; 149 app tests and 15 database tests pass.
+- [ ] Verify new native screens on Android, including TalkBack, large text, and interrupted forms.
+- [ ] Import the complete handbook and support resources using [the content expansion plan](docs/content-expansion-research.plan.md).
+- [ ] Submit a new APK when a preview build is requested; this increment has not been built through EAS.
+
+Previous priority: correct the installed APK layouts before continuing Phase 3. The shared Router/Slot style-loss bug is fixed across all 59 linked controls; [regression evidence](docs/linked-layout-fix.tdd.md). The user is reviewing the corrected preview. Phase 3's storage core has 11 passing SQLite tests including assessment isolation, but provider/screen integration and the phone backup gate remain unfinished. Storage and cloud cutover remain disabled.
 
 Native Android appearance, navigation, file picker/sharing, restore confirmation, TalkBack, large text, and landscape checks remain pending. Validation details are recorded in `docs/home-design.tdd.md`.
 
