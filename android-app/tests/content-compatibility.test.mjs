@@ -10,10 +10,12 @@ const frozen = read('./fixtures/content-identities.json');
 const release = () => ({ schemaVersion: 1, releaseId: '66666666-6666-4666-8666-666666666666',
   minimumReaderVersion: 1, createdAt: '2026-11-27T03:30:00.000Z', documents: structuredClone(documents) });
 
-test('current generated documents validate and match the frozen content identity baseline', () => {
+test('expanded handbook validates while retaining the frozen learning and article identities', () => {
   const input = release();
   assert.deepEqual(parseContentRelease(JSON.stringify(input)), input);
-  assert.deepEqual(createContentIdentityManifest(input.documents), frozen);
+  const current = createContentIdentityManifest(input.documents);
+  assert.deepEqual({ ...current, articles: frozen.articles }, frozen);
+  assert.equal(current.articles.length, 191);
   assert.doesNotThrow(() => assertContentCompatibility(frozen, input.documents));
   assert.equal(input.documents.missions.length, 13);
   assert.equal(input.documents.readiness.flatMap(group => group.checks).length, 133);
@@ -54,7 +56,7 @@ const incompatible = [
   ['removed readiness check', d => { d.readiness[0].checks.pop(); }],
   ['renamed glossary identity', d => { d.glossary[0].term = 'Another term'; }],
   ['removed glossary term', d => { d.glossary.pop(); }],
-  ['removed library article', d => { d.articles.pop(); }],
+  ['removed library article', d => { d.articles = d.articles.filter(article => article.id !== frozen.articles[0]); }],
 ];
 for (const [name, change] of incompatible) test(`content compatibility rejects ${name}`, () => {
   const input = structuredClone(documents); change(input);

@@ -7,6 +7,7 @@ import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-na
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import articles from '../src/generated/articles.json';
 import missions from '../src/generated/missions.json';
+import glossary from '../src/generated/glossary.json';
 import { buildLibrary, categories, searchLibrary } from '../src/library/search';
 import type { Category, Resource } from '../src/library/search';
 import { homeColors as colors } from '../src/theme';
@@ -14,7 +15,8 @@ import { projectStore } from '../src/projects/local';
 import type { Project } from '../src/projects/store';
 import { matchProjectResources, recommendProject } from '../src/projects/assessment';
 
-const library = buildLibrary(missions, articles);
+const library = buildLibrary(missions, articles, glossary);
+const chapters = [...new Map(articles.map(article => [article.chapterId, article.chapterTitle])).entries()];
 const filters = Object.keys(categories) as Category[];
 const categoryIcons = {
   all: 'grid-outline', learn: 'book-outline', glossary: 'library-outline',
@@ -38,7 +40,7 @@ function ResourceContent({ resource }: { resource: Resource }) {
   }
 
   return <View style={styles.detail}>
-    {resource.body.map((paragraph, index) => <Text key={index} style={styles.body}>{paragraph}</Text>)}
+    {resource.body.map((paragraph, index) => <Text selectable key={index} style={styles.body}>{paragraph}</Text>)}
     {prompt ? <>
       {prompt.includes('[APP_NAME]') ? <Text style={styles.meta}>Replace [APP_NAME] with the name of your app before using this prompt.</Text> : null}
       <Pressable accessibilityRole="button" onPress={() => { void copy(prompt); }} style={({ pressed }) => [styles.primary, pressed && styles.pressed]}>
@@ -64,6 +66,8 @@ export default function HelpScreen() {
   const [category, setCategory] = useState<Category>(initialMission ? 'troubleshooting' : 'all');
   const [query, setQuery] = useState('');
   const [expandedId, setExpandedId] = useState<string>();
+  const [chapterId, setChapterId] = useState<string>();
+  const [chapterPicker, setChapterPicker] = useState(false);
   const [project, setProject] = useState<Project>();
   const [projectError, setProjectError] = useState('');
   const [personalised, setPersonalised] = useState(Boolean(projectId));
@@ -77,7 +81,7 @@ export default function HelpScreen() {
   }, [projectId]));
   const guidance = project ? recommendProject(project) : null;
   const source = personalised && guidance ? matchProjectResources(library, guidance) : library;
-  const results = searchLibrary(source, query, category, mission?.id);
+  const results = searchLibrary(source, query, category, mission?.id, chapterId);
 
   return <View style={[styles.screen, { paddingTop: top }]}><FlatList
     data={results}
@@ -99,6 +103,7 @@ export default function HelpScreen() {
       <View style={styles.hero}>
         <Text accessibilityRole="header" style={styles.title}>Resource Library</Text>
         <Text style={styles.body}>Look up a concept, find a fix, or copy a prompt.</Text>
+        <Text style={styles.meta}>{articles.length} handbook sections · {articles.reduce((sum, article) => sum + article.prompts.length, 0)} handbook prompts · {glossary.length} glossary terms</Text>
         <View style={styles.field}>
         <Text style={styles.meta}>Search resources</Text>
         <View style={styles.search}>
@@ -119,8 +124,8 @@ export default function HelpScreen() {
         <Text style={styles.body}>{guidance.stage} · {guidance.title}</Text>
         <Text style={styles.body}>{guidance.reason}</Text>
         {guidance.generalOnly && personalised ? <Text style={styles.body}>General handbook references only. A matching guided lab for your tools may not be available.</Text> : null}
-        <Text style={styles.meta}>Based on your answers. These are selected resources from the current course; the full handbook library is still being added.</Text>
-        <Pressable accessibilityRole="button" onPress={() => { setPersonalised(previous => !previous); setExpandedId(undefined); setMission(undefined); }} style={styles.linkButton}>
+        <Text style={styles.meta}>Based on your answers, with related handbook chapters. References may describe different tools; adapt examples to your app.</Text>
+        <Pressable accessibilityRole="button" onPress={() => { setPersonalised(previous => !previous); setExpandedId(undefined); setMission(undefined); setChapterId(undefined); }} style={styles.linkButton}>
           <Text style={styles.linkLabel}>{personalised ? 'Browse all resources' : 'Show suggestions for this app'}</Text>
         </Pressable>
         <Link href={{ pathname: '/assessment/[id]', params: { id: String(project.id) } }} style={styles.link}>Review my answers →</Link>
@@ -132,6 +137,17 @@ export default function HelpScreen() {
           <Ionicons name={categoryIcons[filter]} size={23} color={category === filter ? colors.white : colors.ink} importantForAccessibility="no" />
           <Text style={[styles.filterLabel, category === filter && styles.selectedLabel]}>{categories[filter]}</Text>
         </Pressable>)}
+      </View>
+      <View style={styles.card}>
+        <Pressable accessibilityRole="button" accessibilityState={{ expanded: chapterPicker }} onPress={() => setChapterPicker(previous => !previous)} style={styles.row}>
+          <View style={styles.rowText}><Text style={styles.label}>Browse handbook chapters</Text><Text style={styles.meta}>{chapterId ? chapters.find(([id]) => id === chapterId)?.[1] : 'All chapters and Print Pack'}</Text></View>
+          <Ionicons name={chapterPicker ? 'chevron-up' : 'chevron-down'} size={23} color={colors.purple} importantForAccessibility="no" />
+        </Pressable>
+        {chapterPicker ? <View accessibilityRole="radiogroup" accessibilityLabel="Handbook chapter">
+          {[[undefined, 'All chapters'], ...chapters].map(([id, title]) => <Pressable key={id ?? 'all'} accessibilityRole="radio"
+            accessibilityState={{ checked: chapterId === id }} onPress={() => { setChapterId(id); setChapterPicker(false); setPersonalised(false); setMission(undefined); setCategory(id ? 'learn' : 'all'); setExpandedId(undefined); }}
+            style={styles.linkButton}><Text style={styles.linkLabel}>{id === undefined ? title : `${id === 'P' ? 'Print Pack' : `Chapter ${id}`} · ${title}`}</Text></Pressable>)}
+        </View> : null}
       </View>
       {mission ? <View style={styles.card}>
         <Text style={styles.body}>Showing resources for {mission.lessonTitle}.</Text>

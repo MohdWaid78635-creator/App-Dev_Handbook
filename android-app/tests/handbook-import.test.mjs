@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
 import test from 'node:test';
 import { buildLibrary, searchLibrary } from '../src/library/search.ts';
+import { handbookBlockText, importHandbook } from '../scripts/handbook.mjs';
 
 const context = { window: {} };
 runInNewContext(readFileSync(new URL('../../guide/data.js', import.meta.url), 'utf8'), context, { timeout: 1000 });
@@ -51,4 +52,19 @@ test('paragraphs, code, labels, headings, checklists, definitions and table cell
 test('all glossary definitions and chapter context can be found in the resource library', () => {
   for (const term of read('glossary')) assert.ok(library.some(item => item.kind === 'glossary' && item.title === term.term && item.body.includes(term.meaning)), `Missing glossary ${term.term}`);
   assert.ok(searchLibrary(library, 'Edge cases: the complete list', 'learn').some(item => item.chapterId === '11'));
+});
+
+test('chapter filtering keeps handbook references and copyable prompts together', () => {
+  const matches = searchLibrary(library, '', 'all', undefined, '20');
+  assert.ok(matches.length >= 13);
+  assert.ok(matches.every(item => item.chapterId === '20'));
+  assert.ok(matches.some(item => item.kind === 'prompt'));
+  assert.deepEqual(searchLibrary(library, '', 'all', undefined, 'missing'), []);
+});
+
+test('the importer fails clearly for unknown blocks and duplicate source identities', () => {
+  assert.throws(() => handbookBlockText({ t: 'unsupported', text: 'Do not drop me' }), /Unsupported handbook block/);
+  const duplicate = structuredClone(chapters[0]);
+  duplicate.sections.push(duplicate.sections[0]);
+  assert.throws(() => importHandbook([duplicate]), /duplicate handbook section/);
 });

@@ -75,13 +75,19 @@ const generalArticles: Record<Focus, readonly string[]> = {
   access: ['5.1', '0-5'], test: ['1-4', '3.3', '4.6'], release: ['4.6', '3.3', '0-5'], recovery: ['0-5', '1-4'],
   repair: ['1-4', '0-5'], security: ['0-5', '5.1'], performance: ['3.3', '4.4'], costs: ['3.2', '5.1'],
 };
+const focusChapters: Record<Focus, readonly string[]> = {
+  start: ['0', '1', '2', '5'], inventory: ['20', '5', '7', '18'], journey: ['3', '4', '7'], data: ['6', '11'],
+  access: ['6', '8'], test: ['11', '12', '4'], release: ['13', '15', '22'], recovery: ['16', '17', '20', 'P'],
+  repair: ['20', '12', '16'], security: ['8', '13', '20'], performance: ['10', '11'], costs: ['3', '5', '8', '9', '17'],
+};
 export function matchProjectResources(resources: readonly Resource[], guidance: Guidance): Resource[] {
   const articles = generalArticles[guidance.focus];
   return resources.flatMap((item, index) => {
     const missionRank = guidance.generalOnly || item.missionId === undefined ? -1 : guidance.relatedMissions.indexOf(item.missionId);
     const articleRank = articles.findIndex(id => item.id === `article-${id}` || item.id.startsWith(`prompt-article-${id}-`));
-    if (missionRank < 0 && articleRank < 0) return [];
+    const chapterRank = item.chapterId === undefined ? -1 : focusChapters[guidance.focus].indexOf(item.chapterId);
+    if (missionRank < 0 && articleRank < 0 && chapterRank < 0) return [];
     const kindRank = item.kind === 'learn' ? 0 : item.kind === 'troubleshooting' ? 1 : item.kind === 'prompt' ? 2 : 3;
-    return [{ item, rank: missionRank >= 0 ? missionRank * 10 + kindRank : 100 + articleRank, index }];
+    return [{ item, rank: missionRank >= 0 ? missionRank * 10 + kindRank : chapterRank >= 0 ? 100 + chapterRank * 10 + kindRank : 200 + articleRank, index }];
   }).sort((a, b) => a.rank - b.rank || a.index - b.index).map(({ item }) => item);
 }

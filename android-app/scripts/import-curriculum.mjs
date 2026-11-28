@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
 import { securityTools } from './security-tools.mjs';
+import { importHandbook } from './handbook.mjs';
 
 const context = { window: {} };
 for (const filename of ['playbook-data.js', 'learn-data.js', 'mobile/readiness-data.js', 'data.js']) {
@@ -134,23 +135,11 @@ const readiness = context.window.READINESS_GROUPS.map(([id, title, missionId, ch
   readinessIds.add(id);
   return { id, title, missionId, checks: checks.map((title, index) => ({ id: `${id}:${index}`, title })), sources };
 });
-const sections = new Map(context.window.HANDBOOK.chapters.flatMap(chapter => chapter.sections.map(section => [section.id, section])));
 const glossary = context.window.HANDBOOK.chapters.find(chapter => chapter.id === '21')?.sections[0]?.blocks
   .find(block => block.t === 'dl')?.items;
 assert.ok(glossary?.length && glossary.every(pair => pair.length === 2 && pair.every(item => typeof item === 'string' && item.trim())) &&
   new Set(glossary.map(([term]) => term)).size === glossary.length, 'Invalid handbook glossary');
-const articles = ['0-5', '1-4', '3.2', '3.3', '4.4', '4.6', '5.1'].map(id => {
-  const section = sections.get(id);
-  assert.ok(section?.title && section.blocks.length, `Missing Library article ${id}`);
-  return {
-    id, title: section.title,
-    body: section.blocks.flatMap(block => {
-      if (block.t === 'check') return block.items.map(item => `• ${item}`);
-      return ['p', 'pre', 'h', 'label'].includes(block.t) && block.text ? [block.text] : [];
-    }),
-    prompts: section.blocks.filter(block => block.t === 'prompt' && block.text).map(block => block.text),
-  };
-});
+const articles = importHandbook(context.window.HANDBOOK.chapters);
 const out = new URL('../src/generated/', import.meta.url);
 mkdirSync(out, { recursive: true });
 writeFileSync(new URL('missions.json', out), `${JSON.stringify(missions, null, 2)}\n`);
@@ -159,3 +148,4 @@ writeFileSync(new URL('articles.json', out), `${JSON.stringify(articles, null, 2
 writeFileSync(new URL('glossary.json', out), `${JSON.stringify(glossary.map(([term, meaning]) => ({ id: term, term, meaning })), null, 2)}\n`);
 console.log(`Imported ${missions.length} missions, ${usedModules.size} lesson modules and ${stepIds.size} build cards.`);
 console.log(`Imported ${readiness.reduce((count, group) => count + group.checks.length, 0)} readiness checks across ${readiness.length} groups.`);
+console.log(`Imported ${articles.length} handbook sections, ${articles.reduce((sum, article) => sum + article.prompts.length, 0)} prompts and ${glossary.length} glossary terms.`);

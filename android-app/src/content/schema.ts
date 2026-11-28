@@ -102,6 +102,9 @@ function validateDocuments(input: unknown): asserts input is ContentDocuments {
   }
   for (const article of uniqueRecords(documents.articles, 'articles')) {
     text(article.title, 'article title'); strings(article.body, 'article body', 1); strings(article.prompts, 'article prompts');
+    if (article.chapterId !== undefined || article.chapterTitle !== undefined) {
+      text(article.chapterId, 'article chapter ID'); text(article.chapterTitle, 'article chapter title');
+    }
   }
 }
 

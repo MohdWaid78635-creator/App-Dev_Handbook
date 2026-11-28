@@ -7,6 +7,7 @@ export type Resource = {
   subtitle: string;
   body: readonly string[];
   missionId?: number;
+  chapterId?: string;
   sourceUrl?: string;
   copyText?: string;
 };
@@ -20,7 +21,7 @@ type Mission = {
   steps: readonly { id: string; title: string; why: string; prompt: string; ifStuck: string;
     proof: readonly string[]; source: { url: string } }[];
 };
-type Article = { id: string; title: string; body: readonly string[]; prompts: readonly string[] };
+type Article = { id: string; title: string; body: readonly string[]; prompts: readonly string[]; chapterId?: string; chapterTitle?: string };
 
 function searchable(text: string) {
   return text.toLowerCase().normalize('NFKD').replace(/\p{M}/gu, '')
@@ -28,7 +29,7 @@ function searchable(text: string) {
     .replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
 }
 
-export function buildLibrary(missions: readonly Mission[], articles: readonly Article[]) {
+export function buildLibrary(missions: readonly Mission[], articles: readonly Article[], glossary: readonly { id: string; term: string; meaning: string }[] = []) {
   const resources: Resource[] = [];
   const definitions = new Set<string>();
   for (const mission of missions) {
@@ -57,18 +58,25 @@ export function buildLibrary(missions: readonly Mission[], articles: readonly Ar
     }
   }
   for (const article of articles) {
-    const subtitle = 'App Builder’s Handbook';
-    resources.push({ id: `article-${article.id}`, kind: 'learn', title: article.title, subtitle, body: article.body });
+    const subtitle = article.chapterTitle ? `${article.chapterTitle} · Section ${article.id}` : 'App Builder’s Handbook';
+    resources.push({ id: `article-${article.id}`, kind: 'learn', title: article.title, subtitle, chapterId: article.chapterId, body: article.body });
     article.prompts.forEach((copyText, index) => resources.push({ id: `prompt-article-${article.id}-${index}`, kind: 'prompt',
-      title: article.title, subtitle, body: [], copyText }));
+      title: article.title, subtitle, chapterId: article.chapterId, body: [], copyText }));
+  }
+  for (const term of glossary) {
+    const key = `${searchable(term.term)}:${searchable(term.meaning)}`;
+    if (definitions.has(key)) continue;
+    definitions.add(key);
+    resources.push({ id: `handbook-term-${term.id}`, kind: 'glossary', title: term.term,
+      subtitle: 'Handbook glossary', chapterId: '21', body: [term.meaning] });
   }
   return resources;
 }
 
-export function searchLibrary(resources: readonly Resource[], query: string, category: Category, missionId?: number) {
+export function searchLibrary(resources: readonly Resource[], query: string, category: Category, missionId?: number, chapterId?: string) {
   const terms = searchable(query).split(' ').filter(Boolean);
   const applicable = resources.filter(item => (category === 'all' || item.kind === category) &&
-    (missionId === undefined || item.missionId === missionId));
+    (missionId === undefined || item.missionId === missionId) && (chapterId === undefined || item.chapterId === chapterId));
   if (!terms.length) return applicable;
   return applicable.flatMap(item => {
     const title = searchable(item.title);
