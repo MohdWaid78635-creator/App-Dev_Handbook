@@ -13,7 +13,7 @@ function fixture() {
   const [project] = store.save({ name: 'Existing app', audience: 'Learners', goal: 'Keep records' });
   return { store, storage, project };
 }
-async function guidance(change = {}, plan = { stack: 'expo-ts', target: 'android' }) {
+async function guidance(change = {}, plan = { stack: 'expo-ts', target: 'android', data: 'supabase' }) {
   const f = fixture();
   const saved = f.store.saveAssessment(f.project.id, { ...assessment(), ...change }, plan);
   const { recommendProject } = await import('../src/projects/assessment.ts');
@@ -107,4 +107,14 @@ test('resource matching returns existing IDs in stable order and explains empty 
   assert.deepEqual(matchProjectResources([], result), []);
   const general = matchProjectResources(library, await guidance({}, { stack: 'flutter' }));
   assert.ok(general.every(item => item.missionId === undefined && item.kind !== 'glossary'));
+});
+
+test('local storage and other backends never lead directly into a Supabase-specific lab', async () => {
+  const checks = { ...assessment().checks, data: 'unsure' };
+  const local = await guidance({ accounts: 'local', checks }, { stack: 'expo-ts', data: 'sqlite', target: 'android' });
+  assert.equal(local.focus, 'data');
+  assert.equal(local.startHere, true);
+  assert.notEqual(local.missionId, 3);
+  const firebase = await guidance({}, { stack: 'expo-ts', data: 'firebase', target: 'android' });
+  assert.equal(firebase.generalOnly, true);
 });

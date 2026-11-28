@@ -12,6 +12,18 @@ import { createScopedStores } from '../src/storage/stores.ts';
 const backup = JSON.parse(readFileSync(new URL('./fixtures/legacy-workspace.json', import.meta.url)));
 const A = 'user:11111111-1111-4111-8111-111111111111';
 const B = 'user:22222222-2222-4222-8222-222222222222';
+
+test('project assessments survive scoped storage and cannot be read across accounts', t => {
+  const f = fixture(t); const stores = f.stores();
+  const [project] = stores.projectStore.save({ name: 'Existing app', audience: '', goal: '' });
+  const assessment = { version: 1, mode: 'existing', stage: 'live', goal: 'repair', accounts: 'local',
+    checks: { running: 'yes', journey: 'yes', data: 'unsure', access: 'unsure', test: 'unsure', recovery: 'unsure' } };
+  stores.projectStore.saveAssessment(project.id, assessment);
+  assert.deepEqual(f.stores().projectStore.load()[0].assessment, assessment);
+  f.scope.select(B);
+  assert.deepEqual(f.stores().projectStore.load(), []);
+  assert.throws(() => stores.projectStore.saveAssessment(project.id, assessment), /scope|account/i);
+});
 function legacySource() {
   const map = new Map([
     ['academy.progress', JSON.stringify(backup.data.progress)], ['academy.projects', JSON.stringify(backup.data.projects)],
