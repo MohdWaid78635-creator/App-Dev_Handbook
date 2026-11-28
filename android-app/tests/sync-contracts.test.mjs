@@ -35,6 +35,15 @@ test('all current saved-data payloads fit the cloud contract without rewriting t
   }
 });
 
+test('project assessment is preserved by cloud mutation validation', () => {
+  const input = mutation();
+  input.payload.assessment = { version: 1, mode: 'existing', stage: 'live', goal: 'release', accounts: 'private',
+    checks: { running: 'yes', journey: 'yes', data: 'yes', access: 'unsure', test: 'yes', recovery: 'yes' } };
+  assert.deepEqual(parseMutation(JSON.stringify(input), owner), input);
+  input.payload.assessment.version = 2;
+  assert.throws(() => parseMutation(JSON.stringify(input), owner));
+});
+
 test('mutation boundary rejects wrong ownership, identity, revision, version, action and hidden fields', () => {
   for (const change of [
     value => { value.ownerId = other; }, value => { value.ownerId = 'not-a-uuid'; },

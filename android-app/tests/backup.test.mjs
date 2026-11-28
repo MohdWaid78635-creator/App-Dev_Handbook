@@ -1,5 +1,17 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+
+test('assessment answers survive backup restore without changing learning progress', async () => {
+  const source = fixture();
+  const [project] = source.projects.save({ name: 'Existing app', audience: '', goal: '' });
+  const assessment = { version: 1, mode: 'existing', stage: 'live', goal: 'repair', accounts: 'local',
+    checks: { running: 'yes', journey: 'yes', data: 'unsure', access: 'unsure', test: 'unsure', recovery: 'unsure' } };
+  source.projects.saveAssessment(project.id, assessment);
+  const destination = fixture();
+  await destination.service.restore(source.service.exportBackup());
+  assert.deepEqual(destination.projects.load()[0].assessment, assessment);
+  assert.deepEqual(destination.progress.load(), source.progress.load());
+});
 import { backupKeys, createBackupService, readinessKey } from '../src/backup/service.ts';
 import { createProgressStore } from '../src/progress/store.ts';
 import { createProjectStore } from '../src/projects/store.ts';
